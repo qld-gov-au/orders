@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.dao;
+package au.gov.qld.pub.orders.dao;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 

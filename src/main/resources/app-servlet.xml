@@ -10,7 +10,7 @@
             
     <context:annotation-config/>
     <context:property-placeholder properties-ref="properties"/>
-    <context:component-scan base-package="au.gov.qld.bdm.orders.web"/>
+    <context:component-scan base-package="au.gov.qld.pub.orders.web"/>
 
     <mvc:resources mapping="/resources/**" location="/resources/" />
     <mvc:view-controller path="/error" view-name="error"/>
@@ -24,7 +24,7 @@
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
 	 
-	<bean id="freemarkerConfig" class="au.gov.qld.bdm.orders.web.ftl.HtmlFreeMarkerConfigurer">
+	<bean id="freemarkerConfig" class="au.gov.qld.pub.orders.web.ftl.HtmlFreeMarkerConfigurer">
     	<property name="templateLoaderPaths">
       		<array>
       			<value>/WEB-INF/ftl/</value>
@@ -40,6 +40,6 @@
     </bean>
 
 	<mvc:interceptors>
-	    <bean class="au.gov.qld.bdm.orders.web.ViewPostProcessor" />
+	    <bean class="au.gov.qld.pub.orders.web.ViewPostProcessor" />
 	</mvc:interceptors>
 </beans>

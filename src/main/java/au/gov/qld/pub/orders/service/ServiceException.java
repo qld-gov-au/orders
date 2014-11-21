@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.service;
+package au.gov.qld.pub.orders.service;
 
 public class ServiceException extends Exception {
 

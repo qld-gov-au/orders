@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.service.ws;
+package au.gov.qld.pub.orders.service.ws;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -8,9 +8,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import au.gov.qld.bdm.orders.entity.Order;
-import au.gov.qld.bdm.orders.service.ConfigurationService;
-import au.gov.qld.bdm.orders.service.ServiceException;
+import au.gov.qld.pub.orders.entity.Order;
+import au.gov.qld.pub.orders.service.ConfigurationService;
+import au.gov.qld.pub.orders.service.ServiceException;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;

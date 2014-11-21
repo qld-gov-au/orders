@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.entity;
+package au.gov.qld.pub.orders.entity;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import au.gov.qld.bdm.orders.service.ws.OrderDetails;
+import au.gov.qld.pub.orders.service.ws.OrderDetails;
 
 import com.google.common.collect.ImmutableMap;
 

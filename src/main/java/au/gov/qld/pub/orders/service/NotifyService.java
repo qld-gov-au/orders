@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.service;
+package au.gov.qld.pub.orders.service;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -17,9 +17,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import au.gov.qld.bdm.orders.dao.OrderDAO;
-import au.gov.qld.bdm.orders.entity.Item;
-import au.gov.qld.bdm.orders.entity.Order;
+import au.gov.qld.pub.orders.dao.OrderDAO;
+import au.gov.qld.pub.orders.entity.Item;
+import au.gov.qld.pub.orders.entity.Order;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;

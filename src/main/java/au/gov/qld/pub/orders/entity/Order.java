@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.entity;
+package au.gov.qld.pub.orders.entity;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -20,8 +20,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.joda.time.LocalDateTime;
 
-import au.gov.qld.bdm.orders.dao.JsonHelper;
-import au.gov.qld.bdm.orders.service.ws.OrderDetails;
+import au.gov.qld.pub.orders.dao.JsonHelper;
+import au.gov.qld.pub.orders.service.ws.OrderDetails;
 
 @Entity
 @Table(name = "customer_order")

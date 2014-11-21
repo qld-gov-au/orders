@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.service;
+package au.gov.qld.pub.orders.service;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -19,16 +19,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import au.gov.qld.bdm.orders.dao.ItemDAO;
-import au.gov.qld.bdm.orders.dao.ItemPropertiesDAO;
-import au.gov.qld.bdm.orders.dao.OrderDAO;
-import au.gov.qld.bdm.orders.entity.CartState;
-import au.gov.qld.bdm.orders.entity.Item;
-import au.gov.qld.bdm.orders.entity.Order;
-import au.gov.qld.bdm.orders.service.ws.CartResponseParser;
-import au.gov.qld.bdm.orders.service.ws.CartService;
-import au.gov.qld.bdm.orders.service.ws.OrderDetails;
-import au.gov.qld.bdm.orders.service.ws.RequestBuilder;
+import au.gov.qld.pub.orders.dao.ItemDAO;
+import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
+import au.gov.qld.pub.orders.dao.OrderDAO;
+import au.gov.qld.pub.orders.entity.CartState;
+import au.gov.qld.pub.orders.entity.Item;
+import au.gov.qld.pub.orders.entity.Order;
+import au.gov.qld.pub.orders.service.ws.CartResponseParser;
+import au.gov.qld.pub.orders.service.ws.CartService;
+import au.gov.qld.pub.orders.service.ws.OrderDetails;
+import au.gov.qld.pub.orders.service.ws.RequestBuilder;
 
 @Service
 public class OrderService {

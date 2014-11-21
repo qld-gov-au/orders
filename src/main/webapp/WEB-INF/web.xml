@@ -43,7 +43,7 @@
 	
 	<filter>
 		<filter-name>errorHandlerFilter</filter-name>
-		<filter-class>au.gov.qld.bdm.orders.web.ErrorHandlerFilter</filter-class>
+		<filter-class>au.gov.qld.pub.orders.web.ErrorHandlerFilter</filter-class>
 	</filter>
 	<filter-mapping>
 	  <filter-name>errorHandlerFilter</filter-name>

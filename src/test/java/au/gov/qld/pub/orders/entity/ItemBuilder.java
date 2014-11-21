@@ -1,4 +1,5 @@
-package au.gov.qld.bdm.orders.entity;
+package au.gov.qld.pub.orders.entity;
+
 
 
 public class ItemBuilder {

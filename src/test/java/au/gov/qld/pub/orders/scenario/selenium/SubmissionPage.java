@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.scenario.selenium;
+package au.gov.qld.pub.orders.scenario.selenium;
 
 import java.util.List;
 

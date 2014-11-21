@@ -1,12 +1,12 @@
-package au.gov.qld.bdm.orders.service;
+package au.gov.qld.pub.orders.service;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import au.gov.qld.bdm.orders.entity.Item;
-import au.gov.qld.bdm.orders.entity.Order;
+import au.gov.qld.pub.orders.entity.Item;
+import au.gov.qld.pub.orders.entity.Order;
 
 @Component
 public class OrderGrouper {

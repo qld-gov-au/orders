@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.service;
+package au.gov.qld.pub.orders.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -12,13 +12,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import au.gov.qld.bdm.orders.ApplicationContextAwareTest;
-import au.gov.qld.bdm.orders.dao.ItemDAO;
-import au.gov.qld.bdm.orders.dao.ItemPropertiesDAO;
-import au.gov.qld.bdm.orders.dao.OrderDAO;
-import au.gov.qld.bdm.orders.entity.Item;
-import au.gov.qld.bdm.orders.entity.Order;
-import au.gov.qld.bdm.orders.service.ws.OrderDetails;
+import au.gov.qld.pub.orders.ApplicationContextAwareTest;
+import au.gov.qld.pub.orders.dao.ItemDAO;
+import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
+import au.gov.qld.pub.orders.dao.OrderDAO;
+import au.gov.qld.pub.orders.entity.Item;
+import au.gov.qld.pub.orders.entity.Order;
+import au.gov.qld.pub.orders.service.ws.OrderDetails;
 
 import com.dumbster.smtp.SmtpMessage;
 import com.google.common.collect.ImmutableMap;
@@ -61,12 +61,12 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
 
 		SmtpMessage business = messages.get(0);
 		SmtpMessage customer = messages.get(1);
-		assertThat(business.getHeaderValue("From"), is("noreply@www.bdm.qld.gov.au"));
+		assertThat(business.getHeaderValue("From"), is("noreply@www.qld.gov.au"));
 		assertThat(business.getHeaderValue("Subject"), is("Test product has been purchased with receipt " + RECEIPT));
 		assertThat(business.getBody(), containsString("business"));
 		
 		assertThat(customer.getHeaderValue("Subject"), is("Test product you purchased with receipt " + RECEIPT));
-		assertThat(customer.getHeaderValue("From"), is("noreply@www.bdm.qld.gov.au"));
+		assertThat(customer.getHeaderValue("From"), is("noreply@www.qld.gov.au"));
 		assertThat(customer.getBody(), containsString("customer"));
 	}
 	

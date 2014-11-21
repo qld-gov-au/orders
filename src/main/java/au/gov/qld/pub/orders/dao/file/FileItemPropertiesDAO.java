@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.dao.file;
+package au.gov.qld.pub.orders.dao.file;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import au.gov.qld.bdm.orders.dao.ItemPropertiesDAO;
+import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
 
 @Repository
 public class FileItemPropertiesDAO implements ItemPropertiesDAO {

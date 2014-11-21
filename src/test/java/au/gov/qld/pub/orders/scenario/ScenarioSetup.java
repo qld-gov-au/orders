@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.scenario;
+package au.gov.qld.pub.orders.scenario;
 
 import java.net.URL;
 
@@ -8,8 +8,8 @@ import org.junit.BeforeClass;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
-import au.gov.qld.bdm.orders.JettyServer;
-import au.gov.qld.bdm.orders.scenario.selenium.ConfirmPage;
+import au.gov.qld.pub.orders.JettyServer;
+import au.gov.qld.pub.orders.scenario.selenium.ConfirmPage;
 
 public class ScenarioSetup {
 

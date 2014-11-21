@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.service.ws;
+package au.gov.qld.pub.orders.service.ws;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.web.ftl;
+package au.gov.qld.pub.orders.web.ftl;
 
 import freemarker.cache.TemplateLoader;  
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;  

@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.web.ftl;
+package au.gov.qld.pub.orders.web.ftl;
 
 import java.io.IOException;
 import java.io.Reader;

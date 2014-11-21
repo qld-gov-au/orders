@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.dao;
+package au.gov.qld.pub.orders.dao;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -11,10 +11,10 @@ import java.util.UUID;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import au.gov.qld.bdm.orders.ApplicationContextAwareTest;
-import au.gov.qld.bdm.orders.entity.Item;
-import au.gov.qld.bdm.orders.entity.Order;
-import au.gov.qld.bdm.orders.service.ws.OrderDetails;
+import au.gov.qld.pub.orders.ApplicationContextAwareTest;
+import au.gov.qld.pub.orders.entity.Item;
+import au.gov.qld.pub.orders.entity.Order;
+import au.gov.qld.pub.orders.service.ws.OrderDetails;
 
 import com.google.common.collect.ImmutableMap;
 

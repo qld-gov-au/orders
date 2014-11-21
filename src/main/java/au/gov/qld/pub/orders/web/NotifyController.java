@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.web;
+package au.gov.qld.pub.orders.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import au.gov.qld.bdm.orders.service.NotifyService;
-import au.gov.qld.bdm.orders.service.OrderService;
+import au.gov.qld.pub.orders.service.NotifyService;
+import au.gov.qld.pub.orders.service.OrderService;
 
 @Controller
 public class NotifyController {

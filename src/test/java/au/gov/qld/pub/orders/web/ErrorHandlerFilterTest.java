@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.web;
+package au.gov.qld.pub.orders.web;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import au.gov.qld.bdm.orders.service.ConfigurationService;
+import au.gov.qld.pub.orders.service.ConfigurationService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ErrorHandlerFilterTest {

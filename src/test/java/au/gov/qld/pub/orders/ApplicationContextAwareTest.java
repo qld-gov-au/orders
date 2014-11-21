@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders;
+package au.gov.qld.pub.orders;
 
 
 import org.junit.After;

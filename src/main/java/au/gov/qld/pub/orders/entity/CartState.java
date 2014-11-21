@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.entity;
+package au.gov.qld.pub.orders.entity;
 
 public enum CartState {
 	NEW(0), ADDED(1), PAID(2);

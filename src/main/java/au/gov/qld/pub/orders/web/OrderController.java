@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.web;
+package au.gov.qld.pub.orders.web;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -29,11 +29,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import au.gov.qld.bdm.orders.entity.Item;
-import au.gov.qld.bdm.orders.entity.Order;
-import au.gov.qld.bdm.orders.service.ConfigurationService;
-import au.gov.qld.bdm.orders.service.OrderService;
-import au.gov.qld.bdm.orders.service.ServiceException;
+import au.gov.qld.pub.orders.entity.Item;
+import au.gov.qld.pub.orders.entity.Order;
+import au.gov.qld.pub.orders.service.ConfigurationService;
+import au.gov.qld.pub.orders.service.OrderService;
+import au.gov.qld.pub.orders.service.ServiceException;
 
 @Controller
 public class OrderController {

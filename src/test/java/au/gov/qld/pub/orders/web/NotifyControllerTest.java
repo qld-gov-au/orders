@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.web;
+package au.gov.qld.pub.orders.web;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -15,9 +15,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import au.gov.qld.bdm.orders.service.NotifyService;
-import au.gov.qld.bdm.orders.service.OrderService;
-import au.gov.qld.bdm.orders.service.ServiceException;
+import au.gov.qld.pub.orders.service.NotifyService;
+import au.gov.qld.pub.orders.service.OrderService;
+import au.gov.qld.pub.orders.service.ServiceException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NotifyControllerTest {

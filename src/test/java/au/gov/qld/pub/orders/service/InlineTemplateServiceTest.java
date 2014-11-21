@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.service;
+package au.gov.qld.pub.orders.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -6,8 +6,8 @@ import static org.hamcrest.Matchers.is;
 import org.junit.Before;
 import org.junit.Test;
 
-import au.gov.qld.bdm.orders.entity.Item;
-import au.gov.qld.bdm.orders.entity.ItemBuilder;
+import au.gov.qld.pub.orders.entity.Item;
+import au.gov.qld.pub.orders.entity.ItemBuilder;
 
 
 public class InlineTemplateServiceTest {

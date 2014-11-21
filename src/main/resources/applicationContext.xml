@@ -18,7 +18,7 @@
        http://www.jasypt.org/schema/encryption http://www.jasypt.org/schema/encryption/jasypt-spring31-encryption-1.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="au.gov.qld.bdm.orders"/>
+    <context:component-scan base-package="au.gov.qld.pub.orders"/>
     <encryption:encryptable-property-placeholder encryptor="configurationEncryptor" location="classpath:application.properties"/>
     
   	<cache:annotation-driven/>
@@ -39,7 +39,7 @@
         </property>
     </bean>
 	
-	<bean id="encryptionConfig" class="au.gov.qld.bdm.orders.service.EncryptionConfiguration" />
+	<bean id="encryptionConfig" class="au.gov.qld.pub.orders.service.EncryptionConfiguration" />
 	<bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
   		<property name="config" ref="encryptionConfig" />
  	</bean>
@@ -55,7 +55,7 @@
 	</bean>
 	
 	<!-- DAO layer -->
-	<jpa:repositories base-package="au.gov.qld.bdm.orders.dao"/>
+	<jpa:repositories base-package="au.gov.qld.pub.orders.dao"/>
     <tx:annotation-driven/>
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
@@ -71,14 +71,14 @@
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
-        <property name="packagesToScan" value="au.gov.qld.bdm.orders.entity"/>
+        <property name="packagesToScan" value="au.gov.qld.pub.orders.entity"/>
     </bean>
  
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="packagesToScan" value="au.gov.qld.bdm.orders.entity" />
+        <property name="packagesToScan" value="au.gov.qld.pub.orders.entity" />
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">${hibernate.dialect}</prop>

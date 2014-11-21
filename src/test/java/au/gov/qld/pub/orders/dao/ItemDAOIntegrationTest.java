@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.dao;
+package au.gov.qld.pub.orders.dao;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -9,7 +9,7 @@ import java.util.Properties;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import au.gov.qld.bdm.orders.ApplicationContextAwareTest;
+import au.gov.qld.pub.orders.ApplicationContextAwareTest;
 
 public class ItemDAOIntegrationTest extends ApplicationContextAwareTest {
 	@Autowired ItemPropertiesDAO dao;

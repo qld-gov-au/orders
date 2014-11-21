@@ -1,12 +1,12 @@
-package au.gov.qld.bdm.orders.service.ws;
+package au.gov.qld.pub.orders.service.ws;
 
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import au.gov.qld.bdm.orders.service.ConfigurationService;
-import au.gov.qld.bdm.orders.service.ServiceException;
+import au.gov.qld.pub.orders.service.ConfigurationService;
+import au.gov.qld.pub.orders.service.ServiceException;
 
 @Service
 public class CartService {

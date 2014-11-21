@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.entity;
+package au.gov.qld.pub.orders.entity;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

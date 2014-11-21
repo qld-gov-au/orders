@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.web;
+package au.gov.qld.pub.orders.web;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

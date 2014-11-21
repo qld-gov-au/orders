@@ -1,6 +1,5 @@
-package au.gov.qld.bdm.orders.web;
+package au.gov.qld.pub.orders.web;
 
-import static au.gov.qld.bdm.orders.web.WebUtilsTest.cookieWith;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,11 +25,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import au.gov.qld.bdm.orders.entity.Item;
-import au.gov.qld.bdm.orders.entity.Order;
-import au.gov.qld.bdm.orders.service.ConfigurationService;
-import au.gov.qld.bdm.orders.service.OrderService;
-import au.gov.qld.bdm.orders.service.ServiceException;
+import au.gov.qld.pub.orders.entity.Item;
+import au.gov.qld.pub.orders.entity.Order;
+import au.gov.qld.pub.orders.service.ConfigurationService;
+import au.gov.qld.pub.orders.service.OrderService;
+import au.gov.qld.pub.orders.service.ServiceException;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -91,7 +90,7 @@ public class OrderControllerTest {
 		RedirectView result = controller.add(COOKIE_CART_ID, REQ_CART_ID, command, request, response);
 		assertThat(result.getUrl(), is(FULL_URL + "/added"));
 		verify(orderService).add(asList(item), COOKIE_CART_ID);
-		verify(response).addCookie(argThat(cookieWith(Constants.CART_ID, COOKIE_CART_ID)));
+		verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, COOKIE_CART_ID)));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -104,7 +103,7 @@ public class OrderControllerTest {
 		RedirectView result = controller.add(null, REQ_CART_ID, command, request, response);
 		assertThat(result.getUrl(), is(FULL_URL + "/added"));
 		verify(orderService).add(asList(item), REQ_CART_ID);
-		verify(response).addCookie(argThat(cookieWith(Constants.CART_ID, REQ_CART_ID)));
+		verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, REQ_CART_ID)));
 		verify(item).setFields((Map<String, String>) argThat(allOf(hasEntry("allowedfield", "allowedvalue"), not(hasEntry("badfield", "badvalue")))));
 	}
 	
@@ -118,7 +117,7 @@ public class OrderControllerTest {
 		RedirectView result = controller.add(null, REQ_CART_ID, command, request, response);
 		assertThat(result.getUrl(), is(FULL_URL + "/added"));
 		verify(orderService).add(asList(item), REQ_CART_ID);
-		verify(response).addCookie(argThat(cookieWith(Constants.CART_ID, REQ_CART_ID)));
+		verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, REQ_CART_ID)));
 		verify(item).setFields((Map<String, String>) argThat(allOf(hasEntry("allowedfield", repeat("a", 200)))));
 	}
 	

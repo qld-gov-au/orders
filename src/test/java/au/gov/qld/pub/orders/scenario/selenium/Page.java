@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.scenario.selenium;
+package au.gov.qld.pub.orders.scenario.selenium;
 
 import static org.junit.Assert.fail;
 
@@ -11,7 +11,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import au.gov.qld.bdm.orders.scenario.ScenarioSetup;
+import au.gov.qld.pub.orders.scenario.ScenarioSetup;
 
 public class Page {
 	public static final String URL = ScenarioSetup.BASE_URL;

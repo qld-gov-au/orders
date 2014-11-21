@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.service;
+package au.gov.qld.pub.orders.service;
 
 import org.jasypt.encryption.pbe.config.SimplePBEConfig;
 

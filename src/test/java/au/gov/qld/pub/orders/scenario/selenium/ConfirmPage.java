@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.scenario.selenium;
+package au.gov.qld.pub.orders.scenario.selenium;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;

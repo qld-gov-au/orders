@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.scenario.selenium;
+package au.gov.qld.pub.orders.scenario.selenium;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.Test;
 
-import au.gov.qld.bdm.orders.scenario.ScenarioSetup;
+import au.gov.qld.pub.orders.scenario.ScenarioSetup;
 
 public class ScenarioTest extends ScenarioSetup {
 	

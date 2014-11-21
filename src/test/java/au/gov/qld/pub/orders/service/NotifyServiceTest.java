@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.service;
+package au.gov.qld.pub.orders.service;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.anyMap;
@@ -27,9 +27,9 @@ import org.mockito.stubbing.Answer;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 
-import au.gov.qld.bdm.orders.dao.OrderDAO;
-import au.gov.qld.bdm.orders.entity.Item;
-import au.gov.qld.bdm.orders.entity.Order;
+import au.gov.qld.pub.orders.dao.OrderDAO;
+import au.gov.qld.pub.orders.entity.Item;
+import au.gov.qld.pub.orders.entity.Order;
 
 import com.google.common.collect.ImmutableMap;
 

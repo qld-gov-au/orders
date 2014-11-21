@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.entity;
+package au.gov.qld.pub.orders.entity;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -23,7 +23,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import au.gov.qld.bdm.orders.dao.JsonHelper;
+import au.gov.qld.pub.orders.dao.JsonHelper;
 
 @Entity
 public class Item {

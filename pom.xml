@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>au.gov.qld.bdm</groupId>
+	<groupId>au.gov.qld.pub</groupId>
 	<artifactId>orders</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>BDM Ordering Service</name>
-	<description>Product orders for certificates, etc</description>
+	<name>Queensland Government Ordering service</name>
+	<description>Online order processor</description>
 
 	<properties>
 		<maven.build.timestamp.format>h:mm a, d MMMM yyyy</maven.build.timestamp.format>
@@ -22,7 +22,6 @@
 	</properties>
 
 	<dependencies>
-		<!-- SPRING DEPENDENCIES -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-oxm</artifactId>

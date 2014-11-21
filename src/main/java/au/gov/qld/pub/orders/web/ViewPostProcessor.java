@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.web;
+package au.gov.qld.pub.orders.web;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import au.gov.qld.bdm.orders.service.ConfigurationService;
+import au.gov.qld.pub.orders.service.ConfigurationService;
 
 public class ViewPostProcessor extends HandlerInterceptorAdapter {
 	private final ConfigurationService configurationService;

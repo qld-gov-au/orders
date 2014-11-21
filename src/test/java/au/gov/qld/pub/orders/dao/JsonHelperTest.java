@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.dao;
+package au.gov.qld.pub.orders.dao;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -8,8 +8,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import au.gov.qld.bdm.orders.entity.ItemBuilder;
-import au.gov.qld.bdm.orders.entity.Order;
+import au.gov.qld.pub.orders.entity.ItemBuilder;
+import au.gov.qld.pub.orders.entity.Order;
 
 import com.google.common.collect.ImmutableMap;
 

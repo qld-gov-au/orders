@@ -1,4 +1,4 @@
-package au.gov.qld.bdm.orders.dao.file;
+package au.gov.qld.pub.orders.dao.file;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
