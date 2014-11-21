@@ -1,0 +1,12 @@
+<decorators defaultdir="/WEB-INF/decorators">
+
+    <excludes>
+        <pattern>/resources/*</pattern>
+    </excludes>
+
+    <decorator name="master" page="/master.dec">
+          <pattern>/*</pattern>
+    </decorator>
+
+
+</decorators>

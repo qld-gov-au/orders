@@ -1,0 +1,39 @@
+<#escape x as x?html><@compress single_line=true><CartAddRequest>
+<#if order.cartId?has_content>
+<cartId>${order.cartId}</cartId>
+</#if>
+<order>
+    <onlineService id="${config.serviceWsUsername}" name="${config.serviceName}"
+        notify="${config.serviceWsNotify}/${order.id}"
+        prev="${config.sourceUrl}"
+        next="${config.sourceUrl}"/>
+        
+	<#list templateItems as item>
+	<#if item.new>
+    <orderline id="${item.id}">
+        <product title="${item.title}"
+            ref="${item.reference}" cost="${item.priceExGst}" gst="${item.priceGst}"
+            agency="${item.agency}"
+            description="${item.description}"
+            disbursementId="${item.disbursementId}">
+            
+            <#if item.costCentre?has_content && item.glCode?has_content && item.glCode?has_content>
+            <accounting costCenter="${item.costCenter}" glCode="${item.glCode}" taxCode="${item.glCode}" narrative="${item.narrative}"/>
+            </#if>
+        </product>
+        
+        <#list item.deliveryDetailsRequiredSet as detail>
+        	<#if detail?has_content>
+       		<deliveryAddressRequest type="${detail?trim}"/>
+       		</#if>
+       	</#list>
+       	<#list item.customerDetailsRequiredSet as detail>
+       		<#if detail?has_content>
+       		<customerDetailsRequest type="${detail?trim}" required="true"/>
+       		</#if>
+       	</#list>
+    </orderline>
+    </#if>
+    </#list>
+</order>
+</CartAddRequest></@compress></#escape>

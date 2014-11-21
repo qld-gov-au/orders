@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+            
+    <context:annotation-config/>
+    <context:property-placeholder properties-ref="properties"/>
+    <context:component-scan base-package="au.gov.qld.bdm.orders.web"/>
+
+    <mvc:resources mapping="/resources/**" location="/resources/" />
+    <mvc:view-controller path="/error" view-name="error"/>
+    <mvc:view-controller path="/notfound" view-name="notfound"/>
+    
+    <mvc:view-controller path="/added" view-name="added"/>
+    <!-- TODO: REMOVE FOR RELEASES -->  
+    <mvc:view-controller path="/test" view-name="test"/>
+    <!-- -->
+	
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
+	 
+	<bean id="freemarkerConfig" class="au.gov.qld.bdm.orders.web.ftl.HtmlFreeMarkerConfigurer">
+    	<property name="templateLoaderPaths">
+      		<array>
+      			<value>/WEB-INF/ftl/</value>
+      			<value>classpath:/products/pages/</value>
+      		</array>
+     	</property>
+    </bean>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="cache" value="false"/>
+		<property name="prefix" value=""/>
+		<property name="suffix" value=".ftl"/>
+    </bean>
+
+	<mvc:interceptors>
+	    <bean class="au.gov.qld.bdm.orders.web.ViewPostProcessor" />
+	</mvc:interceptors>
+</beans>
