@@ -39,7 +39,7 @@ public class CartResponseParserTest {
             + "<detail type=\"countryName\">Australia</detail>"
             + "</deliveryAddress>"
             + "<order>"
-            + "<onlineService id=\"test\" name=\"BDM orders\" next=\"http://localhost:8091/orders/test\" notify=\"http://localhost:8091/orders/notify/6a792941-2c9d-46f1-8c6c-ba53366af47c\" prev=\"http://localhost:8091/orders/test\"/>"
+            + "<onlineService id=\"test\" name=\"Orders\" next=\"http://localhost:8091/orders/test\" notify=\"http://localhost:8091/orders/notify/6a792941-2c9d-46f1-8c6c-ba53366af47c\" prev=\"http://localhost:8091/orders/test\"/>"
             + "<orderline id=\"some orderline id\" quantity=\"2\">"
             + "<product agency=\"test agency\" cost=\"45\" description=\"test description\" disbursementId=\"999\" gst=\"123\" ref=\"test reference\" title=\"test title\"><accounting costCenter=\"cc\" glCode=\"gl\" narrative=\"narrative\" taxCode=\"gl\"/></product>"
             + "<deliveryAddressRequest type=\"POST\"/>"

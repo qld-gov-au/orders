@@ -5,7 +5,7 @@
     <!-- Version: (v@version@) -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     
-    <title>BDM Ordering Service - ${title}</title>
+    <title>Ordering Service - ${title}</title>
             
     <link rel="stylesheet" type="text/css" href="https://static.qgov.net.au/assets/v2/style/qgov.css" media="all" />
     <!--[if lt IE 9]><link rel="stylesheet" href="https://static.qgov.net.au/assets/v2/style/qgov-ie.css" type="text/css" media="all" /><![endif]-->
@@ -92,12 +92,7 @@
         <ol>
         <li class="nav-home"><a href="http://www.qld.gov.au/">Queensland Government home</a></li>
         <li class="nav-residents"><a href="http://www.qld.gov.au/queenslanders">For Queenslanders</a></li>
-        <li><a href="https://www.qld.gov.au/law/">Your rights, crime and the law</a></li>
-        <li><a href="https://www.qld.gov.au/law/births-deaths-marriages-and-divorces/">Births, deaths, marriages and divorces</a></li>
-        <li><a href="https://www.qld.gov.au/law/births-deaths-marriages-and-divorces/birth-death-and-marriage-certificates/">Birth, death and marriage certificates</a></li>
-        <li><a href="https://www.qld.gov.au/law/births-deaths-marriages-and-divorces/birth-death-and-marriage-certificates/birth-certificates/">Birth certificates</a></li>
-        <li><a href="https://www.qld.gov.au/law/births-deaths-marriages-and-divorces/birth-death-and-marriage-certificates/birth-certificates/birth-certificate-extract-application/">Birth certificate/extract application</a></li>
-        <li class="last-child">Your BDM order</li>
+        <li class="last-child">Your order</li>
         </ol>
         </div>
         
@@ -256,7 +251,7 @@
         </div><!-- end #content-container -->
         <div aria-labelledby="landmark-label4" role="navigation" id="nav-section">
         <div role="wairole:presentation" class="box-sizing">
-          <h2 id="landmark-label4"><a class="" href="https://www.qld.gov.au/law/births-deaths-marriages-and-divorces/birth-death-and-marriage-certificates/birth-certificates/birth-certificate-extract-application">Birth certificate/extract application</a></h2>
+          <h2 id="landmark-label4"><a class="" href="${sourceUrl}">${serviceName}</a></h2>
         </div>
         </div>
         
