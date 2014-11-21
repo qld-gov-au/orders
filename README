@@ -1,7 +1,6 @@
 Orders documentation
 
 Running:
-Either deploy the war with application.properties and log4j.properties included in an extra classpath, or run from local build with th
-e test properties by running mvn initialize jetty:run
+Either deploy the war with application.properties and log4j.properties included in an extra classpath, or run from local build with the test properties by running mvn initialize jetty:run
 
 The application will run locally through a local build on http://localhost:8091/orders/test
