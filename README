@@ -1,5 +1,8 @@
 Orders documentation
 
+Build set up:
+Create file in $HOME/.orders.key with contents: "testkey"
+
 Running:
 Either deploy the war with application.properties and log4j.properties included in an extra classpath, or run from local build with the test properties by running mvn initialize jetty:run
 
