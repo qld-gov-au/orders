@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import au.gov.qld.pub.orders.service.ServiceException;
 
 public class SOAPClient {
-	private static final Logger LOG = LoggerFactory.getLogger(SOAPClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SOAPClient.class);
     private static final String CREATED_FMT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static final Pattern SOAP_RESP_BODY_PATTERN = Pattern.compile("<SOAP-ENV:Body>(.+)</SOAP-ENV:Body>");
 
@@ -45,39 +45,39 @@ public class SOAPClient {
             "<soapenv:Body>@BODY@</soapenv:Body></soapenv:Envelope>";
 
     private final SecureRandom nonceRandom;
-	private final String endpoint;
+    private final String endpoint;
 
     public SOAPClient(String endpoint) {
         this.endpoint = endpoint;
-		this.nonceRandom = new SecureRandom();
+        this.nonceRandom = new SecureRandom();
     }
 
     public String sendRequest(String username, byte[] password, String namespace, String request) throws ServiceException {
-		try {
-			String payload = buildSOAPPayload(username, password, namespace).replace("@BODY@", request);
+        try {
+            String payload = buildSOAPPayload(username, password, namespace).replace("@BODY@", request);
 
-			LOG.debug("Built payload: {}", payload);
+            LOG.debug("Built payload: {}", payload);
 
-	        CloseableHttpClient httpclient = HttpClients.createDefault();
-	        HttpPost httpPost = new HttpPost(endpoint);
-	        httpPost.setHeader("Content-Type", "text/xml");
-	        httpPost.setEntity(new StringEntity(payload));
-	        CloseableHttpResponse response = httpclient.execute(httpPost);
-	        
-	        try {
-	        	if (response.getStatusLine().getStatusCode() != 200) {
-	            	LOG.debug("Failed to send: {}", payload);
-	                throw new IOException("Could not connect - HTTP Status code: " + response.getStatusLine().getStatusCode() + " (" + response.getStatusLine().getReasonPhrase() + ")");
-	            }
-	        	
-	        	return extractBody(EntityUtils.toString(response.getEntity()));
-	        } finally {
-	        	response.close();
-	        }
-			
-		} catch (NoSuchAlgorithmException | IOException e) {
-			throw new ServiceException(e);
-		}
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            HttpPost httpPost = new HttpPost(endpoint);
+            httpPost.setHeader("Content-Type", "text/xml");
+            httpPost.setEntity(new StringEntity(payload));
+            CloseableHttpResponse response = httpclient.execute(httpPost);
+            
+            try {
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    LOG.debug("Failed to send: {}", payload);
+                    throw new IOException("Could not connect - HTTP Status code: " + response.getStatusLine().getStatusCode() + " (" + response.getStatusLine().getReasonPhrase() + ")");
+                }
+                
+                return extractBody(EntityUtils.toString(response.getEntity()));
+            } finally {
+                response.close();
+            }
+            
+        } catch (NoSuchAlgorithmException | IOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     private String extractBody(String result) {

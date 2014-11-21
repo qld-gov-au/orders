@@ -15,27 +15,27 @@ import com.dumbster.smtp.SimpleSmtpServer;
 @ContextConfiguration(locations = {"classpath:applicationContext.xml"})
 @Transactional
 public abstract class ApplicationContextAwareTest {
-	public static String LINE_SEPARATOR = System.getProperty("line.separator");
-	
-	@Value("${mail.port}") private Integer mailPort;
-	protected SimpleSmtpServer mailServer;
-	
+    public static String LINE_SEPARATOR = System.getProperty("line.separator");
+    
+    @Value("${mail.port}") private Integer mailPort;
+    protected SimpleSmtpServer mailServer;
+    
     @Before
     public void beforeMethod() {
-    	try {
-    		mailServer = SimpleSmtpServer.start(mailPort);
-    	} catch (Exception e) {}
+        try {
+            mailServer = SimpleSmtpServer.start(mailPort);
+        } catch (Exception e) {}
     }
 
     @After
     public void afterMethod() {
-    	try {
-    		if (mailServer != null) {
-    			mailServer.stop();
-    		}
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
+        try {
+            if (mailServer != null) {
+                mailServer.stop();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
 }

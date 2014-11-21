@@ -7,5 +7,5 @@ import au.gov.qld.pub.orders.entity.Order;
 
 @Repository
 public interface OrderDAO extends CrudRepository<Order, String> {
-	Order findByCartId(String cartId);
+    Order findByCartId(String cartId);
 }

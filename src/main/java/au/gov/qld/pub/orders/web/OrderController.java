@@ -37,97 +37,97 @@ import au.gov.qld.pub.orders.service.ServiceException;
 
 @Controller
 public class OrderController {
-	private static final Logger LOG = LoggerFactory.getLogger(OrderController.class);
-	private static final int MAX_FIELDS = 100;
-	private static final int MAX_FIELD_LENGTH = 200;
+    private static final Logger LOG = LoggerFactory.getLogger(OrderController.class);
+    private static final int MAX_FIELDS = 100;
+    private static final int MAX_FIELD_LENGTH = 200;
 
-	private final OrderService orderService;
-	private final String errorRedirect;
-	private final ConfigurationService configurationService;
+    private final OrderService orderService;
+    private final String errorRedirect;
+    private final ConfigurationService configurationService;
 
-	@Autowired
-	public OrderController(OrderService orderService, ConfigurationService configurationService) {
-		this.orderService = orderService;
-		this.configurationService = configurationService;
-		this.errorRedirect = configurationService.getErrorRedirect();
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/confirm", method = RequestMethod.POST)
-	public ModelAndView confirm(@RequestParam String group, HttpServletRequest request) {
-		Map<String, Object> fields = new HashMap<String, Object>();
-		List<String> fieldNames = EnumerationUtils.toList(request.getParameterNames());
-		for (String fieldName : fieldNames) {
-			if (isNotBlank(request.getParameter(fieldName))) {
-				fields.put(fieldName, request.getParameter(fieldName));
-			}
-		}
-		
-		ModelAndView mav = new ModelAndView("confirm." + group);
-		mav.getModel().put("fields", fields);
-		return mav;
-	}
+    @Autowired
+    public OrderController(OrderService orderService, ConfigurationService configurationService) {
+        this.orderService = orderService;
+        this.configurationService = configurationService;
+        this.errorRedirect = configurationService.getErrorRedirect();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/confirm", method = RequestMethod.POST)
+    public ModelAndView confirm(@RequestParam String group, HttpServletRequest request) {
+        Map<String, Object> fields = new HashMap<String, Object>();
+        List<String> fieldNames = EnumerationUtils.toList(request.getParameterNames());
+        for (String fieldName : fieldNames) {
+            if (isNotBlank(request.getParameter(fieldName))) {
+                fields.put(fieldName, request.getParameter(fieldName));
+            }
+        }
+        
+        ModelAndView mav = new ModelAndView("confirm." + group);
+        mav.getModel().put("fields", fields);
+        return mav;
+    }
 
-	@SuppressWarnings("unchecked")
-	private Map<String, String> validateAndGetFields(HttpServletRequest request, Collection<String> allowedFields) {
-		Map<String, String> fields = new HashMap<String, String>();
-		Enumeration<String> parameterNames = (Enumeration<String>)request.getParameterNames();
-		for (int i=0; i < MAX_FIELDS && parameterNames.hasMoreElements(); i++) {
-			String name = (String)parameterNames.nextElement();
-			if (!allowedFields.contains(name)) {
-				continue;
-			}
-			
-			String value = defaultString(request.getParameter(name)).trim();
-			if (value.length() > MAX_FIELD_LENGTH) {
-				value = value.substring(0, MAX_FIELD_LENGTH);
-			}
-			
-			fields.put(name.trim(), value);
-		}
-		
-		fields.remove("ssqCartId");
-		fields.remove("productId");
-		return fields;
-	}
+    @SuppressWarnings("unchecked")
+    private Map<String, String> validateAndGetFields(HttpServletRequest request, Collection<String> allowedFields) {
+        Map<String, String> fields = new HashMap<String, String>();
+        Enumeration<String> parameterNames = (Enumeration<String>)request.getParameterNames();
+        for (int i=0; i < MAX_FIELDS && parameterNames.hasMoreElements(); i++) {
+            String name = (String)parameterNames.nextElement();
+            if (!allowedFields.contains(name)) {
+                continue;
+            }
+            
+            String value = defaultString(request.getParameter(name)).trim();
+            if (value.length() > MAX_FIELD_LENGTH) {
+                value = value.substring(0, MAX_FIELD_LENGTH);
+            }
+            
+            fields.put(name.trim(), value);
+        }
+        
+        fields.remove("ssqCartId");
+        fields.remove("productId");
+        return fields;
+    }
 
-	private List<Item> validateAndCreate(ItemCommand command) {
-		if (command.getProductId() == null) {
-			return Collections.emptyList();
-		}
+    private List<Item> validateAndCreate(ItemCommand command) {
+        if (command.getProductId() == null) {
+            return Collections.emptyList();
+        }
 
-		List<Item> items = new ArrayList<Item>();
-		for (String productId : command.getProductId()) {
-			Item item = orderService.findAndPopulate(productId);
-			if (item != null) {
-				items.add(item);
-			}
-		}
-		
-		return items;
-	}
-	
-	@RequestMapping(value = "add", method = RequestMethod.POST)
-	public RedirectView add(@CookieValue(value=Constants.CART_ID, required=false) String cookieCartId, @RequestParam(required=false) String ssqCartId, 
-			@ModelAttribute("command") ItemCommand command, HttpServletRequest request, HttpServletResponse response) throws ServiceException {
-		String effectiveCartId = isBlank(cookieCartId) ? ssqCartId : cookieCartId;
-		
-		List<Item> items = validateAndCreate(command);
-		if (items.isEmpty()) {
-			return WebUtils.redirect(errorRedirect);
-		}
-		
-		for (Item item : items) {
-			Collection<String> allowedFields = orderService.getAllowedFields(item.getProductId());
-			item.setFields(validateAndGetFields(request, allowedFields));
-		}
-		
-		LOG.info("Adding to cart with cartId: " + effectiveCartId);
-		Order order = orderService.add(items, effectiveCartId);
-		Cookie cookie = new Cookie(Constants.CART_ID, order.getCartId());
-		response.addCookie(cookie);
-		return WebUtils.redirect(configurationService.getServiceFullUrl() + "/added");
-	}
-	
-	
+        List<Item> items = new ArrayList<Item>();
+        for (String productId : command.getProductId()) {
+            Item item = orderService.findAndPopulate(productId);
+            if (item != null) {
+                items.add(item);
+            }
+        }
+        
+        return items;
+    }
+    
+    @RequestMapping(value = "add", method = RequestMethod.POST)
+    public RedirectView add(@CookieValue(value=Constants.CART_ID, required=false) String cookieCartId, @RequestParam(required=false) String ssqCartId, 
+            @ModelAttribute("command") ItemCommand command, HttpServletRequest request, HttpServletResponse response) throws ServiceException {
+        String effectiveCartId = isBlank(cookieCartId) ? ssqCartId : cookieCartId;
+        
+        List<Item> items = validateAndCreate(command);
+        if (items.isEmpty()) {
+            return WebUtils.redirect(errorRedirect);
+        }
+        
+        for (Item item : items) {
+            Collection<String> allowedFields = orderService.getAllowedFields(item.getProductId());
+            item.setFields(validateAndGetFields(request, allowedFields));
+        }
+        
+        LOG.info("Adding to cart with cartId: " + effectiveCartId);
+        Order order = orderService.add(items, effectiveCartId);
+        Cookie cookie = new Cookie(Constants.CART_ID, order.getCartId());
+        response.addCookie(cookie);
+        return WebUtils.redirect(configurationService.getServiceFullUrl() + "/added");
+    }
+    
+    
 }

@@ -11,21 +11,21 @@ import freemarker.template.Template;
 @Service
 public class InlineTemplateService {
 
-	private final Configuration configuration;
-	
-	public InlineTemplateService() {
-		this.configuration = new Configuration();
-	}
+    private final Configuration configuration;
+    
+    public InlineTemplateService() {
+        this.configuration = new Configuration();
+    }
 
-	public String template(String nameOfTemplate, String template, Object templateData) {
-		try {
-			Template ftl = new Template(nameOfTemplate, new StringReader(template), configuration);
-			StringWriter writer = new StringWriter();
-			ftl.process(templateData, writer);
-			return writer.toString();
-		} catch (Exception e) {
-			throw new IllegalStateException(e.getMessage(), e);
-		}
-	}
+    public String template(String nameOfTemplate, String template, Object templateData) {
+        try {
+            Template ftl = new Template(nameOfTemplate, new StringReader(template), configuration);
+            StringWriter writer = new StringWriter();
+            ftl.process(templateData, writer);
+            return writer.toString();
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
 
 }

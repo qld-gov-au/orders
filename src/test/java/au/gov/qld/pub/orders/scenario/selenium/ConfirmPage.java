@@ -5,11 +5,11 @@ import org.openqa.selenium.support.PageFactory;
 
 
 public class ConfirmPage extends Page {
-	private WebElement add;
-	
-	public AddedPage add() {
-		add.click();
-		return PageFactory.initElements(getDriver(), AddedPage.class);
-	}
+    private WebElement add;
+    
+    public AddedPage add() {
+        add.click();
+        return PageFactory.initElements(getDriver(), AddedPage.class);
+    }
 
 }

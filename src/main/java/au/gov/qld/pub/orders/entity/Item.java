@@ -28,242 +28,242 @@ import au.gov.qld.pub.orders.dao.JsonHelper;
 @Entity
 public class Item {
 
-	private static final List<String> VALID_NOTIFY_CUSTOMER_EMAIL_FIELDS = asList("deliveryDetails", "customerDetails");
-	
-	@Id
-	private String id;
-	@Column private String productId;
-	@Column private String productGroup;
-	@Column private String title;
-	@Column private String reference;
-	@Column private String agency;
-	@Column private String description;
-	@Column private String disbursementId;
-	@Column private String priceGst;
-	@Column private String priceExGst;
-	@Column private String costCenter;
-	@Column private String glCode;
-	@Column private String taxCode;
-	@Column private String narrative;
-	@Column private String notifyCustomerEmailField;
-	@Column private String notifyBusinessEmail;
-	@Column private String notifyCustomerEmailSubject;
-	@Column private String notifyBusinessEmailSubject;
-	@Column private String deliveryDetailsRequired;
-	@Column private String customerDetailsRequired;
-	
-	@Column @Enumerated(EnumType.STRING)
-	private CartState cartState;
-	@Column 
-	private String quantityPaid;
-	@Column 
-	private String fields;
-	
-	@SuppressWarnings("unused")
-	private Item() {
-		//for hibernate
-	}
-	
-	public Item(String productId, String productGroup, String title, String reference,
-			String agency, String description, String disbursementId,
-			String priceGst, String priceExGst, String costCenter,
-			String glCode, String taxCode, String narrative, String notifyCustomerEmailField,
-			String notifyBusinessEmail, String notifyBusinessEmailSubject, String notifyCustomerEmailSubject,
-			String deliveryDetailsRequired, String customerDetailsRequired) {
-		this.id = UUID.randomUUID().toString();
-		this.cartState = CartState.NEW;
-		
-		this.notifyCustomerEmailField = notifyCustomerEmailField;
-		this.notifyBusinessEmail = notifyBusinessEmail;
-		this.notifyBusinessEmailSubject = notifyBusinessEmailSubject;
-		this.notifyCustomerEmailSubject = notifyCustomerEmailSubject;
-		if (isNotBlank(notifyCustomerEmailField) && !VALID_NOTIFY_CUSTOMER_EMAIL_FIELDS.contains(notifyCustomerEmailField)) {
-			throw new IllegalStateException("Invalid notifyCustomerEmailField of " 
-				+ notifyCustomerEmailField + " and should be in " + VALID_NOTIFY_CUSTOMER_EMAIL_FIELDS);
-		}
-		
-		this.deliveryDetailsRequired = deliveryDetailsRequired;
-		this.customerDetailsRequired = customerDetailsRequired;
-		this.productId = productId;
-		this.productGroup = productGroup;
-		this.title = title;
-		this.reference = reference;
-		this.agency = agency;
-		this.description = description;
-		this.disbursementId = disbursementId;
-		this.priceGst = priceGst;
-		this.priceExGst = priceExGst;
-		this.costCenter = costCenter;
-		this.glCode = glCode;
-		this.taxCode = taxCode;
-		this.narrative = narrative;
-	}
+    private static final List<String> VALID_NOTIFY_CUSTOMER_EMAIL_FIELDS = asList("deliveryDetails", "customerDetails");
+    
+    @Id
+    private String id;
+    @Column private String productId;
+    @Column private String productGroup;
+    @Column private String title;
+    @Column private String reference;
+    @Column private String agency;
+    @Column private String description;
+    @Column private String disbursementId;
+    @Column private String priceGst;
+    @Column private String priceExGst;
+    @Column private String costCenter;
+    @Column private String glCode;
+    @Column private String taxCode;
+    @Column private String narrative;
+    @Column private String notifyCustomerEmailField;
+    @Column private String notifyBusinessEmail;
+    @Column private String notifyCustomerEmailSubject;
+    @Column private String notifyBusinessEmailSubject;
+    @Column private String deliveryDetailsRequired;
+    @Column private String customerDetailsRequired;
+    
+    @Column @Enumerated(EnumType.STRING)
+    private CartState cartState;
+    @Column 
+    private String quantityPaid;
+    @Column 
+    private String fields;
+    
+    @SuppressWarnings("unused")
+    private Item() {
+        //for hibernate
+    }
+    
+    public Item(String productId, String productGroup, String title, String reference,
+            String agency, String description, String disbursementId,
+            String priceGst, String priceExGst, String costCenter,
+            String glCode, String taxCode, String narrative, String notifyCustomerEmailField,
+            String notifyBusinessEmail, String notifyBusinessEmailSubject, String notifyCustomerEmailSubject,
+            String deliveryDetailsRequired, String customerDetailsRequired) {
+        this.id = UUID.randomUUID().toString();
+        this.cartState = CartState.NEW;
+        
+        this.notifyCustomerEmailField = notifyCustomerEmailField;
+        this.notifyBusinessEmail = notifyBusinessEmail;
+        this.notifyBusinessEmailSubject = notifyBusinessEmailSubject;
+        this.notifyCustomerEmailSubject = notifyCustomerEmailSubject;
+        if (isNotBlank(notifyCustomerEmailField) && !VALID_NOTIFY_CUSTOMER_EMAIL_FIELDS.contains(notifyCustomerEmailField)) {
+            throw new IllegalStateException("Invalid notifyCustomerEmailField of " 
+                + notifyCustomerEmailField + " and should be in " + VALID_NOTIFY_CUSTOMER_EMAIL_FIELDS);
+        }
+        
+        this.deliveryDetailsRequired = deliveryDetailsRequired;
+        this.customerDetailsRequired = customerDetailsRequired;
+        this.productId = productId;
+        this.productGroup = productGroup;
+        this.title = title;
+        this.reference = reference;
+        this.agency = agency;
+        this.description = description;
+        this.disbursementId = disbursementId;
+        this.priceGst = priceGst;
+        this.priceExGst = priceExGst;
+        this.costCenter = costCenter;
+        this.glCode = glCode;
+        this.taxCode = taxCode;
+        this.narrative = narrative;
+    }
 
-	public static Item populateFrom(Properties properties) {
-		String deliveryDetailsRequired = properties.getProperty("deliveryDetailsRequired");
-		String customerDetailsRequired = properties.getProperty("customerDetailsRequired");
-		
-		return new Item(properties.getProperty("productId"), properties.getProperty("productGroup"), properties.getProperty("title"), properties.getProperty("reference"),
-				properties.getProperty("agency"), properties.getProperty("description"), properties.getProperty("disbursementId"),
-				properties.getProperty("priceGst"), properties.getProperty("priceExGst"), properties.getProperty("costCenter"),
-				properties.getProperty("glCode"), properties.getProperty("taxCode"), properties.getProperty("narrative"),
-				properties.getProperty("notifyCustomerEmailField"), properties.getProperty("notifyBusinessEmail"), 
-				properties.getProperty("notifyBusinessEmailSubject"), properties.getProperty("notifyCustomerEmailSubject"),
-				deliveryDetailsRequired, customerDetailsRequired);
-	}
+    public static Item populateFrom(Properties properties) {
+        String deliveryDetailsRequired = properties.getProperty("deliveryDetailsRequired");
+        String customerDetailsRequired = properties.getProperty("customerDetailsRequired");
+        
+        return new Item(properties.getProperty("productId"), properties.getProperty("productGroup"), properties.getProperty("title"), properties.getProperty("reference"),
+                properties.getProperty("agency"), properties.getProperty("description"), properties.getProperty("disbursementId"),
+                properties.getProperty("priceGst"), properties.getProperty("priceExGst"), properties.getProperty("costCenter"),
+                properties.getProperty("glCode"), properties.getProperty("taxCode"), properties.getProperty("narrative"),
+                properties.getProperty("notifyCustomerEmailField"), properties.getProperty("notifyBusinessEmail"), 
+                properties.getProperty("notifyBusinessEmailSubject"), properties.getProperty("notifyCustomerEmailSubject"),
+                deliveryDetailsRequired, customerDetailsRequired);
+    }
 
-	public String getId() {
-		return id;
-	}
-	
-	public String getProductId() {
-		return productId;
-	}
+    public String getId() {
+        return id;
+    }
+    
+    public String getProductId() {
+        return productId;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public String getReference() {
-		return reference;
-	}
+    public String getReference() {
+        return reference;
+    }
 
-	public String getAgency() {
-		return agency;
-	}
+    public String getAgency() {
+        return agency;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getDisbursementId() {
-		return disbursementId;
-	}
+    public String getDisbursementId() {
+        return disbursementId;
+    }
 
-	public String getPriceGst() {
-		return priceGst;
-	}
+    public String getPriceGst() {
+        return priceGst;
+    }
 
-	public String getPriceExGst() {
-		return priceExGst;
-	}
+    public String getPriceExGst() {
+        return priceExGst;
+    }
 
-	public String getCostCenter() {
-		return costCenter;
-	}
+    public String getCostCenter() {
+        return costCenter;
+    }
 
-	public String getGlCode() {
-		return glCode;
-	}
+    public String getGlCode() {
+        return glCode;
+    }
 
-	public String getTaxCode() {
-		return taxCode;
-	}
+    public String getTaxCode() {
+        return taxCode;
+    }
 
-	public String getNarrative() {
-		return narrative;
-	}
+    public String getNarrative() {
+        return narrative;
+    }
 
-	public CartState getCartState() {
-		return cartState;
-	}
-	
-	public boolean isNew() {
-		return CartState.NEW == cartState;
-	}
+    public CartState getCartState() {
+        return cartState;
+    }
+    
+    public boolean isNew() {
+        return CartState.NEW == cartState;
+    }
 
-	public void setCartState(CartState cartState) {
-		if (!this.cartState.canUpgrade(cartState)) {
-			throw new IllegalStateException("Cannot move from: " + this.cartState + " to " + cartState);
-		}
-		this.cartState = cartState;
-	}
+    public void setCartState(CartState cartState) {
+        if (!this.cartState.canUpgrade(cartState)) {
+            throw new IllegalStateException("Cannot move from: " + this.cartState + " to " + cartState);
+        }
+        this.cartState = cartState;
+    }
 
-	public void setQuantityPaid(String value) {
-		this.quantityPaid = value;
-		if (isBlank(value)) {
-			this.quantityPaid = "0";
-		}
-	}
-	
-	public boolean isPaid() {
-		return Integer.parseInt(defaultString(this.quantityPaid, "0")) > 0;
-	}
-	
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
+    public void setQuantityPaid(String value) {
+        this.quantityPaid = value;
+        if (isBlank(value)) {
+            this.quantityPaid = "0";
+        }
+    }
+    
+    public boolean isPaid() {
+        return Integer.parseInt(defaultString(this.quantityPaid, "0")) > 0;
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 
-	public String getQuantityPaid() {
-		return quantityPaid;
-	}
+    public String getQuantityPaid() {
+        return quantityPaid;
+    }
 
-	@SuppressWarnings("unchecked")
-	public Map<String, String> getFieldsMap() {
-		Map<String, String> map = JsonHelper.deserialise(Map.class, fields);
-		return map != null ? map : new TreeMap<String, String>();
-	}
-		
-	public void setFields(Map<String, String> fields) {
-		this.fields = JsonHelper.serialise(fields);
-	}
+    @SuppressWarnings("unchecked")
+    public Map<String, String> getFieldsMap() {
+        Map<String, String> map = JsonHelper.deserialise(Map.class, fields);
+        return map != null ? map : new TreeMap<String, String>();
+    }
+        
+    public void setFields(Map<String, String> fields) {
+        this.fields = JsonHelper.serialise(fields);
+    }
 
-	public String getNotifyCustomerEmailField() {
-		return notifyCustomerEmailField;
-	}
+    public String getNotifyCustomerEmailField() {
+        return notifyCustomerEmailField;
+    }
 
-	public String getNotifyBusinessEmail() {
-		return notifyBusinessEmail;
-	}
+    public String getNotifyBusinessEmail() {
+        return notifyBusinessEmail;
+    }
 
-	public String getNotifyCustomerEmailSubject() {
-		return notifyCustomerEmailSubject;
-	}
+    public String getNotifyCustomerEmailSubject() {
+        return notifyCustomerEmailSubject;
+    }
 
-	public String getNotifyBusinessEmailSubject() {
-		return notifyBusinessEmailSubject;
-	}
+    public String getNotifyBusinessEmailSubject() {
+        return notifyBusinessEmailSubject;
+    }
 
-	public Set<String> getCustomerDetailsRequiredSet() {
-		return new HashSet<String>(asList(defaultString(customerDetailsRequired).split(",")));
-	}
+    public Set<String> getCustomerDetailsRequiredSet() {
+        return new HashSet<String>(asList(defaultString(customerDetailsRequired).split(",")));
+    }
 
-	public Set<String> getDeliveryDetailsRequiredSet() {
-		return new HashSet<String>(asList(defaultString(deliveryDetailsRequired).split(",")));
-	}
+    public Set<String> getDeliveryDetailsRequiredSet() {
+        return new HashSet<String>(asList(defaultString(deliveryDetailsRequired).split(",")));
+    }
 
-	public String getDeliveryDetailsRequired() {
-		return deliveryDetailsRequired;
-	}
+    public String getDeliveryDetailsRequired() {
+        return deliveryDetailsRequired;
+    }
 
-	public void setDeliveryDetailsRequired(String deliveryDetailsRequired) {
-		this.deliveryDetailsRequired = deliveryDetailsRequired;
-	}
+    public void setDeliveryDetailsRequired(String deliveryDetailsRequired) {
+        this.deliveryDetailsRequired = deliveryDetailsRequired;
+    }
 
-	public String getCustomerDetailsRequired() {
-		return customerDetailsRequired;
-	}
+    public String getCustomerDetailsRequired() {
+        return customerDetailsRequired;
+    }
 
-	public void setCustomerDetailsRequired(String customerDetailsRequired) {
-		this.customerDetailsRequired = customerDetailsRequired;
-	}
+    public void setCustomerDetailsRequired(String customerDetailsRequired) {
+        this.customerDetailsRequired = customerDetailsRequired;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(id).build();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(id).build();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return new EqualsBuilder().append(id, ((Item)obj).id).build();
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(id, ((Item)obj).id).build();
+    }
 
-	public String getProductGroup() {
-		return productGroup;
-	}
+    public String getProductGroup() {
+        return productGroup;
+    }
 
-	public void setProductGroup(String group) {
-		this.productGroup = group;
-	}
+    public void setProductGroup(String group) {
+        this.productGroup = group;
+    }
 }

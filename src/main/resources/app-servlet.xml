@@ -20,26 +20,26 @@
     <!-- TODO: REMOVE FOR RELEASES -->  
     <mvc:view-controller path="/test" view-name="test"/>
     <!-- -->
-	
+    
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
-	 
-	<bean id="freemarkerConfig" class="au.gov.qld.pub.orders.web.ftl.HtmlFreeMarkerConfigurer">
-    	<property name="templateLoaderPaths">
-      		<array>
-      			<value>/WEB-INF/ftl/</value>
-      			<value>classpath:/products/pages/</value>
-      		</array>
-     	</property>
+     
+    <bean id="freemarkerConfig" class="au.gov.qld.pub.orders.web.ftl.HtmlFreeMarkerConfigurer">
+        <property name="templateLoaderPaths">
+              <array>
+                  <value>/WEB-INF/ftl/</value>
+                  <value>classpath:/products/pages/</value>
+              </array>
+         </property>
     </bean>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
-		<property name="cache" value="false"/>
-		<property name="prefix" value=""/>
-		<property name="suffix" value=".ftl"/>
+        <property name="cache" value="false"/>
+        <property name="prefix" value=""/>
+        <property name="suffix" value=".ftl"/>
     </bean>
 
-	<mvc:interceptors>
-	    <bean class="au.gov.qld.pub.orders.web.ViewPostProcessor" />
-	</mvc:interceptors>
+    <mvc:interceptors>
+        <bean class="au.gov.qld.pub.orders.web.ViewPostProcessor" />
+    </mvc:interceptors>
 </beans>

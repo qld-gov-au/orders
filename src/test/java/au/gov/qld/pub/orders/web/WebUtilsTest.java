@@ -12,24 +12,24 @@ import org.junit.Test;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class WebUtilsTest {
-	@Test
-	public void redirectWithoutUrlEffected() {
-		RedirectView redirect = WebUtils.redirect("something");
-		assertThat(redirect.getUrl(), is("something"));
-		assertThat(redirect.isExposePathVariables(), is(false));
-	}
-	
-	public static Matcher<Cookie> cookieWith(final String name, final String value) {
-		return new BaseMatcher<Cookie>() {
-			@Override
-			public boolean matches(Object arg0) {
-				Cookie cookie = (Cookie)arg0;
-				return name.equals(cookie.getName()) && value.equals(cookie.getValue());
-			}
+    @Test
+    public void redirectWithoutUrlEffected() {
+        RedirectView redirect = WebUtils.redirect("something");
+        assertThat(redirect.getUrl(), is("something"));
+        assertThat(redirect.isExposePathVariables(), is(false));
+    }
+    
+    public static Matcher<Cookie> cookieWith(final String name, final String value) {
+        return new BaseMatcher<Cookie>() {
+            @Override
+            public boolean matches(Object arg0) {
+                Cookie cookie = (Cookie)arg0;
+                return name.equals(cookie.getName()) && value.equals(cookie.getValue());
+            }
 
-			@Override
-			public void describeTo(Description arg0) {
-			}
-		};
-	}
+            @Override
+            public void describeTo(Description arg0) {
+            }
+        };
+    }
 }

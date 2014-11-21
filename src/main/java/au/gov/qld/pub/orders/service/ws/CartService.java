@@ -15,16 +15,16 @@ public class CartService {
     private static final String QUERY_TEMPLATE = "<OrderStatusRequest><generatedOrderId>@ORDER_ID@</generatedOrderId></OrderStatusRequest>";
     private static final String ORDER_QUERY_TEMPLATE = "<OrderQueryRequest><generatedOrderId>@ORDER_ID@</generatedOrderId></OrderQueryRequest>";
 
-	private final String username;
+    private final String username;
     private final SOAPClient client;
     private final byte[] passwordBytes;
     
     @Autowired
     public CartService(ConfigurationService configurationService) throws IOException {
-    	String password = configurationService.getServiceWsPassword();
-    	String endpoint = configurationService.getServiceWsEndpoint();
-    	this.username = configurationService.getServiceWsUsername();
-    	this.passwordBytes = password.getBytes("UTF-8");
+        String password = configurationService.getServiceWsPassword();
+        String endpoint = configurationService.getServiceWsEndpoint();
+        this.username = configurationService.getServiceWsUsername();
+        this.passwordBytes = password.getBytes("UTF-8");
         this.client = new SOAPClient(endpoint);
     }
     

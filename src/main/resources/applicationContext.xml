@@ -21,41 +21,41 @@
     <context:component-scan base-package="au.gov.qld.pub.orders"/>
     <encryption:encryptable-property-placeholder encryptor="configurationEncryptor" location="classpath:application.properties"/>
     
-  	<cache:annotation-driven/>
-	<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
-		<property name="caches">
-			<set>
-				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="default" />
-			</set>
-		</property>
-	</bean>
-	
-	<!-- No app beans should need decrypted properties -->
-	<bean id="properties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+      <cache:annotation-driven/>
+    <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+        <property name="caches">
+            <set>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="default" />
+            </set>
+        </property>
+    </bean>
+    
+    <!-- No app beans should need decrypted properties -->
+    <bean id="properties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="locations">
             <list>
                 <value>classpath:application.properties</value>
             </list>
         </property>
     </bean>
-	
-	<bean id="encryptionConfig" class="au.gov.qld.pub.orders.service.EncryptionConfiguration" />
-	<bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
-  		<property name="config" ref="encryptionConfig" />
- 	</bean>
-	
+    
+    <bean id="encryptionConfig" class="au.gov.qld.pub.orders.service.EncryptionConfiguration" />
+    <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+          <property name="config" ref="encryptionConfig" />
+     </bean>
+    
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="classpath:messages"/>
         <property name="defaultEncoding" value="${sourceEncoding}"/>
     </bean>
     
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name="host" value="${mail.host}" />
-		<property name="port" value="${mail.port}" />
-	</bean>
-	
-	<!-- DAO layer -->
-	<jpa:repositories base-package="au.gov.qld.pub.orders.dao"/>
+        <property name="host" value="${mail.host}" />
+        <property name="port" value="${mail.port}" />
+    </bean>
+    
+    <!-- DAO layer -->
+    <jpa:repositories base-package="au.gov.qld.pub.orders.dao"/>
     <tx:annotation-driven/>
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">

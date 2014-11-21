@@ -23,33 +23,33 @@ import au.gov.qld.pub.orders.web.ItemCommand;
 import com.google.common.collect.ImmutableMap;
 
 public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
-	@Autowired OrderService service;
-	@Autowired OrderDAO orderDAO;
-	
-	@Test
-	public void addToNewCart() throws ServiceException {
-		ItemCommand command = new ItemCommand();
-		command.setProductId(asList("test"));
-		Item item = service.findAndPopulate("test");
-		item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
-		
-		Order order = service.add(asList(item), null);
-		assertThat(order.getCartId(), not(nullValue()));
-		assertThat(order.getGeneratedId(), not(nullValue()));
-		
-		Order saved = orderDAO.findOne(order.getId());
-		assertThat(saved.getCartId(), not(nullValue()));
-		assertThat(saved.getGeneratedId(), not(nullValue()));
-		
-		Matcher<Item> itemWith = allOf(hasProperty("productId", is("test")), hasProperty("cartState", is(CartState.ADDED)));
-		assertThat(saved.getItems(), hasItem(itemWith));
-	}
+    @Autowired OrderService service;
+    @Autowired OrderDAO orderDAO;
+    
+    @Test
+    public void addToNewCart() throws ServiceException {
+        ItemCommand command = new ItemCommand();
+        command.setProductId(asList("test"));
+        Item item = service.findAndPopulate("test");
+        item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
+        
+        Order order = service.add(asList(item), null);
+        assertThat(order.getCartId(), not(nullValue()));
+        assertThat(order.getGeneratedId(), not(nullValue()));
+        
+        Order saved = orderDAO.findOne(order.getId());
+        assertThat(saved.getCartId(), not(nullValue()));
+        assertThat(saved.getGeneratedId(), not(nullValue()));
+        
+        Matcher<Item> itemWith = allOf(hasProperty("productId", is("test")), hasProperty("cartState", is(CartState.ADDED)));
+        assertThat(saved.getItems(), hasItem(itemWith));
+    }
 
-	@Test
-	public void populateItemFromCommand() {
-		ItemCommand command = new ItemCommand();
-		command.setProductId(asList("test"));
-		Item item = service.findAndPopulate("test");
-		assertThat(item.getProductId(), is("test"));
-	}
+    @Test
+    public void populateItemFromCommand() {
+        ItemCommand command = new ItemCommand();
+        command.setProductId(asList("test"));
+        Item item = service.findAndPopulate("test");
+        assertThat(item.getProductId(), is("test"));
+    }
 }

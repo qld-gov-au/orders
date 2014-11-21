@@ -8,8 +8,8 @@
         prev="${config.sourceUrl}"
         next="${config.sourceUrl}"/>
         
-	<#list templateItems as item>
-	<#if item.new>
+    <#list templateItems as item>
+    <#if item.new>
     <orderline id="${item.id}">
         <product title="${item.title}"
             ref="${item.reference}" cost="${item.priceExGst}" gst="${item.priceGst}"
@@ -23,15 +23,15 @@
         </product>
         
         <#list item.deliveryDetailsRequiredSet as detail>
-        	<#if detail?has_content>
-       		<deliveryAddressRequest type="${detail?trim}"/>
-       		</#if>
-       	</#list>
-       	<#list item.customerDetailsRequiredSet as detail>
-       		<#if detail?has_content>
-       		<customerDetailsRequest type="${detail?trim}" required="true"/>
-       		</#if>
-       	</#list>
+            <#if detail?has_content>
+               <deliveryAddressRequest type="${detail?trim}"/>
+               </#if>
+           </#list>
+           <#list item.customerDetailsRequiredSet as detail>
+               <#if detail?has_content>
+               <customerDetailsRequest type="${detail?trim}" required="true"/>
+               </#if>
+           </#list>
     </orderline>
     </#if>
     </#list>

@@ -18,24 +18,24 @@ import com.google.common.collect.ImmutableMap;
 
 
 public class TemplateItemBuilderTest extends ApplicationContextAwareTest {
-	@Autowired ItemPropertiesDAO itemPropertiesDAO;
-	@Autowired TemplateItemBuilder builder;
+    @Autowired ItemPropertiesDAO itemPropertiesDAO;
+    @Autowired TemplateItemBuilder builder;
 
-	@Test
-	public void freemarkerTemplatedTitleAndDescription() {
-		Item item = Item.populateFrom(itemPropertiesDAO.find("test"));
-		item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
-		
-		List<TemplateItem> templated = builder.build(asList(item));
-		TemplateItem templateItem = templated.get(0);
-		
-		assertThat(templateItem.getAgency(), is(item.getAgency()));
-		assertThat(templateItem.getCartState(), is(item.getCartState()));
-		assertThat(templateItem.getCustomerDetailsRequired(), is(item.getCustomerDetailsRequired()));
-		assertThat(templateItem.getDeliveryDetailsRequired(), is(item.getDeliveryDetailsRequired()));
-		assertThat(templateItem.getFieldsMap(), is(item.getFieldsMap()));
-		
-		assertThat(templateItem.getTitle(), is("test title value1"));
-		assertThat(templateItem.getDescription(), is("test description value2"));
-	}
+    @Test
+    public void freemarkerTemplatedTitleAndDescription() {
+        Item item = Item.populateFrom(itemPropertiesDAO.find("test"));
+        item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
+        
+        List<TemplateItem> templated = builder.build(asList(item));
+        TemplateItem templateItem = templated.get(0);
+        
+        assertThat(templateItem.getAgency(), is(item.getAgency()));
+        assertThat(templateItem.getCartState(), is(item.getCartState()));
+        assertThat(templateItem.getCustomerDetailsRequired(), is(item.getCustomerDetailsRequired()));
+        assertThat(templateItem.getDeliveryDetailsRequired(), is(item.getDeliveryDetailsRequired()));
+        assertThat(templateItem.getFieldsMap(), is(item.getFieldsMap()));
+        
+        assertThat(templateItem.getTitle(), is("test title value1"));
+        assertThat(templateItem.getDescription(), is("test description value2"));
+    }
 }

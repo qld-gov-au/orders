@@ -9,8 +9,8 @@ import org.mortbay.jetty.webapp.WebAppContext;
 import com.dumbster.smtp.SimpleSmtpServer;
 
 public class JettyServer {
-	private static Server server;
-	private static SimpleSmtpServer mailServer;
+    private static Server server;
+    private static SimpleSmtpServer mailServer;
 
     public static void main(String[] args) throws Exception {
         start();
@@ -43,7 +43,7 @@ public class JettyServer {
             server.stop();
         }
         if (mailServer != null) {
-        	mailServer.stop();
+            mailServer.stop();
         }
     }
 }

@@ -14,29 +14,29 @@ import au.gov.qld.pub.orders.service.OrderService;
 
 @Controller
 public class NotifyController {
-	private static final Logger LOG = LoggerFactory.getLogger(NotifyController.class);
-	private final OrderService orderService;
-	private final NotifyService notifyService;
+    private static final Logger LOG = LoggerFactory.getLogger(NotifyController.class);
+    private final OrderService orderService;
+    private final NotifyService notifyService;
 
-	@Autowired
-	public NotifyController(OrderService orderService, NotifyService notifyService) {
-		this.orderService = orderService;
-		this.notifyService = notifyService;
-	}
-	
-	@RequestMapping(value = "/notify/{orderId}")
-	public ResponseEntity<String> confirm(@PathVariable String orderId) {
-		LOG.info("Received notify for order id: {}", orderId);
-		try {
-			orderService.notifyPayment(orderId);
-			notifyService.send(orderId);
-			
-			return new ResponseEntity<String>(HttpStatus.OK);
-		} catch (Exception e) {
-			LOG.warn(e.getMessage(), e);
-			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
-		}
-	}
-		
-	
+    @Autowired
+    public NotifyController(OrderService orderService, NotifyService notifyService) {
+        this.orderService = orderService;
+        this.notifyService = notifyService;
+    }
+    
+    @RequestMapping(value = "/notify/{orderId}")
+    public ResponseEntity<String> confirm(@PathVariable String orderId) {
+        LOG.info("Received notify for order id: {}", orderId);
+        try {
+            orderService.notifyPayment(orderId);
+            notifyService.send(orderId);
+            
+            return new ResponseEntity<String>(HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.warn(e.getMessage(), e);
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+        }
+    }
+        
+    
 }
