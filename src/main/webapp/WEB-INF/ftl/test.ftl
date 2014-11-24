@@ -1,6 +1,14 @@
 <head>
-<title>Home</title>
+<title>Example home</title>
 </head>
+
+<content tag="top_nav">
+<li>Top nav item</li>
+</content>
+
+<content tag="left_nav">
+<li>Left nav item</li>
+</content>
 
 <form action="confirm" method="post">
     <ul class="actions">
