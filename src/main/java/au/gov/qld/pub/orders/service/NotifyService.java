@@ -4,16 +4,21 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,22 +32,24 @@ import freemarker.template.TemplateException;
 @Service
 public class NotifyService {
     private static final Logger LOG = LoggerFactory.getLogger(NotifyService.class);
-    
+   
     private final OrderDAO orderDAO;
-    private final MailSender mailSender;
+    private final JavaMailSender mailSender;
     private final ConfigurationService configurationService;
     private final Configuration templateConfiguration;
     private final OrderGrouper orderGrouper;
     private final InlineTemplateService inlineTemplateService;
+	private final AttachmentService attachmentService;
     
     @Autowired
-    public NotifyService(ConfigurationService configurationService, OrderDAO orderDAO, 
-            MailSender mailSender, OrderGrouper orderGrouper, InlineTemplateService inlineTemplateService) {
+    public NotifyService(ConfigurationService configurationService, OrderDAO orderDAO, JavaMailSender mailSender, 
+    		OrderGrouper orderGrouper, InlineTemplateService inlineTemplateService, AttachmentService attachmentService) {
         this.orderDAO = orderDAO;
         this.mailSender = mailSender;
         this.configurationService = configurationService;
         this.orderGrouper = orderGrouper;
         this.inlineTemplateService = inlineTemplateService;
+		this.attachmentService = attachmentService;
         this.templateConfiguration = getTemplateConfiguration();
         this.templateConfiguration.setClassForTemplateLoading(getClass(), "/products/emails/");
     }
@@ -66,64 +73,79 @@ public class NotifyService {
             for (Map.Entry<String, Order> productIdOrder : productIdOrders.entrySet()) {
                 notifyOrderWithProductId(productIdOrder.getKey(), productIdOrder.getValue());
             }
-        } catch (TemplateException | IOException e) {
+        } catch (TemplateException | IOException | MessagingException e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(e);
         }
         
-        save(order);
+        setNotifed(order);
         LOG.info("Notified order: {}", order.getId());
     }
 
     @Transactional
-    private void save(Order order) {
+    private void setNotifed(Order order) {
         order.setNotified(new LocalDateTime().toString());
         orderDAO.save(order);
     }
     
-    private void notifyOrderWithProductId(String productId, Order order) throws TemplateException, IOException {
+    private void notifyOrderWithProductId(String productId, Order order) throws TemplateException, IOException, MessagingException {
         Item first = order.getItems().get(0);
         if (isNotBlank(first.getNotifyBusinessEmail())) {
-            notifyBusinessOrder(productId, order, first.getNotifyBusinessEmail(), first.getNotifyBusinessEmailSubject());
+			notifyBusinessOrder(productId, order, first.getNotifyBusinessEmail(), first.getNotifyBusinessEmailSubject());
         }
         
         String customerEmailField = first.getNotifyCustomerEmailField();
         if (isNotBlank(customerEmailField)) {
-            String customerEmailTo = "customerDetails".equals(customerEmailField) ? 
-                    order.getCustomerDetailsMap().get("email") : order.getDeliveryDetailsMap().get("email");
+            String customerEmailTo = getCustomerEmailTo(order, customerEmailField);
             notifyCustomerOrder(productId, order, customerEmailTo, first.getNotifyCustomerEmailSubject());
         }
     }
+
+	private String getCustomerEmailTo(Order order, String customerEmailField) {
+		return "customerDetails".equals(customerEmailField) ? 
+		        order.getCustomerDetailsMap().get("email") : order.getDeliveryDetailsMap().get("email");
+	}
     
-    private void notifyBusinessOrder(String productId, Order order, String to, String subject) throws TemplateException, IOException {
+    private void notifyBusinessOrder(String productId, Order order, String to, String subject) 
+    		throws TemplateException, IOException, MessagingException {
         if (isBlank(to)) {
             LOG.info("No business email to notify for order receipt: {}", order.getReceipt());
             return;
         }
         
+        Map<String, InputStream> attachments = attachmentService.retrieve(order, NotifyType.BUSINESS);
+        
         String emailBody = prepareTemplate(productId, order, "business");
         LOG.info("Sending business email to: {} for order receipt: {}", to, order.getReceipt());
-        send(order, to, subject, emailBody);
+        sendEmail(order, to, subject, emailBody, attachments);
     }
 
-    private void send(Order order, String to, String subject, String emailBody) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(inlineTemplateService.template("subject", subject, order));
-        message.setText(emailBody);
-        message.setFrom(configurationService.getMailFrom());
+    private void sendEmail(Order order, String to, String subject, String emailBody, Map<String, InputStream> attachments) throws MessagingException {
+    	MimeMessage message = mailSender.createMimeMessage();
+    	MimeMessageHelper helper = new MimeMessageHelper(message, !attachments.isEmpty());
+    	
+        helper.setTo(to);
+        helper.setSubject(inlineTemplateService.template("subject", subject, order));
+        helper.setText(emailBody);
+        helper.setFrom(configurationService.getMailFrom());
+        for (Map.Entry<String, InputStream> attachment : attachments.entrySet()) {
+        	helper.addAttachment(attachment.getKey(), new InputStreamResource(attachment.getValue()));
+        }
+        
         mailSender.send(message);
     }
 
-    private void notifyCustomerOrder(String productId, Order order, String to, String subject) throws TemplateException, IOException {
+    private void notifyCustomerOrder(String productId, Order order, String to, String subject) throws TemplateException, IOException, MessagingException {
         if (isBlank(to)) {
             LOG.info("No customer email to notify for order receipt: {}", order.getReceipt());
             return;
         }
         
+        Map<String, InputStream> attachments = attachmentService.retrieve(order, NotifyType.CUSTOMER);
+        
         String emailBody = prepareTemplate(productId, order, "customer");
         LOG.info("Sending customer email to: {} for order receipt: {}", to, order.getReceipt());
-        send(order, to, subject, emailBody);
+		sendEmail(order, to, subject, emailBody, attachments);
     }
 
     private String prepareTemplate(String productId, Order order, String templateName) throws TemplateException, IOException {
