@@ -45,9 +45,8 @@ public class AttachmentService {
 			
 			LOG.info("Downloading attachments for item {} and type {}", item.getId(), type);
 			String uri = NotifyType.BUSINESS == type ? item.getNotifyBusinessFormUri() : item.getNotifyCustomerFormUri();
-			String filename = NotifyType.BUSINESS == type ? item.getNotifyBusinessFormFilename() : item.getNotifyCustomerFormFilename();
 			if (isNotBlank(uri)) {
-				attachments.put(filename, download(client, uri, order, item));
+				attachments.put(item.getId(), download(client, uri, order, item));
 			}
 		}
 		

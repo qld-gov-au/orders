@@ -90,13 +90,13 @@ public class NotifyService {
     private void notifyOrderWithProductId(String productId, Order order) throws TemplateException, IOException, MessagingException {
         Item first = order.getItems().get(0);
         if (isNotBlank(first.getNotifyBusinessEmail())) {
-			notifyBusinessOrder(productId, order, first.getNotifyBusinessEmail(), first.getNotifyBusinessEmailSubject());
+			notifyBusinessOrder(productId, order, first.getNotifyBusinessEmail(), first.getNotifyBusinessEmailSubject(), first.getNotifyBusinessFormFilename());
         }
         
         String customerEmailField = first.getNotifyCustomerEmailField();
         if (isNotBlank(customerEmailField)) {
             String customerEmailTo = getCustomerEmailTo(order, customerEmailField);
-            notifyCustomerOrder(productId, order, customerEmailTo, first.getNotifyCustomerEmailSubject());
+            notifyCustomerOrder(productId, order, customerEmailTo, first.getNotifyCustomerEmailSubject(), first.getNotifyCustomerFormFilename());
         }
     }
 
@@ -105,7 +105,7 @@ public class NotifyService {
 		        order.getCustomerDetailsMap().get("email") : order.getDeliveryDetailsMap().get("email");
 	}
     
-    private void notifyBusinessOrder(String productId, Order order, String to, String subject) 
+    private void notifyBusinessOrder(String productId, Order order, String to, String subject, String filename) 
     		throws TemplateException, IOException, MessagingException {
         if (isBlank(to)) {
             LOG.info("No business email to notify for order receipt: {}", order.getReceipt());
@@ -116,25 +116,10 @@ public class NotifyService {
         
         String emailBody = prepareTemplate(productId, order, "business");
         LOG.info("Sending business email to: {} for order receipt: {}", to, order.getReceipt());
-        sendEmail(order, to, subject, emailBody, attachments);
+        sendEmail(order, to, subject, emailBody, filename, attachments);
     }
 
-    private void sendEmail(Order order, String to, String subject, String emailBody, Map<String, byte[]> attachments) throws MessagingException {
-    	MimeMessage message = mailSender.createMimeMessage();
-    	MimeMessageHelper helper = new MimeMessageHelper(message, !attachments.isEmpty());
-    	
-        helper.setTo(to);
-        helper.setSubject(inlineTemplateService.template("subject", subject, order));
-        helper.setText(emailBody);
-        helper.setFrom(configurationService.getMailFrom());
-        for (Map.Entry<String, byte[]> attachment : attachments.entrySet()) {
-			helper.addAttachment(attachment.getKey(), new ByteArrayResource(attachment.getValue()));
-        }
-        
-        mailSender.send(message);
-    }
-
-    private void notifyCustomerOrder(String productId, Order order, String to, String subject) throws TemplateException, IOException, MessagingException {
+    private void notifyCustomerOrder(String productId, Order order, String to, String subject, String filename) throws TemplateException, IOException, MessagingException {
         if (isBlank(to)) {
             LOG.info("No customer email to notify for order receipt: {}", order.getReceipt());
             return;
@@ -144,7 +129,25 @@ public class NotifyService {
         
         String emailBody = prepareTemplate(productId, order, "customer");
         LOG.info("Sending customer email to: {} for order receipt: {}", to, order.getReceipt());
-		sendEmail(order, to, subject, emailBody, attachments);
+		sendEmail(order, to, subject, emailBody, filename, attachments);
+    }
+    
+    private void sendEmail(Order order, String to, String subject, String emailBody, String filename, Map<String, byte[]> attachments) throws MessagingException {
+    	MimeMessage message = mailSender.createMimeMessage();
+    	MimeMessageHelper helper = new MimeMessageHelper(message, !attachments.isEmpty());
+    	
+        helper.setTo(to);
+        helper.setSubject(inlineTemplateService.template("subject", subject, order));
+        helper.setText(emailBody);
+        helper.setFrom(configurationService.getMailFrom());
+        
+        int attachmentCounter = 0;
+        for (Map.Entry<String, byte[]> attachment : attachments.entrySet()) {
+        	attachmentCounter++;
+			helper.addAttachment(attachmentCounter + "-" + filename, new ByteArrayResource(attachment.getValue()));
+        }
+        
+        mailSender.send(message);
     }
 
     private String prepareTemplate(String productId, Order order, String templateName) throws TemplateException, IOException {

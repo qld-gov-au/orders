@@ -26,6 +26,7 @@ public class ItemBuilder {
 	private String notifyBusinessFormFilename;
 	private String notifyCustomerFormUri;
 	private String notifyCustomerFormFilename;
+	private String notifyCustomerFormDownloadTitle;
 
     public ItemBuilder withProductId(String productId) {
         this.productId = productId;
@@ -46,6 +47,6 @@ public class ItemBuilder {
         return new Item(productId, group, title, reference, agency, description, disbursementId,
                 priceGst, priceExGst, costCenter, glCode, taxCode, narrative, notifyCustomerEmailField,
                 notifyBusinessEmail, notifyBusinessEmailSubject, notifyCustomerEmailSubject, deliveryDetailsRequired, customerDetailsRequired,
-                notifyBusinessFormUri, notifyBusinessFormFilename, notifyCustomerFormUri, notifyCustomerFormFilename);
+                notifyBusinessFormUri, notifyBusinessFormFilename, notifyCustomerFormUri, notifyCustomerFormFilename, notifyCustomerFormDownloadTitle);
     }
 }

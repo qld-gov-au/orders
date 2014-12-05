@@ -29,6 +29,7 @@ public enum ProductProperties {
                 properties.getProperty("notifyBusinessEmailSubject"), properties.getProperty("notifyCustomerEmailSubject"),
                 deliveryDetailsRequired, customerDetailsRequired,
                 properties.getProperty("notifyBusinessFormUri"), properties.getProperty("notifyBusinessFormFilename"),
-                properties.getProperty("notifyCustomerFormUri"), properties.getProperty("notifyCustomerFormFilename"));
+                properties.getProperty("notifyCustomerFormUri"), properties.getProperty("notifyCustomerFormFilename"),
+                properties.getProperty("notifyCustomerFormDownloadTitle"));
     }
 }

@@ -56,6 +56,7 @@ public class Item {
     @Column private String notifyBusinessFormFilename;
     @Column private String notifyCustomerFormUri;
     @Column private String notifyCustomerFormFilename;
+    @Column private String notifyCustomerFormDownloadTitle;
     
     @Column @Enumerated(EnumType.STRING)
     private CartState cartState;
@@ -71,7 +72,7 @@ public class Item {
             String glCode, String taxCode, String narrative, String notifyCustomerEmailField,
             String notifyBusinessEmail, String notifyBusinessEmailSubject, String notifyCustomerEmailSubject,
             String deliveryDetailsRequired, String customerDetailsRequired,
-            String notifyBusinessFormUri, String notifyBusinessFormFilename, String notifyCustomerFormUri, String notifyCustomerFormFilename) {
+            String notifyBusinessFormUri, String notifyBusinessFormFilename, String notifyCustomerFormUri, String notifyCustomerFormFilename, String notifyCustomerFormDownloadTitle) {
         this.id = UUID.randomUUID().toString();
         this.cartState = CartState.NEW;
         
@@ -103,6 +104,7 @@ public class Item {
         this.notifyBusinessFormFilename = notifyBusinessFormFilename;
         this.notifyCustomerFormUri = notifyCustomerFormUri;
         this.notifyCustomerFormFilename = notifyCustomerFormFilename;
+        this.notifyCustomerFormDownloadTitle = notifyCustomerFormDownloadTitle;
     }
 
     public String getId() {
@@ -274,5 +276,9 @@ public class Item {
 
 	public String getNotifyCustomerFormFilename() {
 		return notifyCustomerFormFilename;
+	}
+	
+	public String getNotifyCustomerFormDownloadTitle() {
+		return notifyCustomerFormDownloadTitle;
 	}
 }

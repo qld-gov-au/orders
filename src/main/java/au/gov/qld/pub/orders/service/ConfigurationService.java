@@ -5,18 +5,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ConfigurationService {
-    @Value("${web.context}")         private String context;
-    @Value("${serviceFranchise}")     private String serviceFranchise;
-    @Value("${serviceName}")         private String serviceName;
-    @Value("${papiBase}")            private String papiBase;
-    @Value("${sourceUrl}")             private String sourceUrl;
-    @Value("${serviceWsUsername}")     private String serviceWsUsername;
-    @Value("${serviceWsPassword}")     private String serviceWsPassword;
-    @Value("${serviceWsEndpoint}")     private String serviceWsEndpoint;
-    @Value("${serviceWsNotify}")     private String serviceWsNotify;
-    @Value("${serviceFullUrl}")     private String serviceFullUrl;
-    @Value("${errorRedirect}")         private String errorRedirect;
-    @Value("${mail.from}")             private String mailFrom;
+    @Value("${web.context}") private String context;
+    @Value("${serviceFranchise}") private String serviceFranchise;
+    @Value("${serviceName}") private String serviceName;
+    @Value("${papiBase}") private String papiBase;
+    @Value("${sourceUrl}") private String sourceUrl;
+    @Value("${serviceWsUsername}") private String serviceWsUsername;
+    @Value("${serviceWsPassword}") private String serviceWsPassword;
+    @Value("${serviceWsEndpoint}") private String serviceWsEndpoint;
+    @Value("${serviceWsNotify}") private String serviceWsNotify;
+    @Value("${serviceFullUrl}") private String serviceFullUrl;
+    @Value("${errorRedirect}") private String errorRedirect;
+    @Value("${mail.from}") private String mailFrom;
 
     public String getContext() {
         return context;

@@ -43,6 +43,7 @@ public class AttachmentServiceTest {
     private static final String CUSTOMER_FORM_FILE_NAME = "some customer form file name";
     private static final String CUSTOMER_FORM_URI = "http://somecustomerformuri";
     private static final String BUSINESS_FORM_FILE_NAME = "some business form file name";
+    private static final String ITEM_ID = "some item id";
 
     AttachmentService service;
     
@@ -61,6 +62,7 @@ public class AttachmentServiceTest {
         when(order.getPaid()).thenReturn(PAID_AT);
         when(order.getReceipt()).thenReturn(RECEIPT);
         
+        when(item.getId()).thenReturn(ITEM_ID);
         when(item.getFieldsMap()).thenReturn(fieldsMap);
         when(item.getNotifyBusinessFormUri()).thenReturn(BUSINESS_FORM_URI);
         when(item.getNotifyBusinessFormFilename()).thenReturn(BUSINESS_FORM_FILE_NAME);
@@ -96,8 +98,8 @@ public class AttachmentServiceTest {
             .thenReturn(businessResponse);
         
         Map<String, byte[]> result = service.retrieve(order, NotifyType.BUSINESS);
-        assertThat(result, hasKey(BUSINESS_FORM_FILE_NAME));
-        assertThat(new String(result.get(BUSINESS_FORM_FILE_NAME)), is(BUSINESS_CONTENT));
+        assertThat(result, hasKey(ITEM_ID));
+        assertThat(new String(result.get(ITEM_ID)), is(BUSINESS_CONTENT));
     }
     
     @Test
@@ -106,8 +108,8 @@ public class AttachmentServiceTest {
             .thenReturn(customerResponse);
         
         Map<String, byte[]> result = service.retrieve(order, NotifyType.CUSTOMER);
-        assertThat(result, hasKey(CUSTOMER_FORM_FILE_NAME));
-        assertThat(new String(result.get(CUSTOMER_FORM_FILE_NAME)), is(CUSTOMER_CONTENT));
+        assertThat(result, hasKey(ITEM_ID));
+        assertThat(new String(result.get(ITEM_ID)), is(CUSTOMER_CONTENT));
     }
 
     private Matcher<HttpPost> postRequest(final String uri, final String data) {

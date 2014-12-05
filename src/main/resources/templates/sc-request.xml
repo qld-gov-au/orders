@@ -20,8 +20,14 @@
             <#if item.costCentre?has_content && item.glCode?has_content && item.glCode?has_content>
             <accounting costCenter="${item.costCenter}" glCode="${item.glCode}" taxCode="${item.glCode}" narrative="${item.narrative}"/>
             </#if>
+            
+            <#if item.notifyCustomerFormDownloadTitle?has_content>
+            <distribution title="${item.notifyCustomerFormDownloadTitle}">
+                <resource link="${config.serviceFullUrl}/download/${order.id}/${item.id}" type="PDF" />
+            </distribution>
+            </#if>
         </product>
-        
+
         <#list item.deliveryDetailsRequiredSet as detail>
             <#if detail?has_content>
                <deliveryAddressRequest type="${detail?trim}"/>
