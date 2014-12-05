@@ -63,10 +63,10 @@ public class AttachmentService {
 		}
 		
 		HttpEntity entity = response.getEntity();
-		ByteArrayOutputStream memory = new ByteArrayOutputStream();
-		IOUtils.copy(entity.getContent(), memory);
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		IOUtils.copy(entity.getContent(), output);
 	    EntityUtils.consume(entity);
-		return memory.toByteArray();
+		return output.toByteArray();
 	}
 
 	private HttpPost createRequest(String uri, Order order, Item item) throws UnsupportedEncodingException {
