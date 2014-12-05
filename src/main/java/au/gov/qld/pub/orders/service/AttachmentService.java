@@ -34,7 +34,7 @@ public class AttachmentService {
 	public static final int OKAY_STATUS_CODE = 200;
 
 	public Map<String, byte[]> retrieve(Order order, NotifyType type) throws IOException {
-		LOG.info("Fetching attachments");
+		LOG.info("Starting downloading attachments for order {} and type {}", order.getId(), type);
 		Map<String, byte[]> attachments = new HashMap<String, byte[]>();
 		HttpClient client = createClient();
 		
@@ -43,6 +43,7 @@ public class AttachmentService {
 				continue;
 			}
 			
+			LOG.info("Downloading attachments for item {} and type {}", item.getId(), type);
 			String uri = NotifyType.BUSINESS == type ? item.getNotifyBusinessFormUri() : item.getNotifyCustomerFormUri();
 			String filename = NotifyType.BUSINESS == type ? item.getNotifyBusinessFormFilename() : item.getNotifyCustomerFormFilename();
 			if (isNotBlank(uri)) {
