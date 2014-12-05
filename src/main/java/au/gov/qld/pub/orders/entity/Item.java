@@ -8,7 +8,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -51,13 +50,15 @@ public class Item {
     @Column private String notifyBusinessEmailSubject;
     @Column private String deliveryDetailsRequired;
     @Column private String customerDetailsRequired;
+    @Column private String quantityPaid;
+    @Column private String fields;
+    @Column private String notifyBusinessFormUri;
+    @Column private String notifyBusinessFormFilename;
+    @Column private String notifyCustomerFormUri;
+    @Column private String notifyCustomerFormFilename;
     
     @Column @Enumerated(EnumType.STRING)
     private CartState cartState;
-    @Column 
-    private String quantityPaid;
-    @Column 
-    private String fields;
     
     @SuppressWarnings("unused")
     private Item() {
@@ -69,7 +70,8 @@ public class Item {
             String priceGst, String priceExGst, String costCenter,
             String glCode, String taxCode, String narrative, String notifyCustomerEmailField,
             String notifyBusinessEmail, String notifyBusinessEmailSubject, String notifyCustomerEmailSubject,
-            String deliveryDetailsRequired, String customerDetailsRequired) {
+            String deliveryDetailsRequired, String customerDetailsRequired,
+            String notifyBusinessFormUri, String notifyBusinessFormFilename, String notifyCustomerFormUri, String notifyCustomerFormFilename) {
         this.id = UUID.randomUUID().toString();
         this.cartState = CartState.NEW;
         
@@ -97,19 +99,10 @@ public class Item {
         this.glCode = glCode;
         this.taxCode = taxCode;
         this.narrative = narrative;
-    }
-
-    public static Item populateFrom(Properties properties) {
-        String deliveryDetailsRequired = properties.getProperty("deliveryDetailsRequired");
-        String customerDetailsRequired = properties.getProperty("customerDetailsRequired");
-        
-        return new Item(properties.getProperty("productId"), properties.getProperty("productGroup"), properties.getProperty("title"), properties.getProperty("reference"),
-                properties.getProperty("agency"), properties.getProperty("description"), properties.getProperty("disbursementId"),
-                properties.getProperty("priceGst"), properties.getProperty("priceExGst"), properties.getProperty("costCenter"),
-                properties.getProperty("glCode"), properties.getProperty("taxCode"), properties.getProperty("narrative"),
-                properties.getProperty("notifyCustomerEmailField"), properties.getProperty("notifyBusinessEmail"), 
-                properties.getProperty("notifyBusinessEmailSubject"), properties.getProperty("notifyCustomerEmailSubject"),
-                deliveryDetailsRequired, customerDetailsRequired);
+        this.notifyBusinessFormUri = notifyBusinessFormUri;
+        this.notifyBusinessFormFilename = notifyBusinessFormFilename;
+        this.notifyCustomerFormUri = notifyCustomerFormUri;
+        this.notifyCustomerFormFilename = notifyCustomerFormFilename;
     }
 
     public String getId() {
@@ -266,4 +259,20 @@ public class Item {
     public void setProductGroup(String group) {
         this.productGroup = group;
     }
+
+	public String getNotifyBusinessFormUri() {
+		return notifyBusinessFormUri;
+	}
+
+	public String getNotifyBusinessFormFilename() {
+		return notifyBusinessFormFilename;
+	}
+
+	public String getNotifyCustomerFormUri() {
+		return notifyCustomerFormUri;
+	}
+
+	public String getNotifyCustomerFormFilename() {
+		return notifyCustomerFormFilename;
+	}
 }

@@ -22,6 +22,10 @@ public class ItemBuilder {
     private String notifyCustomerEmailSubject;
     private String deliveryDetailsRequired;
     private String customerDetailsRequired;
+	private String notifyBusinessFormUri;
+	private String notifyBusinessFormFilename;
+	private String notifyCustomerFormUri;
+	private String notifyCustomerFormFilename;
 
     public ItemBuilder withProductId(String productId) {
         this.productId = productId;
@@ -41,6 +45,7 @@ public class ItemBuilder {
     public Item build() {
         return new Item(productId, group, title, reference, agency, description, disbursementId,
                 priceGst, priceExGst, costCenter, glCode, taxCode, narrative, notifyCustomerEmailField,
-                notifyBusinessEmail, notifyBusinessEmailSubject, notifyCustomerEmailSubject, deliveryDetailsRequired, customerDetailsRequired);
+                notifyBusinessEmail, notifyBusinessEmailSubject, notifyCustomerEmailSubject, deliveryDetailsRequired, customerDetailsRequired,
+                notifyBusinessFormUri, notifyBusinessFormFilename, notifyCustomerFormUri, notifyCustomerFormFilename);
     }
 }

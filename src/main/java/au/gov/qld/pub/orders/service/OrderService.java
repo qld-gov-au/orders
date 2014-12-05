@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import au.gov.qld.pub.orders.ProductProperties;
 import au.gov.qld.pub.orders.dao.ItemDAO;
 import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
@@ -96,7 +97,7 @@ public class OrderService {
             return null;
         }
         
-        return Item.populateFrom(properties);
+        return ProductProperties.populate(properties);
     }
 
     private String getValueFrom(Pattern pattern, String text) {
@@ -147,14 +148,14 @@ public class OrderService {
         LOG.info("Saved order: {} as paid", orderId);
     }
 
-    public Collection<String> getAllowedFields(String productId) {
+    public Collection<String> getAllowedFields(String productId, ProductProperties acceptFields) {
         Set<String> allowedFields = new HashSet<String>();
         Properties properties = itemPropertiesDAO.find(productId);
         if (properties == null) {
             return Collections.emptySet();
         }
         
-        String rawFields = properties.getProperty("fields");
+        String rawFields = properties.getProperty(acceptFields.getProperty());
         if (isBlank(rawFields)) {
             return Collections.emptySet();
         }

@@ -4,7 +4,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +15,7 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -113,14 +112,14 @@ public class NotifyService {
             return;
         }
         
-        Map<String, InputStream> attachments = attachmentService.retrieve(order, NotifyType.BUSINESS);
+        Map<String, byte[]> attachments = attachmentService.retrieve(order, NotifyType.BUSINESS);
         
         String emailBody = prepareTemplate(productId, order, "business");
         LOG.info("Sending business email to: {} for order receipt: {}", to, order.getReceipt());
         sendEmail(order, to, subject, emailBody, attachments);
     }
 
-    private void sendEmail(Order order, String to, String subject, String emailBody, Map<String, InputStream> attachments) throws MessagingException {
+    private void sendEmail(Order order, String to, String subject, String emailBody, Map<String, byte[]> attachments) throws MessagingException {
     	MimeMessage message = mailSender.createMimeMessage();
     	MimeMessageHelper helper = new MimeMessageHelper(message, !attachments.isEmpty());
     	
@@ -128,8 +127,8 @@ public class NotifyService {
         helper.setSubject(inlineTemplateService.template("subject", subject, order));
         helper.setText(emailBody);
         helper.setFrom(configurationService.getMailFrom());
-        for (Map.Entry<String, InputStream> attachment : attachments.entrySet()) {
-        	helper.addAttachment(attachment.getKey(), new InputStreamResource(attachment.getValue()));
+        for (Map.Entry<String, byte[]> attachment : attachments.entrySet()) {
+			helper.addAttachment(attachment.getKey(), new ByteArrayResource(attachment.getValue()));
         }
         
         mailSender.send(message);
@@ -141,7 +140,7 @@ public class NotifyService {
             return;
         }
         
-        Map<String, InputStream> attachments = attachmentService.retrieve(order, NotifyType.CUSTOMER);
+        Map<String, byte[]> attachments = attachmentService.retrieve(order, NotifyType.CUSTOMER);
         
         String emailBody = prepareTemplate(productId, order, "customer");
         LOG.info("Sending customer email to: {} for order receipt: {}", to, order.getReceipt());

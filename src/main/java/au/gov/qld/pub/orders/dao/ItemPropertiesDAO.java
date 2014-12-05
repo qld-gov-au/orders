@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ItemPropertiesDAO {
 
-    Properties find(String productId);
+	Properties find(String productId);
 
 }

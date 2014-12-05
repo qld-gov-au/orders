@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import au.gov.qld.pub.orders.ApplicationContextAwareTest;
+import au.gov.qld.pub.orders.ProductProperties;
 import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.service.ws.TemplateItemBuilder.TemplateItem;
@@ -23,7 +24,7 @@ public class TemplateItemBuilderTest extends ApplicationContextAwareTest {
 
     @Test
     public void freemarkerTemplatedTitleAndDescription() {
-        Item item = Item.populateFrom(itemPropertiesDAO.find("test"));
+        Item item = ProductProperties.populate(itemPropertiesDAO.find("test"));
         item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
         
         List<TemplateItem> templated = builder.build(asList(item));

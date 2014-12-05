@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import au.gov.qld.pub.orders.ProductProperties;
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.ConfigurationService;
@@ -37,7 +38,7 @@ import au.gov.qld.pub.orders.service.ServiceException;
 
 @Controller
 public class OrderController {
-    private static final Logger LOG = LoggerFactory.getLogger(OrderController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(OrderController.class);
     private static final int MAX_FIELDS = 100;
     private static final int MAX_FIELD_LENGTH = 200;
 
@@ -118,7 +119,7 @@ public class OrderController {
         }
         
         for (Item item : items) {
-            Collection<String> allowedFields = orderService.getAllowedFields(item.getProductId());
+            Collection<String> allowedFields = orderService.getAllowedFields(item.getProductId(), ProductProperties.ACCEPT_FIELDS);
             item.setFields(validateAndGetFields(request, allowedFields));
         }
         

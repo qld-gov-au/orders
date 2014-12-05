@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import au.gov.qld.pub.orders.ApplicationContextAwareTest;
+import au.gov.qld.pub.orders.ProductProperties;
 import au.gov.qld.pub.orders.dao.ItemDAO;
 import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
@@ -36,7 +37,7 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
     @Before
     public void setUp() {
         order = new Order(null);
-        item = Item.populateFrom(itemPropertiesDAO.find("test"));
+        item = ProductProperties.populate(itemPropertiesDAO.find("test"));
         item.setFields(ImmutableMap.of("field1", "value1"));
         order.add(item);
         OrderDetails orderDetails = new OrderDetails();
