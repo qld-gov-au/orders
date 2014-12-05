@@ -73,13 +73,13 @@ public class AttachmentService {
 		HttpPost httpPost = new HttpPost(uri);
 		
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-		nvps.add(createField("item-quantityPaid", item.getQuantityPaid()));
+		nvps.add(createField("quantityPaid", item.getQuantityPaid()));
 		for (Map.Entry<String, String> field : item.getFieldsMap().entrySet()) {
-			nvps.add(createField("item-" + field.getKey(), field.getValue()));
+			nvps.add(createField(field.getKey(), field.getValue()));
 		}
 		
-		nvps.add(createField("order-paid", order.getPaid()));
-		nvps.add(createField("order-receipt", order.getReceipt()));
+		nvps.add(createField("paid", order.getPaid()));
+		nvps.add(createField("receipt", order.getReceipt()));
 
 		httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 		return httpPost;

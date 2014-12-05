@@ -92,7 +92,7 @@ public class AttachmentServiceTest {
     
     @Test
     public void sendOrderAndItemDetailsToFormServiceAndReturnAsAttachmentsForBusiness() throws Exception {
-        when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, "item-quantityPaid=1&item-name=value&order-paid=paid+at&order-receipt=receipt"))))
+        when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))))
             .thenReturn(businessResponse);
         
         Map<String, byte[]> result = service.retrieve(order, NotifyType.BUSINESS);
@@ -102,7 +102,7 @@ public class AttachmentServiceTest {
     
     @Test
     public void sendOrderAndItemDetailsToFormServiceAndReturnAsAttachmentsForCustomer() throws Exception {
-        when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, "item-quantityPaid=1&item-name=value&order-paid=paid+at&order-receipt=receipt"))))
+        when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))))
             .thenReturn(customerResponse);
         
         Map<String, byte[]> result = service.retrieve(order, NotifyType.CUSTOMER);
