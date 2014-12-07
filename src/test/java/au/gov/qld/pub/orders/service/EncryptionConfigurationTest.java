@@ -15,6 +15,7 @@ public class EncryptionConfigurationTest {
 		String location = System.getProperty("user.home") + File.separator + ".orders.key";
 		File keyFile = new File(location);
 		if (!keyFile.exists()) {
+			System.err.println("Creating test key");
 			FileUtils.write(keyFile, "testkey");
 		}
 		
