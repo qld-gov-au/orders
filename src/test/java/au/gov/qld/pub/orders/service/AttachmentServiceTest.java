@@ -37,14 +37,16 @@ import com.google.common.collect.ImmutableMap;
 @RunWith(MockitoJUnitRunner.class)
 public class AttachmentServiceTest {
     private static final Integer RETRY_COUNT = 1;
+    private static final Integer RETRY_WAIT = 1;
+    private static final Integer TIMEOUT = 1;
 	private static final String PAID_AT = "paid at";
     private static final String RECEIPT = "receipt";
     private static final String QUANTITY_PAID = "1";
     private static final String BUSINESS_CONTENT = "business content";
     private static final String CUSTOMER_CONTENT = "customer content";
-    private static final String BUSINESS_FORM_URI = "http://somebusinessformuri";
+    private static final String BUSINESS_FORM_URI = "http://example.com";
     private static final String CUSTOMER_FORM_FILE_NAME = "some customer form file name";
-    private static final String CUSTOMER_FORM_URI = "http://somecustomerformuri";
+    private static final String CUSTOMER_FORM_URI = "http://example.com";
     private static final String BUSINESS_FORM_FILE_NAME = "some business form file name";
     private static final String ITEM_ID = "some item id";
 
@@ -82,6 +84,8 @@ public class AttachmentServiceTest {
         when(customerResponse.getEntity()).thenReturn(new StringEntity(CUSTOMER_CONTENT));
         
         when(config.getNotifyFormRetryCount()).thenReturn(RETRY_COUNT);
+        when(config.getNotifyFormRetryWait()).thenReturn(RETRY_WAIT);
+        when(config.getNotifyFormTimeout()).thenReturn(TIMEOUT);
         
         service = new AttachmentService(config) {
             @Override
@@ -137,6 +141,12 @@ public class AttachmentServiceTest {
         assertThat(new String(result.get(ITEM_ID)), is(CUSTOMER_CONTENT));
         
         verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))));
+    }
+    
+    @Test(expected = IOException.class)
+    public void throwExceptionWhencannotConnect() throws Exception {
+        when(config.getNotifyFormRetryCount()).thenReturn(2);
+        new AttachmentService(config).retrieve(order, NotifyType.CUSTOMER);
     }
     
     @Test(expected = IOException.class)

@@ -18,6 +18,8 @@ public class ConfigurationService {
     @Value("${errorRedirect}") private String errorRedirect;
     @Value("${mail.from}") private String mailFrom;
     @Value("${notifyFormRetryCount}") private Integer notifyFormRetryCount;
+    @Value("${notifyFormRetryWait}") private Integer notifyFormRetryWait;
+    @Value("${notifyFormTimeout}") private Integer notifyFormTimeout;
 
     public String getContext() {
         return context;
@@ -67,7 +69,15 @@ public class ConfigurationService {
         return mailFrom;
     }
 
-	public int getNotifyFormRetryCount() {
-		return notifyFormRetryCount;
-	}
+    public int getNotifyFormRetryCount() {
+        return notifyFormRetryCount;
+    }
+    
+    public int getNotifyFormRetryWait() {
+        return notifyFormRetryWait;
+    }
+    
+    public int getNotifyFormTimeout() {
+        return notifyFormTimeout;
+    }
 }

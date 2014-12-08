@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -35,10 +36,14 @@ public class AttachmentService {
 	public static final int OKAY_STATUS_CODE = 200;
 	
 	private final int retryCount;
+    private final int retryWait;
+    private final int timeout;
 	
 	@Autowired
 	public AttachmentService(ConfigurationService config) {
 		this.retryCount = config.getNotifyFormRetryCount();
+		this.retryWait = config.getNotifyFormRetryWait();
+		this.timeout = config.getNotifyFormTimeout();
 	}
 
 	public Map<String, byte[]> retrieve(Order order, NotifyType type) throws IOException, InterruptedException {
@@ -68,7 +73,7 @@ public class AttachmentService {
 				return download(client, httpPost);
 			} catch(IOException e) {
 				LOG.error(e.getMessage(), e);
-				Thread.sleep(3000);
+				Thread.sleep(retryWait);
 			}
 		}
 		
@@ -110,7 +115,8 @@ public class AttachmentService {
 	}
 
 	protected HttpClient createClient() {
-		return HttpClients.createDefault();
+	    RequestConfig config = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout).build();
+		return HttpClients.custom().setDefaultRequestConfig(config).build();
 	}
 
 }
