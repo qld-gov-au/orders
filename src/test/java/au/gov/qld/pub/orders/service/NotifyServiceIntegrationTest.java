@@ -51,7 +51,7 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
     
     @SuppressWarnings("unchecked")
     @Test
-    public void notifyAndSetOrderNotifiedForEachProductId() throws ServiceException {
+    public void notifyAndSetOrderNotifiedForEachProductId() throws ServiceException, InterruptedException {
         service.send(order.getId());
         
         Order saved = orderDAO.findOne(order.getId());
@@ -73,7 +73,7 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
     
     @SuppressWarnings("unchecked")
     @Test
-    public void dontNotifyCustomerWhenEmailBlank() throws ServiceException {
+    public void dontNotifyCustomerWhenEmailBlank() throws ServiceException, InterruptedException {
         OrderDetails orderDetails = new OrderDetails();
         orderDetails.setOrderlineQuantities(ImmutableMap.of(item.getId(), "1"));
         order.setPaid(RECEIPT, orderDetails);

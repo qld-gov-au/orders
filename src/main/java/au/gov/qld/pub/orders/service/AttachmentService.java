@@ -23,6 +23,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import au.gov.qld.pub.orders.entity.Item;
@@ -32,8 +33,15 @@ import au.gov.qld.pub.orders.entity.Order;
 public class AttachmentService {
 	private static final Logger LOG = LoggerFactory.getLogger(AttachmentService.class);
 	public static final int OKAY_STATUS_CODE = 200;
+	
+	private final int retryCount;
+	
+	@Autowired
+	public AttachmentService(ConfigurationService config) {
+		this.retryCount = config.getNotifyFormRetryCount();
+	}
 
-	public Map<String, byte[]> retrieve(Order order, NotifyType type) throws IOException {
+	public Map<String, byte[]> retrieve(Order order, NotifyType type) throws IOException, InterruptedException {
 		LOG.info("Starting downloading attachments for order {} and type {}", order.getId(), type);
 		Map<String, byte[]> attachments = new HashMap<String, byte[]>();
 		HttpClient client = createClient();
@@ -46,15 +54,28 @@ public class AttachmentService {
 			LOG.info("Downloading attachments for item {} and type {}", item.getId(), type);
 			String uri = NotifyType.BUSINESS == type ? item.getNotifyBusinessFormUri() : item.getNotifyCustomerFormUri();
 			if (isNotBlank(uri)) {
-				attachments.put(item.getId(), download(client, uri, order, item));
+				attachments.put(item.getId(), downloadRetrying(client, uri, order, item));
 			}
 		}
 		
 		return attachments;
 	}
-
-	private byte[] download(HttpClient client, String uri, Order order, Item item) throws IOException {
+	
+	private byte[] downloadRetrying(HttpClient client, String uri, Order order, Item item) throws IOException, InterruptedException {
 		HttpPost httpPost = createRequest(uri, order, item);
+		for (int attempt=0; attempt < retryCount; attempt++) {
+			try {
+				return download(client, httpPost);
+			} catch(IOException e) {
+				LOG.error(e.getMessage(), e);
+				Thread.sleep(3000);
+			}
+		}
+		
+		throw new IOException("Retries exhausted for " + order.getId() + " with item " + item.getId() + " to uri " + uri);
+	}
+
+	private byte[] download(HttpClient client, HttpPost httpPost) throws IOException {
 		CloseableHttpResponse response = (CloseableHttpResponse) client.execute(httpPost);
 		
 		if (response.getStatusLine().getStatusCode() != OKAY_STATUS_CODE) {

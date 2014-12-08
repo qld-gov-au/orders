@@ -17,6 +17,7 @@ public class ConfigurationService {
     @Value("${serviceFullUrl}") private String serviceFullUrl;
     @Value("${errorRedirect}") private String errorRedirect;
     @Value("${mail.from}") private String mailFrom;
+    @Value("${notifyFormRetryCount}") private Integer notifyFormRetryCount;
 
     public String getContext() {
         return context;
@@ -65,4 +66,8 @@ public class ConfigurationService {
     public String getMailFrom() {
         return mailFrom;
     }
+
+	public int getNotifyFormRetryCount() {
+		return notifyFormRetryCount;
+	}
 }

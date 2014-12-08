@@ -6,6 +6,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -34,7 +36,8 @@ import com.google.common.collect.ImmutableMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AttachmentServiceTest {
-    private static final String PAID_AT = "paid at";
+    private static final Integer RETRY_COUNT = 1;
+	private static final String PAID_AT = "paid at";
     private static final String RECEIPT = "receipt";
     private static final String QUANTITY_PAID = "1";
     private static final String BUSINESS_CONTENT = "business content";
@@ -53,6 +56,7 @@ public class AttachmentServiceTest {
     @Mock CloseableHttpResponse businessResponse;
     @Mock CloseableHttpResponse customerResponse;
     @Mock StatusLine statusLine;
+    @Mock ConfigurationService config;
     
     Map<String, String> fieldsMap = ImmutableMap.of("name", "value");
     
@@ -77,7 +81,9 @@ public class AttachmentServiceTest {
         when(customerResponse.getStatusLine()).thenReturn(statusLine);
         when(customerResponse.getEntity()).thenReturn(new StringEntity(CUSTOMER_CONTENT));
         
-        service = new AttachmentService() {
+        when(config.getNotifyFormRetryCount()).thenReturn(RETRY_COUNT);
+        
+        service = new AttachmentService(config) {
             @Override
             protected HttpClient createClient() {
                 return client;
@@ -110,6 +116,49 @@ public class AttachmentServiceTest {
         Map<String, byte[]> result = service.retrieve(order, NotifyType.CUSTOMER);
         assertThat(result, hasKey(ITEM_ID));
         assertThat(new String(result.get(ITEM_ID)), is(CUSTOMER_CONTENT));
+    }
+    
+    @Test
+    public void retryWhenCannotDownload() throws Exception {
+    	when(config.getNotifyFormRetryCount()).thenReturn(2);
+        service = new AttachmentService(config) {
+            @Override
+            protected HttpClient createClient() {
+                return client;
+            }
+        };
+        
+    	when(statusLine.getStatusCode()).thenReturn(500, AttachmentService.OKAY_STATUS_CODE);
+        when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))))
+            .thenReturn(customerResponse);
+        
+        Map<String, byte[]> result = service.retrieve(order, NotifyType.CUSTOMER);
+        assertThat(result, hasKey(ITEM_ID));
+        assertThat(new String(result.get(ITEM_ID)), is(CUSTOMER_CONTENT));
+        
+        verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))));
+    }
+    
+    @Test(expected = IOException.class)
+    public void throwExceptionWhenRetriesExhausted() throws Exception {
+    	when(config.getNotifyFormRetryCount()).thenReturn(2);
+        service = new AttachmentService(config) {
+            @Override
+            protected HttpClient createClient() {
+                return client;
+            }
+        };
+        
+    	when(statusLine.getStatusCode()).thenReturn(500);
+        when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))))
+            .thenReturn(customerResponse);
+        
+        try {
+        	service.retrieve(order, NotifyType.CUSTOMER);
+        } catch(IOException e) {
+        	verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))));
+        	throw e;
+        }
     }
 
     private Matcher<HttpPost> postRequest(final String uri, final String data) {

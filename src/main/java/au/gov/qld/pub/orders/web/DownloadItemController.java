@@ -42,7 +42,7 @@ public class DownloadItemController {
     }
     
     @RequestMapping(value = "/download/{orderId}/{itemId}")
-    public void download(@PathVariable String orderId, @PathVariable String itemId, HttpServletResponse response) throws IOException, ServiceException {
+    public void download(@PathVariable String orderId, @PathVariable String itemId, HttpServletResponse response) throws IOException, ServiceException, InterruptedException {
         LOG.info("Downloading item: {}", itemId);
         
         Item item = itemDao.findOne(itemId);

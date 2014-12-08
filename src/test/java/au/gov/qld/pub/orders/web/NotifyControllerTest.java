@@ -32,7 +32,7 @@ public class NotifyControllerTest {
     }
     
     @Test
-    public void okNotifyOk() throws ServiceException {
+    public void okNotifyOk() throws ServiceException, InterruptedException {
         ResponseEntity<String> entity = controller.confirm("id");
         assertThat(entity.getStatusCode(), is(HttpStatus.OK));
         verify(orderService).notifyPayment("id");

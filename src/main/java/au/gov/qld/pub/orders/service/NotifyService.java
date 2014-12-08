@@ -72,7 +72,7 @@ public class NotifyService {
             for (Map.Entry<String, Order> productIdOrder : productIdOrders.entrySet()) {
                 notifyOrderWithProductId(productIdOrder.getKey(), productIdOrder.getValue());
             }
-        } catch (TemplateException | IOException | MessagingException e) {
+        } catch (TemplateException | IOException | MessagingException | InterruptedException e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(e);
         }
@@ -87,7 +87,7 @@ public class NotifyService {
         orderDAO.save(order);
     }
     
-    private void notifyOrderWithProductId(String productId, Order order) throws TemplateException, IOException, MessagingException {
+    private void notifyOrderWithProductId(String productId, Order order) throws TemplateException, IOException, MessagingException, InterruptedException {
         Item first = order.getItems().get(0);
         if (isNotBlank(first.getNotifyBusinessEmail())) {
 			notifyBusinessOrder(productId, order, first.getNotifyBusinessEmail(), first.getNotifyBusinessEmailSubject(), first.getNotifyBusinessFormFilename());
@@ -106,7 +106,7 @@ public class NotifyService {
 	}
     
     private void notifyBusinessOrder(String productId, Order order, String to, String subject, String filename) 
-    		throws TemplateException, IOException, MessagingException {
+    		throws TemplateException, IOException, MessagingException, InterruptedException {
         if (isBlank(to)) {
             LOG.info("No business email to notify for order receipt: {}", order.getReceipt());
             return;
@@ -119,7 +119,7 @@ public class NotifyService {
         sendEmail(order, to, subject, emailBody, filename, attachments);
     }
 
-    private void notifyCustomerOrder(String productId, Order order, String to, String subject, String filename) throws TemplateException, IOException, MessagingException {
+    private void notifyCustomerOrder(String productId, Order order, String to, String subject, String filename) throws TemplateException, IOException, MessagingException, InterruptedException {
         if (isBlank(to)) {
             LOG.info("No customer email to notify for order receipt: {}", order.getReceipt());
             return;
