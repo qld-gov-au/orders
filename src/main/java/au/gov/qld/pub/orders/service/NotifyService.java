@@ -38,17 +38,17 @@ public class NotifyService {
     private final Configuration templateConfiguration;
     private final OrderGrouper orderGrouper;
     private final InlineTemplateService inlineTemplateService;
-	private final AttachmentService attachmentService;
+    private final AttachmentService attachmentService;
     
     @Autowired
     public NotifyService(ConfigurationService configurationService, OrderDAO orderDAO, JavaMailSender mailSender, 
-    		OrderGrouper orderGrouper, InlineTemplateService inlineTemplateService, AttachmentService attachmentService) {
+            OrderGrouper orderGrouper, InlineTemplateService inlineTemplateService, AttachmentService attachmentService) {
         this.orderDAO = orderDAO;
         this.mailSender = mailSender;
         this.configurationService = configurationService;
         this.orderGrouper = orderGrouper;
         this.inlineTemplateService = inlineTemplateService;
-		this.attachmentService = attachmentService;
+        this.attachmentService = attachmentService;
         this.templateConfiguration = getTemplateConfiguration();
         this.templateConfiguration.setClassForTemplateLoading(getClass(), "/products/emails/");
     }
@@ -90,7 +90,7 @@ public class NotifyService {
     private void notifyOrderWithProductId(String productId, Order order) throws TemplateException, IOException, MessagingException, InterruptedException {
         Item first = order.getItems().get(0);
         if (isNotBlank(first.getNotifyBusinessEmail())) {
-			notifyBusinessOrder(productId, order, first.getNotifyBusinessEmail(), first.getNotifyBusinessEmailSubject(), first.getNotifyBusinessFormFilename());
+            notifyBusinessOrder(productId, order, first.getNotifyBusinessEmail(), first.getNotifyBusinessEmailSubject(), first.getNotifyBusinessFormFilename());
         }
         
         String customerEmailField = first.getNotifyCustomerEmailField();
@@ -100,13 +100,13 @@ public class NotifyService {
         }
     }
 
-	private String getCustomerEmailTo(Order order, String customerEmailField) {
-		return "customerDetails".equals(customerEmailField) ? 
-		        order.getCustomerDetailsMap().get("email") : order.getDeliveryDetailsMap().get("email");
-	}
+    private String getCustomerEmailTo(Order order, String customerEmailField) {
+        return "customerDetails".equals(customerEmailField) ? 
+                order.getCustomerDetailsMap().get("email") : order.getDeliveryDetailsMap().get("email");
+    }
     
     private void notifyBusinessOrder(String productId, Order order, String to, String subject, String filename) 
-    		throws TemplateException, IOException, MessagingException, InterruptedException {
+        throws TemplateException, IOException, MessagingException, InterruptedException {
         if (isBlank(to)) {
             LOG.info("No business email to notify for order receipt: {}", order.getReceipt());
             return;
@@ -129,13 +129,13 @@ public class NotifyService {
         
         String emailBody = prepareTemplate(productId, order, "customer");
         LOG.info("Sending customer email to: {} for order receipt: {}", to, order.getReceipt());
-		sendEmail(order, to, subject, emailBody, filename, attachments);
+        sendEmail(order, to, subject, emailBody, filename, attachments);
     }
     
     private void sendEmail(Order order, String to, String subject, String emailBody, String filename, Map<String, byte[]> attachments) throws MessagingException {
-    	MimeMessage message = mailSender.createMimeMessage();
-    	MimeMessageHelper helper = new MimeMessageHelper(message, !attachments.isEmpty());
-    	
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, !attachments.isEmpty());
+    
         helper.setTo(to);
         helper.setSubject(inlineTemplateService.template("subject", subject, order));
         helper.setText(emailBody);
@@ -143,8 +143,8 @@ public class NotifyService {
         
         int attachmentCounter = 0;
         for (Map.Entry<String, byte[]> attachment : attachments.entrySet()) {
-        	attachmentCounter++;
-			helper.addAttachment(attachmentCounter + "-" + filename, new ByteArrayResource(attachment.getValue()));
+            attachmentCounter++;
+            helper.addAttachment(attachmentCounter + "-" + filename, new ByteArrayResource(attachment.getValue()));
         }
         
         mailSender.send(message);

@@ -5,19 +5,19 @@ import java.util.Properties;
 import au.gov.qld.pub.orders.entity.Item;
 
 public enum ProductProperties {
-	ACCEPT_FIELDS("fields");
-	
-	private final String property;
+    ACCEPT_FIELDS("fields");
+    
+    private final String property;
+    
+    private ProductProperties(String property) {
+        this.property = property;
+    }
+    
+    public String getProperty() {
+        return property;
+    }
 
-	private ProductProperties(String property) {
-		this.property = property;
-	}
-	
-	public String getProperty() {
-		return property;
-	}
-	
-	public static Item populate(Properties properties) {
+    public static Item populate(Properties properties) {
         String deliveryDetailsRequired = properties.getProperty("deliveryDetailsRequired");
         String customerDetailsRequired = properties.getProperty("customerDetailsRequired");
         

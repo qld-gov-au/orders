@@ -262,23 +262,23 @@ public class Item {
         this.productGroup = group;
     }
 
-	public String getNotifyBusinessFormUri() {
-		return notifyBusinessFormUri;
-	}
+    public String getNotifyBusinessFormUri() {
+        return notifyBusinessFormUri;
+    }
 
-	public String getNotifyBusinessFormFilename() {
-		return notifyBusinessFormFilename;
-	}
+    public String getNotifyBusinessFormFilename() {
+        return notifyBusinessFormFilename;
+    }
 
-	public String getNotifyCustomerFormUri() {
-		return notifyCustomerFormUri;
-	}
+    public String getNotifyCustomerFormUri() {
+        return notifyCustomerFormUri;
+    }
 
-	public String getNotifyCustomerFormFilename() {
-		return notifyCustomerFormFilename;
-	}
-	
-	public String getNotifyCustomerFormDownloadTitle() {
-		return notifyCustomerFormDownloadTitle;
-	}
+    public String getNotifyCustomerFormFilename() {
+        return notifyCustomerFormFilename;
+    }
+    
+    public String getNotifyCustomerFormDownloadTitle() {
+        return notifyCustomerFormDownloadTitle;
+    }
 }

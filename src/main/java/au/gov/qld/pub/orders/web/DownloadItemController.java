@@ -24,21 +24,21 @@ import au.gov.qld.pub.orders.service.ServiceException;
 @Controller
 public class DownloadItemController {
     private static final Logger LOG = LoggerFactory.getLogger(DownloadItemController.class);
-	private static final String CONTENT_TYPE = "application/pdf";
-	
-	private final OrderService orderService;
-	private final NotifyService notifyService;
-	private final ItemDAO itemDao;
-	private final AttachmentService attachmentService;
-	private final OrderDAO orderDao;
+    private static final String CONTENT_TYPE = "application/pdf";
+
+    private final OrderService orderService;
+    private final NotifyService notifyService;
+    private final ItemDAO itemDao;
+    private final AttachmentService attachmentService;
+    private final OrderDAO orderDao;
     
     @Autowired
     public DownloadItemController(OrderService orderService, NotifyService notifyService, AttachmentService attachmentService, ItemDAO itemDao, OrderDAO orderDao) {
         this.orderService = orderService;
         this.notifyService = notifyService;
-		this.itemDao = itemDao;
-		this.attachmentService = attachmentService;
-		this.orderDao = orderDao;
+        this.itemDao = itemDao;
+        this.attachmentService = attachmentService;
+        this.orderDao = orderDao;
     }
     
     @RequestMapping(value = "/download/{orderId}/{itemId}")
@@ -47,17 +47,17 @@ public class DownloadItemController {
         
         Item item = itemDao.findOne(itemId);
         if (item == null) {
-        	throw new IllegalArgumentException("Unknown item id: " + itemId);
+        throw new IllegalArgumentException("Unknown item id: " + itemId);
         }
         
         if (!item.isPaid()) {
-        	orderService.notifyPayment(orderId);
-        	notifyService.send(orderId);
-        	item = itemDao.findOne(itemId);
+        orderService.notifyPayment(orderId);
+        notifyService.send(orderId);
+        item = itemDao.findOne(itemId);
         }
         
         if (!item.isPaid()) {
-        	throw new IllegalArgumentException("Attempted to download unpaid item id: " + itemId + " with order id" + orderId);
+        throw new IllegalArgumentException("Attempted to download unpaid item id: " + itemId + " with order id" + orderId);
         }
 
         String filename = item.getNotifyCustomerFormFilename();
@@ -65,7 +65,7 @@ public class DownloadItemController {
         
         response.setContentType(CONTENT_TYPE);
         response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
-		IOUtils.write(data, response.getOutputStream());
+        IOUtils.write(data, response.getOutputStream());
         response.getOutputStream().flush();   
         response.getOutputStream().close();
     }
