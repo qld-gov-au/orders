@@ -20,6 +20,7 @@ public class ConfigurationService {
     @Value("${notifyFormRetryCount}") private Integer notifyFormRetryCount;
     @Value("${notifyFormRetryWait}") private Integer notifyFormRetryWait;
     @Value("${notifyFormTimeout}") private Integer notifyFormTimeout;
+    @Value("${scheduler.statusCheck.maxAgeForRetry}") private Integer maxAgeForRetry;
 
     public String getContext() {
         return context;
@@ -79,5 +80,9 @@ public class ConfigurationService {
     
     public int getNotifyFormTimeout() {
         return notifyFormTimeout;
+    }
+
+    public int getMaxAgeForRetry() {
+        return maxAgeForRetry;
     }
 }

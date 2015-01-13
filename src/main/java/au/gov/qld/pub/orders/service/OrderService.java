@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -135,7 +136,7 @@ public class OrderService {
         
         String receipt = responseParser.getReceipt(statusResponse);
         if (isBlank(receipt)) {
-            throw new IllegalStateException("Order: " + orderId + " is not paid");
+            throw new ServiceException("Order: " + orderId + " is not paid");
         }
         
         LOG.info("Getting cart details of order: {}", orderId);
@@ -167,6 +168,10 @@ public class OrderService {
         }
         
         return allowedFields;
+    }
+
+    public Iterable<String> findUnpaidOrderIds(Date minCreated) {
+        return orderDAO.findUnpaidOrdersCreatedAfter(minCreated);
     }
     
     

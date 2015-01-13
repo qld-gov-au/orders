@@ -1,5 +1,7 @@
 package au.gov.qld.pub.orders.dao;
 
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -8,6 +10,7 @@ import static org.hamcrest.Matchers.nullValue;
 import java.util.Map;
 import java.util.UUID;
 
+import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -84,5 +87,22 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
         Order findByOrderId = dao.findOne(id);
         assertThat(findByOrderId, notNullValue());
         assertThat(findByOrderId.getId(), is(id));
+    }
+    
+    @Test
+    public void findUnpaidOrdersCreatedAfterMinDate() {
+        Order unpaidOrder = new Order(UUID.randomUUID().toString());
+        String unpaidId = unpaidOrder.getId();
+        dao.save(unpaidOrder);
+        
+        Order paidOrder = new Order(UUID.randomUUID().toString());
+        paidOrder.setPaid("some paid");
+        String paidId = paidOrder.getId();
+        dao.save(paidOrder);
+        
+        
+        Iterable<String> unpaidIds = dao.findUnpaidOrdersCreatedAfter(new LocalDateTime().minusHours(1).toDate());
+        assertThat(unpaidIds, hasItem(unpaidId));
+        assertThat(unpaidIds, not(hasItem(paidId)));
     }
 }

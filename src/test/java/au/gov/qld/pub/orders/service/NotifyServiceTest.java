@@ -50,6 +50,7 @@ public class NotifyServiceTest {
     private static final String BUSINESS_TO = "businesstoemail";
     private static final String FROM = "somefromaddress";
     private static final String TEMPLATED = "some subject templated";
+    private static final String PAID = "some paid at";
     
     @Mock ConfigurationService configurationService;
     @Mock OrderDAO orderDAO;
@@ -119,6 +120,7 @@ public class NotifyServiceTest {
     public void notifyToBusiness() throws Exception {
         when(item.getNotifyBusinessEmail()).thenReturn(BUSINESS_TO);
         when(item.getNotifyBusinessEmailSubject()).thenReturn(BUSINESS_SUBJECT);
+        when(order.getPaid()).thenReturn(PAID);
         service.send(order.getId());
 
         verify(mailSender).send(message);
@@ -129,12 +131,24 @@ public class NotifyServiceTest {
         verify(order).setNotified(anyString());
         verify(orderDAO).save(order);        
     }
+    
+    @Test
+    public void dontNotifyWhenNotPaid() throws Exception {
+        when(order.getPaid()).thenReturn(null);
+        service.send(order.getId());
+
+        verifyZeroInteractions(mailSender);
+        verifyZeroInteractions(attachmentService);
+        verify(order, never()).setNotified(anyString());
+        verify(orderDAO, never()).save(order);
+    }
 
     @Test
     public void notifyToCustomerFromCustomerDetails() throws Exception {
         when(item.getNotifyCustomerEmailField()).thenReturn("customerDetails");
         when(item.getNotifyCustomerEmailSubject()).thenReturn(CUSTOMER_SUBJECT);
         when(groupedOrder.getCustomerDetailsMap()).thenReturn(of("email", CUSTOMER_TO));
+        when(order.getPaid()).thenReturn(PAID);
         service.send(order.getId());
 
         verify(mailSender).send(message);
@@ -148,6 +162,7 @@ public class NotifyServiceTest {
     
     @Test
     public void notifyToCustomerFromDeliveryDetails() throws Exception {
+        when(order.getPaid()).thenReturn(PAID);
         when(item.getNotifyCustomerEmailField()).thenReturn("deliveryDetails");
         when(item.getNotifyCustomerEmailSubject()).thenReturn(CUSTOMER_SUBJECT);
         when(groupedOrder.getDeliveryDetailsMap()).thenReturn(of("email", CUSTOMER_TO));        

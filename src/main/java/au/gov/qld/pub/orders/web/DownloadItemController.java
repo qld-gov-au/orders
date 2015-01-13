@@ -47,17 +47,17 @@ public class DownloadItemController {
         
         Item item = itemDao.findOne(itemId);
         if (item == null) {
-        throw new IllegalArgumentException("Unknown item id: " + itemId);
+            throw new IllegalArgumentException("Unknown item id: " + itemId);
         }
         
         if (!item.isPaid()) {
-        orderService.notifyPayment(orderId);
-        notifyService.send(orderId);
-        item = itemDao.findOne(itemId);
+            orderService.notifyPayment(orderId);
+            notifyService.send(orderId);
+            item = itemDao.findOne(itemId);
         }
         
         if (!item.isPaid()) {
-        throw new IllegalArgumentException("Attempted to download unpaid item id: " + itemId + " with order id" + orderId);
+            throw new IllegalArgumentException("Attempted to download unpaid item id: " + itemId + " with order id" + orderId);
         }
 
         String filename = item.getNotifyCustomerFormFilename();

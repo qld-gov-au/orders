@@ -65,6 +65,11 @@ public class NotifyService {
             return;
         }
         
+        if (isBlank(order.getPaid())) {
+            LOG.error("Attempted to notify unpaid order: {}", orderId);
+            return;
+        }
+        
         LOG.info("Notifying order: {}", order.getId());
         
         Map<String, Order> productIdOrders = orderGrouper.byProductGroup(order);

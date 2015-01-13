@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -147,7 +148,7 @@ public class OrderServiceTest {
         orderService.notifyPayment("anything");
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = ServiceException.class)
     public void throwExceptionWhenCartNotPaidOnNotify() throws ServiceException {
         String id = order.getId();
         when(orderDAO.findOne(id)).thenReturn(order);
@@ -210,5 +211,14 @@ public class OrderServiceTest {
         when(itemPropertiesDAO.find(PRODUCT_ID)).thenReturn(properties1);
         
         assertThat((Set<String>)orderService.getAllowedFields(PRODUCT_ID, ProductProperties.ACCEPT_FIELDS), is(Collections.EMPTY_SET));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void returnUnpaidOrdersAfterMinCreated() {
+        Date minCreated = new Date();
+        Iterable<String> unpaidAfterMinCreated = mock(Iterable.class);
+        when(orderDAO.findUnpaidOrdersCreatedAfter(minCreated)).thenReturn(unpaidAfterMinCreated);
+        assertThat(orderService.findUnpaidOrderIds(minCreated), is(unpaidAfterMinCreated));
     }
 }

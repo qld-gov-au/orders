@@ -3,6 +3,7 @@ package au.gov.qld.pub.orders.entity;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -34,6 +35,8 @@ public class Order {
     private List<Item> items = new ArrayList<Item>();
     
     @Column
+    private Date created;
+    @Column
     private String customerDetails;
     @Column
     private String deliveryDetails;
@@ -56,10 +59,15 @@ public class Order {
     public Order(String cartId) {
         this();
         this.cartId = cartId;
+        this.created = new Date();
     }
     
     public String getCartId() {
         return cartId;
+    }
+    
+    public Date getCreated() {
+        return created;
     }
     
     public void setCartId(String cartId) {
