@@ -14,7 +14,6 @@
         <jetty.version>6.1.4</jetty.version>
         <spring.version>4.0.6.RELEASE</spring.version>
         <hibernate.version>4.2.5.Final</hibernate.version>
-        <commons-dbcp.version>1.4</commons-dbcp.version>
         <maven-compiler-plugin.version>2.3.1</maven-compiler-plugin.version>
         <maven-jetty-plugin.version>6.1.24</maven-jetty-plugin.version>
         <maven-jetty-plugin.port>8091</maven-jetty-plugin.port>
@@ -105,16 +104,10 @@
             <version>${hibernate.version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-            <version>${commons-dbcp.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>c3p0</groupId>
+            <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
-            <version>0.9.1.2</version>
+            <version>0.9.5</version>
         </dependency>
-        
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
