@@ -57,7 +57,7 @@ public class OrderService {
         this.responseParser = responseParser;
     }
     
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public Order add(List<Item> items, String cartId) throws ServiceException {
         Order order = findByCartId(cartId);
         if (order == null) {
@@ -118,7 +118,7 @@ public class OrderService {
         return orderDAO.findOne(orderId);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void notifyPayment(String orderId) throws ServiceException {
         Order order = findByOrderId(orderId);
         if (order == null) {

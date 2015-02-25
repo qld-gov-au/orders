@@ -57,7 +57,7 @@ public class NotifyService {
         return new Configuration();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = ServiceException.class)
     public void send(String orderId) throws ServiceException {
         Order order = orderDAO.findOne(orderId);
         if (isNotBlank(order.getNotified())) {
@@ -82,16 +82,11 @@ public class NotifyService {
             throw new ServiceException(e);
         }
         
-        setNotifed(order);
+        order.setNotified(new LocalDateTime().toString());
+        orderDAO.save(order);
         LOG.info("Notified order: {}", order.getId());
     }
 
-    @Transactional
-    private void setNotifed(Order order) {
-        order.setNotified(new LocalDateTime().toString());
-        orderDAO.save(order);
-    }
-    
     private void notifyOrderWithProductId(String productId, Order order) throws TemplateException, IOException, MessagingException, InterruptedException {
         Item first = order.getItems().get(0);
         if (isNotBlank(first.getNotifyBusinessEmail())) {
