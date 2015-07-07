@@ -1,0 +1,21 @@
+<#escape x as x?html><@compress single_line=true>
+<NoticeToPayRequest
+	xmlns="http://smartservice.qld.gov.au/payment/schemas/notice_to_pay_1_4">
+	<paymentRequest id="${paymentRequestId}">
+		<onlineService>${config.serviceWsUsername}</onlineService>
+		<paymentOptions>
+			<creditCard />
+		</paymentOptions>
+		<item>
+			<agency>${config.serviceFranchise}</agency>
+			<description>${paymentInformation.description}</description>
+			<cost>${paymentInformation.amountOwingInCents}</cost>
+			<gst>${paymentInformation.amountOwingGstInCents}</gst>
+			<reference>${paymentInformation.reference}</reference>
+			<disbursementId>${config.noticeToPayDisbursementId}</disbursementId>
+		</item>
+		<returnUrl>${sourceUrl}</returnUrl>
+		<notificationUrl>${config.noticeToPayNotifyUrl}/${noticeToPayId}</notificationUrl>
+	</paymentRequest>
+</NoticeToPayRequest>
+</@compress></#escape>

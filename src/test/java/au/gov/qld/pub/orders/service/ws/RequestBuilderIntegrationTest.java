@@ -14,16 +14,22 @@ import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
 import au.gov.qld.pub.orders.entity.CartState;
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
+import au.gov.qld.pub.orders.service.ConfigurationService;
+import au.gov.qld.pub.orders.service.PaymentInformation;
 import au.gov.qld.pub.orders.service.ServiceException;
+import au.gov.qld.pub.orders.service.StubPaymentInformationService;
 
 import com.google.common.collect.ImmutableMap;
 
 
 public class RequestBuilderIntegrationTest extends ApplicationContextAwareTest {
     static final String CART_ID = "some cart id";
+	private static final String SOURCE_URL = "some source";
+	private static final String NTP_ID = "some ntp id";
     
     @Autowired RequestBuilder builder;
     @Autowired ItemPropertiesDAO itemPropertiesDAO;
+    @Autowired ConfigurationService config;
     
     Order order;
     Item item;
@@ -74,5 +80,14 @@ public class RequestBuilderIntegrationTest extends ApplicationContextAwareTest {
         String request = builder.addRequest(order);
         assertThat(request, not(containsString("<cartId>")));
     }
+    
+    @Test
+    public void createNoticeToPayRequestWithInformation() throws ServiceException {
+    	PaymentInformation paymentInformation = StubPaymentInformationService.STUB;
+		String request = builder.noticeToPay(paymentInformation, NTP_ID, SOURCE_URL);
+		assertThat(request, containsString("<paymentRequest id=\"" + NTP_ID.substring(NTP_ID.length() - 10) +  "\">"));
+		assertThat(request, containsString("<returnUrl>" + SOURCE_URL + "</returnUrl>"));
+		assertThat(request, containsString("<notificationUrl>" + config.getNoticeToPayNotifyUrl() + "/" + NTP_ID + "</notificationUrl>"));
+	}
 }
 

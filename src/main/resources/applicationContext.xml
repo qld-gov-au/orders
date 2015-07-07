@@ -23,6 +23,8 @@
     <context:component-scan base-package="au.gov.qld.pub.orders"/>
     <encryption:encryptable-property-placeholder encryptor="configurationEncryptor" location="classpath:application.properties"/>
     
+    <import resource="classpath:order-extension.xml" />
+    
     <task:executor id="taskExecutor" pool-size="5"/>
     <task:scheduler id="taskScheduler" pool-size="10"/>
     <task:annotation-driven executor="taskExecutor" scheduler="taskScheduler"/>

@@ -21,6 +21,11 @@ public class ConfigurationService {
     @Value("${notifyFormRetryWait}") private Integer notifyFormRetryWait;
     @Value("${notifyFormTimeout}") private Integer notifyFormTimeout;
     @Value("${scheduler.statusCheck.maxAgeForRetry}") private Integer maxAgeForRetry;
+    @Value("${noticeToPay.default.redirect}") private String noticeToPayDefaultRedirect;
+    @Value("${noticeToPay.source.pattern}") private String noticeToPaySourcePattern;
+    @Value("${noticeToPay.id.pattern}") private String noticeToPayIdPattern;
+    @Value("${noticeToPay.notifyUrl}") private String noticeToPayNotifyUrl;
+    @Value("${noticeToPay.disbursementId}") private String noticeToPayDisbursementId;
 
     public String getContext() {
         return context;
@@ -85,4 +90,24 @@ public class ConfigurationService {
     public int getMaxAgeForRetry() {
         return maxAgeForRetry;
     }
+
+	public String getNoticeToPayDefaultRedirect() {
+		return noticeToPayDefaultRedirect;
+	}
+
+	public String getNoticeToPaySourcePattern() {
+		return noticeToPaySourcePattern;
+	}
+
+	public String getNoticeToPayIdPattern() {
+		return noticeToPayIdPattern;
+	}
+
+	public String getNoticeToPayNotifyUrl() {
+		return noticeToPayNotifyUrl;
+	}
+
+	public String getNoticeToPayDisbursementId() {
+		return noticeToPayDisbursementId;
+	}
 }
