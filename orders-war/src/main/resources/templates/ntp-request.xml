@@ -9,8 +9,8 @@
 		<item>
 			<agency>${config.serviceFranchise}</agency>
 			<description>${paymentInformation.description}</description>
-			<cost>${paymentInformation.amountOwingInCents}</cost>
-			<gst>${paymentInformation.amountOwingGstInCents}</gst>
+			<cost>${paymentInformation.amountOwingInCents?c}</cost>
+			<gst>${paymentInformation.amountOwingGstInCents?c}</gst>
 			<reference>${paymentInformation.reference}</reference>
 			<disbursementId>${config.noticeToPayDisbursementId}</disbursementId>
 		</item>
