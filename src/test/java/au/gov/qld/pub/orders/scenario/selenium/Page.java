@@ -52,4 +52,9 @@ public class Page {
         }
         return results;
     }
+    
+    protected void setText(String text, WebElement element) {
+        element.clear();
+        element.sendKeys(text);
+    }
 }

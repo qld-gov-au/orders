@@ -41,29 +41,34 @@ public class NoticeToPayControllerTest {
 	public void redirectToDefaultWhenInvalidSource() throws ServiceException {
 		RedirectView redirect = controller.payInFull(ID, "bogus");
 		assertThat(redirect.getUrl(), is(DEFAULT_REDIRECT));
+		assertThat(redirect.isExposePathVariables(), is(false));
 	}
 	
 	@Test
 	public void redirectToDefaultWhenBlankSource() throws ServiceException {
 		RedirectView redirect = controller.payInFull(ID, null);
 		assertThat(redirect.getUrl(), is(DEFAULT_REDIRECT));
+		assertThat(redirect.isExposePathVariables(), is(false));
 	}
 	
 	@Test
 	public void redirectToSourceWhenInvalidId() throws ServiceException {
 		RedirectView redirect = controller.payInFull("bogus", SOURCE);
 		assertThat(redirect.getUrl(), is(SOURCE));
+		assertThat(redirect.isExposePathVariables(), is(false));
 	}
 	
 	@Test
 	public void redirectToSourceWhenBlankId() throws ServiceException {
 		RedirectView redirect = controller.payInFull(null, SOURCE);
 		assertThat(redirect.getUrl(), is(SOURCE));
+		assertThat(redirect.isExposePathVariables(), is(false));
 	}
 	
 	@Test
 	public void redirectToNoticeToPay() throws ServiceException {
 		RedirectView redirect = controller.payInFull(ID, SOURCE);
 		assertThat(redirect.getUrl(), is(NOTICE_TO_PAY));
+		assertThat(redirect.isExposePathVariables(), is(false));
 	}
 }

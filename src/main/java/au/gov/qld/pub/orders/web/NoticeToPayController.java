@@ -34,17 +34,19 @@ public class NoticeToPayController {
     }
     
     @RequestMapping(value = "/pay-in-full")
-    public RedirectView payInFull(@RequestParam String id, @RequestParam String source) throws ServiceException {
-    	if (!validateInput(source, sourcePattern)) {
-    		return new RedirectView(defaultRedirect);
+    public RedirectView payInFull(@RequestParam String sourceId, @RequestParam String sourceUrl) throws ServiceException {
+    	if (!validateInput(sourceUrl, sourcePattern)) {
+    	    LOG.info("Invalid source url");
+    	    return WebUtils.redirect(defaultRedirect);
     	}
     	
-    	if (!validateInput(id, idPattern)) {
-    		return new RedirectView(source);
+    	if (!validateInput(sourceId, idPattern)) {
+    	    LOG.info("Invalid source ID");
+    	    return WebUtils.redirect(sourceUrl);
     	}
     	
-    	LOG.info("Creating notice to pay for {}", id);
-    	return new RedirectView(service.create(id, source));
+    	LOG.info("Creating notice to pay for {}", sourceId);
+    	return WebUtils.redirect(service.create(sourceId, sourceUrl));
     }
 
 	private boolean validateInput(String value, Pattern pattern) {

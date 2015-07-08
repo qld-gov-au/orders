@@ -9,6 +9,9 @@ import org.openqa.selenium.support.PageFactory;
 public class SubmissionPage extends Page {
     WebElement confirm;
     WebElement group;
+    WebElement noticeToPay;
+    WebElement sourceId;
+    WebElement sourceUrl;
     List<WebElement> productIds;
     
     public static SubmissionPage open() {
@@ -18,7 +21,7 @@ public class SubmissionPage extends Page {
         return submissionPage;
     }
     
-    public ConfirmPage confirm() {
+    public ConfirmPage order() {
         confirm.click();
         return PageFactory.initElements(getDriver(), ConfirmPage.class);
     }
@@ -28,5 +31,14 @@ public class SubmissionPage extends Page {
         for (WebElement productId : productIds) {
             productId.clear();
         }
+    }
+
+    public String noticeToPay(boolean useDefault, String sourceId, String sourceUrl) {
+        if (!useDefault) {
+            setText(sourceId, this.sourceId);
+            setText(sourceUrl, this.sourceUrl);
+        }
+        noticeToPay.click();
+        return getDriver().getCurrentUrl();
     }
 }
