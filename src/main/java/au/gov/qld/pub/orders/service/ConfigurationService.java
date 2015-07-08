@@ -12,6 +12,8 @@ public class ConfigurationService {
     @Value("${sourceUrl}") private String sourceUrl;
     @Value("${serviceWsUsername}") private String serviceWsUsername;
     @Value("${serviceWsPassword}") private String serviceWsPassword;
+    @Value("${noticeToPay.serviceWsUsername}") private String noticeToPayServiceWsUsername;
+    @Value("${noticeToPay.serviceWsPassword}") private String noticeToPayServiceWsPassword;
     @Value("${serviceWsEndpoint}") private String serviceWsEndpoint;
     @Value("${serviceWsNotify}") private String serviceWsNotify;
     @Value("${serviceFullUrl}") private String serviceFullUrl;
@@ -110,4 +112,13 @@ public class ConfigurationService {
 	public String getNoticeToPayDisbursementId() {
 		return noticeToPayDisbursementId;
 	}
+
+    public String getNoticeToPayServiceWsUsername() {
+        return noticeToPayServiceWsUsername;
+    }
+
+    public String getNoticeToPayServiceWsPassword() {
+        return noticeToPayServiceWsPassword;
+    }
+
 }

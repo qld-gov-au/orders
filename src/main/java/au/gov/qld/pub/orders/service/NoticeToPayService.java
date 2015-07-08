@@ -31,8 +31,8 @@ public class NoticeToPayService {
 	public NoticeToPayService(ConfigurationService config, PaymentInformationService paymentInformationService, 
 			NoticeToPayDAO noticeToPayDAO, RequestBuilder requestBuilder) throws UnsupportedEncodingException {
 		this.paymentInformationService = paymentInformationService;
-		this.username = config.getServiceWsUsername();
-        this.password = config.getServiceWsPassword().getBytes("UTF-8");
+		this.username = config.getNoticeToPayServiceWsUsername();
+        this.password = config.getNoticeToPayServiceWsPassword().getBytes("UTF-8");
 		this.soapClient = getSOAPClient(config.getServiceWsEndpoint());
 		this.noticeToPayDAO = noticeToPayDAO;
 		this.requestBuilder = requestBuilder;
@@ -50,8 +50,10 @@ public class NoticeToPayService {
 		}
 
 		NoticeToPay noticeToPay = new NoticeToPay(sourceId);
+		noticeToPayDAO.save(noticeToPay);
 		String request = requestBuilder.noticeToPay(paymentInformation, noticeToPay.getId() , sourceUrl);
-		LOG.info("Sending request: {}", request);
+		
+		LOG.info("Sending notice to pay request for source ID: {}", sourceId);
 		String response = soapClient.sendRequest(username, password, NS, request);
 		Matcher matcher = RESPONSE_PATTERN.matcher(response);
 		if (!matcher.find()) {
@@ -60,7 +62,6 @@ public class NoticeToPayService {
 		
 		String redirect = matcher.group(1);
 		LOG.info("Received redirect to: {}", redirect);
-		noticeToPayDAO.save(noticeToPay);
 		return redirect;
 	}
 

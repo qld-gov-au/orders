@@ -46,8 +46,8 @@ public class NoticeToPayServiceTest {
 	@Before
     public void setUp() throws Exception {
 		when(config.getServiceWsEndpoint()).thenReturn(ENDPOINT);
-		when(config.getServiceWsPassword()).thenReturn(PASSWORD);
-		when(config.getServiceWsUsername()).thenReturn(USERNAME);
+		when(config.getNoticeToPayServiceWsPassword()).thenReturn(PASSWORD);
+		when(config.getNoticeToPayServiceWsUsername()).thenReturn(USERNAME);
 		when(requestBuilder.noticeToPay(eq(paymentInformation), anyString(), eq(SOURCE_URL))).thenReturn(REQUEST);
 		when(soapClient.sendRequest(USERNAME, PASSWORD.getBytes("UTF-8"), NoticeToPayService.NS, REQUEST)).thenReturn(RESPONSE);
 		when(paymentInformation.getAmountOwingInCents()).thenReturn(OWING);
@@ -85,7 +85,7 @@ public class NoticeToPayServiceTest {
 			service.create(SOURCE_ID, SOURCE_URL);
 			org.junit.Assert.fail("Should have thrown exception");
 		} catch (ServiceException e) {
-			verifyZeroInteractions(noticeToPayDAO);
+		    verify(noticeToPayDAO).save((NoticeToPay)argThat(hasProperty("paymentInformationId", equalTo(SOURCE_ID))));
 		}
 	}
 }
