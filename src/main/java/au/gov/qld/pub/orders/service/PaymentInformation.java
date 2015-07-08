@@ -1,5 +1,6 @@
 package au.gov.qld.pub.orders.service;
 
+// Warning: do not put anything sensitive in this unless you know your source ID cannot be guessed.
 public class PaymentInformation {
 	private final long amountOwingInCents;
 	private final long amountOwingGstInCents;

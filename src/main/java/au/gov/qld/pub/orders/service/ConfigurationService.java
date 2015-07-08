@@ -26,8 +26,8 @@ public class ConfigurationService {
     @Value("${noticeToPay.default.redirect}") private String noticeToPayDefaultRedirect;
     @Value("${noticeToPay.source.pattern}") private String noticeToPaySourcePattern;
     @Value("${noticeToPay.id.pattern}") private String noticeToPayIdPattern;
-    @Value("${noticeToPay.notifyUrl}") private String noticeToPayNotifyUrl;
     @Value("${noticeToPay.disbursementId}") private String noticeToPayDisbursementId;
+    @Value("${noticeToPay.serviceWsNotify}") private String noticeToPayServiceWsNotify;
 
     public String getContext() {
         return context;
@@ -105,10 +105,6 @@ public class ConfigurationService {
 		return noticeToPayIdPattern;
 	}
 
-	public String getNoticeToPayNotifyUrl() {
-		return noticeToPayNotifyUrl;
-	}
-
 	public String getNoticeToPayDisbursementId() {
 		return noticeToPayDisbursementId;
 	}
@@ -119,6 +115,10 @@ public class ConfigurationService {
 
     public String getNoticeToPayServiceWsPassword() {
         return noticeToPayServiceWsPassword;
+    }
+
+    public String getNoticeToPayServiceWsNotify() {
+        return noticeToPayServiceWsNotify;
     }
 
 }

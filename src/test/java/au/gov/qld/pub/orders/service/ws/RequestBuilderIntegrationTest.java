@@ -87,7 +87,13 @@ public class RequestBuilderIntegrationTest extends ApplicationContextAwareTest {
 		String request = builder.noticeToPay(paymentInformation, NTP_ID, SOURCE_URL);
 		assertThat(request, containsString("<paymentRequest id=\"" + NTP_ID.substring(NTP_ID.length() - 10) +  "\">"));
 		assertThat(request, containsString("<returnUrl>" + SOURCE_URL + "</returnUrl>"));
-		assertThat(request, containsString("<notificationUrl>" + config.getNoticeToPayNotifyUrl() + "/" + NTP_ID + "</notificationUrl>"));
+		assertThat(request, containsString("<notificationUrl>" + config.getNoticeToPayServiceWsNotify() + "/ntp-notify/" + NTP_ID + "</notificationUrl>"));
 	}
+    
+    @Test
+    public void createNoticeToPayQueryRequest() {
+        String request = builder.noticeToPayQuery(NTP_ID);
+        assertThat(request, containsString("<paymentRequestId>" + NTP_ID.substring(NTP_ID.length() - 10) + "</paymentRequestId>"));
+    }
 }
 

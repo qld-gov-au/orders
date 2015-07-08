@@ -15,7 +15,7 @@
 			<disbursementId>${config.noticeToPayDisbursementId}</disbursementId>
 		</item>
 		<returnUrl>${sourceUrl}</returnUrl>
-		<notificationUrl>${config.noticeToPayNotifyUrl}/${noticeToPayId}</notificationUrl>
+		<notificationUrl>${config.noticeToPayServiceWsNotify}/ntp-notify/${noticeToPayId}</notificationUrl>
 	</paymentRequest>
 </NoticeToPayRequest>
 </@compress></#escape>

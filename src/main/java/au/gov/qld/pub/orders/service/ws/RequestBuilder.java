@@ -18,6 +18,10 @@ import freemarker.template.TemplateException;
 
 @Component
 public class RequestBuilder {
+    private static final String NTP_QUERY_TEMPLATE = 
+        "<PaymentQueryRequest xmlns=\"http://smartservice.qld.gov.au/payment/schemas/payment_query_1_0\">"
+        + "<paymentRequestId>%s</paymentRequestId>"
+        +"</PaymentQueryRequest>";
 
     private final Template shoppingCartRequestTemplate;
     private final ConfigurationService configurationService;
@@ -62,6 +66,11 @@ public class RequestBuilder {
         dataModel.put("noticeToPayId", noticeToPayId);
         dataModel.put("sourceUrl", sourceUrl);
         return processTemplate(noticeToPayRequestTemplate, dataModel);
+	}
+	
+	public String noticeToPayQuery(String noticeToPayId) {
+	    String paymentRequestId = noticeToPayId.substring(noticeToPayId.length() - 10);
+	    return String.format(NTP_QUERY_TEMPLATE, paymentRequestId);
 	}
 
 }

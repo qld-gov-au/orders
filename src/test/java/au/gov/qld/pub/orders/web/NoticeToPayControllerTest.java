@@ -1,7 +1,11 @@
 package au.gov.qld.pub.orders.web;
 
+import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -23,6 +27,7 @@ public class NoticeToPayControllerTest {
 	private static final String ID = "1";
 	private static final String SOURCE = "t";
 	private static final String NOTICE_TO_PAY = "some notice to pay";
+    private static final String NOTICE_TO_PAY_ID = "some notice to pay id";	
 
 	NoticeToPayController controller;
 	@Mock ConfigurationService config;
@@ -71,4 +76,34 @@ public class NoticeToPayControllerTest {
 		assertThat(redirect.getUrl(), is(NOTICE_TO_PAY));
 		assertThat(redirect.isExposePathVariables(), is(false));
 	}
+	
+	@Test
+	public void notifyById() throws ServiceException {
+	    controller.notifyPayment(NOTICE_TO_PAY_ID);
+	    verify(service).notifyPayment(NOTICE_TO_PAY_ID);
+	}
+	
+	@Test
+    public void throwExceptionIfNotifyByIdInvalidFormat() throws ServiceException {
+	    try {
+	        controller.notifyPayment(null);
+	        fail();
+	    } catch (ServiceException e) {
+	        verifyZeroInteractions(service);
+	    }
+	    
+	    try {
+            controller.notifyPayment("");
+            fail();
+        } catch (ServiceException e) {
+            verifyZeroInteractions(service);
+        }
+	    
+	    try {
+            controller.notifyPayment(repeat("a", 100));
+            fail();
+        } catch (ServiceException e) {
+            verifyZeroInteractions(service);
+        }
+    }
 }
