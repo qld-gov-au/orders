@@ -26,7 +26,7 @@ public class RequestBuilder {
     private final Template shoppingCartRequestTemplate;
     private final ConfigurationService configurationService;
     private final TemplateItemBuilder templateItemBuilder;
-	private final Template noticeToPayRequestTemplate;
+    private final Template noticeToPayRequestTemplate;
 
     @Autowired
     public RequestBuilder(ConfigurationService configurationService, TemplateItemBuilder templateItemBuilder) throws IOException {
@@ -46,18 +46,18 @@ public class RequestBuilder {
         return processTemplate(shoppingCartRequestTemplate, dataModel);
     }
 
-	private String processTemplate(Template template, Map<String, Object> dataModel) throws ServiceException {
-		try {
-        	StringWriter writer = new StringWriter();
-        	template.process(dataModel, writer);
+    private String processTemplate(Template template, Map<String, Object> dataModel) throws ServiceException {
+        try {
+            StringWriter writer = new StringWriter();
+            template.process(dataModel, writer);
             writer.close();
             return writer.toString();
         } catch (TemplateException | IOException e) {
             throw new ServiceException(e);
         }
-	}
+    }
 
-	public String noticeToPay(PaymentInformation paymentInformation, String noticeToPayId, String sourceUrl) throws ServiceException {
+    public String noticeToPay(PaymentInformation paymentInformation, String noticeToPayId, String sourceUrl) throws ServiceException {
         Map<String, Object> dataModel = new HashMap<>();
         // Payment gateway only allows 8-10 character IDs
         dataModel.put("paymentRequestId", noticeToPayId.substring(noticeToPayId.length() - 10));
@@ -66,11 +66,11 @@ public class RequestBuilder {
         dataModel.put("noticeToPayId", noticeToPayId);
         dataModel.put("sourceUrl", sourceUrl);
         return processTemplate(noticeToPayRequestTemplate, dataModel);
-	}
-	
-	public String noticeToPayQuery(String noticeToPayId) {
-	    String paymentRequestId = noticeToPayId.substring(noticeToPayId.length() - 10);
-	    return String.format(NTP_QUERY_TEMPLATE, paymentRequestId);
-	}
+    }
+    
+    public String noticeToPayQuery(String noticeToPayId) {
+        String paymentRequestId = noticeToPayId.substring(noticeToPayId.length() - 10);
+        return String.format(NTP_QUERY_TEMPLATE, paymentRequestId);
+    }
 
 }

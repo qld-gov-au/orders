@@ -39,7 +39,7 @@ public class AttachmentServiceTest {
     private static final Integer RETRY_COUNT = 1;
     private static final Integer RETRY_WAIT = 1;
     private static final Integer TIMEOUT = 1;
-	private static final String PAID_AT = "paid at";
+    private static final String PAID_AT = "paid at";
     private static final String RECEIPT = "receipt";
     private static final String QUANTITY_PAID = "1";
     private static final String BUSINESS_CONTENT = "business content";
@@ -124,7 +124,7 @@ public class AttachmentServiceTest {
     
     @Test
     public void retryWhenCannotDownload() throws Exception {
-    	when(config.getNotifyFormRetryCount()).thenReturn(2);
+        when(config.getNotifyFormRetryCount()).thenReturn(2);
         service = new AttachmentService(config) {
             @Override
             protected HttpClient createClient() {
@@ -132,7 +132,7 @@ public class AttachmentServiceTest {
             }
         };
         
-    	when(statusLine.getStatusCode()).thenReturn(500, AttachmentService.OKAY_STATUS_CODE);
+        when(statusLine.getStatusCode()).thenReturn(500, AttachmentService.OKAY_STATUS_CODE);
         when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))))
             .thenReturn(customerResponse);
         
@@ -151,7 +151,7 @@ public class AttachmentServiceTest {
     
     @Test(expected = IOException.class)
     public void throwExceptionWhenRetriesExhausted() throws Exception {
-    	when(config.getNotifyFormRetryCount()).thenReturn(2);
+        when(config.getNotifyFormRetryCount()).thenReturn(2);
         service = new AttachmentService(config) {
             @Override
             protected HttpClient createClient() {
@@ -159,15 +159,15 @@ public class AttachmentServiceTest {
             }
         };
         
-    	when(statusLine.getStatusCode()).thenReturn(500);
+        when(statusLine.getStatusCode()).thenReturn(500);
         when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))))
             .thenReturn(customerResponse);
         
         try {
-        	service.retrieve(order, NotifyType.CUSTOMER);
+            service.retrieve(order, NotifyType.CUSTOMER);
         } catch(IOException e) {
-        	verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))));
-        	throw e;
+            verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))));
+            throw e;
         }
     }
 
@@ -178,7 +178,7 @@ public class AttachmentServiceTest {
                 HttpPost post = (HttpPost)item;
                 System.out.println("Request to: " + post.getURI().toString());
                 if (!uri.equals(post.getURI().toString())) {
-                	return false;
+                    return false;
                 }
                 
                 UrlEncodedFormEntity entity = (UrlEncodedFormEntity) post.getEntity();

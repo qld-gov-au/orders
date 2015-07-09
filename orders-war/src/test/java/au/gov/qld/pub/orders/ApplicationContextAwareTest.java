@@ -24,16 +24,16 @@ public abstract class ApplicationContextAwareTest {
     public static String LINE_SEPARATOR = System.getProperty("line.separator");
     
     static {
-    	String location = System.getProperty("user.home") + File.separator + ".orders.key";
-		File keyFile = new File(location);
-		if (!keyFile.exists()) {
-			System.err.println("Creating test key");
-			try {
-				FileUtils.write(keyFile, "testkey");
-			} catch (IOException e) {
-				throw new IllegalStateException("Could not create test key");
-			}
-		}
+        String location = System.getProperty("user.home") + File.separator + ".orders.key";
+        File keyFile = new File(location);
+        if (!keyFile.exists()) {
+            System.err.println("Creating test key");
+            try {
+                FileUtils.write(keyFile, "testkey");
+            } catch (IOException e) {
+                throw new IllegalStateException("Could not create test key");
+            }
+        }
     }
     
     @Value("${mail.port}") private Integer mailPort;

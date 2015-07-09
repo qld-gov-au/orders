@@ -22,11 +22,11 @@ public class ItemBuilder {
     private String notifyCustomerEmailSubject;
     private String deliveryDetailsRequired;
     private String customerDetailsRequired;
-	private String notifyBusinessFormUri;
-	private String notifyBusinessFormFilename;
-	private String notifyCustomerFormUri;
-	private String notifyCustomerFormFilename;
-	private String notifyCustomerFormDownloadTitle;
+    private String notifyBusinessFormUri;
+    private String notifyBusinessFormFilename;
+    private String notifyCustomerFormUri;
+    private String notifyCustomerFormFilename;
+    private String notifyCustomerFormDownloadTitle;
 
     public ItemBuilder withProductId(String productId) {
         this.productId = productId;

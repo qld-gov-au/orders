@@ -2,31 +2,31 @@ package au.gov.qld.pub.orders.service;
 
 // Warning: do not put anything sensitive in this unless you know your source ID cannot be guessed.
 public class PaymentInformation {
-	private final long amountOwingInCents;
-	private final long amountOwingGstInCents;
-	private final String reference;
-	private final String description;
+    private final long amountOwingInCents;
+    private final long amountOwingGstInCents;
+    private final String reference;
+    private final String description;
 
-	public PaymentInformation(String reference, String description, long amountOwingInCents, long amountOwingGstInCents) {
-		this.reference = reference;
-		this.description = description;
-		this.amountOwingInCents = amountOwingInCents;
-		this.amountOwingGstInCents = amountOwingGstInCents;
-	}
+    public PaymentInformation(String reference, String description, long amountOwingInCents, long amountOwingGstInCents) {
+        this.reference = reference;
+        this.description = description;
+        this.amountOwingInCents = amountOwingInCents;
+        this.amountOwingGstInCents = amountOwingGstInCents;
+    }
 
-	public long getAmountOwingInCents() {
-		return amountOwingInCents;
-	}
+    public long getAmountOwingInCents() {
+        return amountOwingInCents;
+    }
 
-	public long getAmountOwingGstInCents() {
-		return amountOwingGstInCents;
-	}
+    public long getAmountOwingGstInCents() {
+        return amountOwingGstInCents;
+    }
 
-	public String getReference() {
-		return reference;
-	}
+    public String getReference() {
+        return reference;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 }

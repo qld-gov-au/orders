@@ -7,9 +7,9 @@ import org.junit.Test;
 
 
 public class EncryptionConfigurationTest {
-	@Test
-	public void loadEncryptionKey() throws Exception {
-		EncryptionConfiguration configuration = new EncryptionConfiguration();
-		assertThat(configuration.getPassword(), is("testkey"));
-	}
+    @Test
+    public void loadEncryptionKey() throws Exception {
+        EncryptionConfiguration configuration = new EncryptionConfiguration();
+        assertThat(configuration.getPassword(), is("testkey"));
+    }
 }

@@ -93,21 +93,21 @@ public class ConfigurationService {
         return maxAgeForRetry;
     }
 
-	public String getNoticeToPayDefaultRedirect() {
-		return noticeToPayDefaultRedirect;
-	}
+    public String getNoticeToPayDefaultRedirect() {
+        return noticeToPayDefaultRedirect;
+    }
 
-	public String getNoticeToPaySourcePattern() {
-		return noticeToPaySourcePattern;
-	}
+    public String getNoticeToPaySourcePattern() {
+        return noticeToPaySourcePattern;
+    }
 
-	public String getNoticeToPayIdPattern() {
-		return noticeToPayIdPattern;
-	}
+    public String getNoticeToPayIdPattern() {
+        return noticeToPayIdPattern;
+    }
 
-	public String getNoticeToPayDisbursementId() {
-		return noticeToPayDisbursementId;
-	}
+    public String getNoticeToPayDisbursementId() {
+        return noticeToPayDisbursementId;
+    }
 
     public String getNoticeToPayServiceWsUsername() {
         return noticeToPayServiceWsUsername;

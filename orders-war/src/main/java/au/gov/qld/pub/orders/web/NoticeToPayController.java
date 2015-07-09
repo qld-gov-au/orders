@@ -25,32 +25,32 @@ public class NoticeToPayController {
     private static final int MAX_NOTICE_TO_PAY_ID_LENGTH = 100;
     
     private final String defaultRedirect;
-	private final Pattern sourcePattern;
-	private final Pattern idPattern;
-	private final NoticeToPayService service;
-	
+    private final Pattern sourcePattern;
+    private final Pattern idPattern;
+    private final NoticeToPayService service;
+    
     @Autowired
     public NoticeToPayController(ConfigurationService config, NoticeToPayService service) {
-		this.service = service;
-		this.defaultRedirect = config.getNoticeToPayDefaultRedirect();
-		this.sourcePattern = Pattern.compile(config.getNoticeToPaySourcePattern());
-		this.idPattern = Pattern.compile(config.getNoticeToPayIdPattern());
+        this.service = service;
+        this.defaultRedirect = config.getNoticeToPayDefaultRedirect();
+        this.sourcePattern = Pattern.compile(config.getNoticeToPaySourcePattern());
+        this.idPattern = Pattern.compile(config.getNoticeToPayIdPattern());
     }
     
     @RequestMapping(value = "/pay-in-full", method = {RequestMethod.GET, RequestMethod.POST})
     public RedirectView payInFull(@RequestParam String sourceId, @RequestParam String sourceUrl) throws ServiceException {
-    	if (!validateInput(sourceUrl, sourcePattern)) {
-    	    LOG.info("Invalid source url");
-    	    return WebUtils.redirect(defaultRedirect);
-    	}
-    	
-    	if (!validateInput(sourceId, idPattern)) {
-    	    LOG.info("Invalid source ID");
-    	    return WebUtils.redirect(sourceUrl);
-    	}
-    	
-    	LOG.info("Creating notice to pay for {}", sourceId);
-    	return WebUtils.redirect(service.create(sourceId, sourceUrl));
+        if (!validateInput(sourceUrl, sourcePattern)) {
+            LOG.info("Invalid source url");
+            return WebUtils.redirect(defaultRedirect);
+        }
+        
+        if (!validateInput(sourceId, idPattern)) {
+            LOG.info("Invalid source ID");
+            return WebUtils.redirect(sourceUrl);
+        }
+        
+        LOG.info("Creating notice to pay for {}", sourceId);
+        return WebUtils.redirect(service.create(sourceId, sourceUrl));
     }
     
     @RequestMapping(value = "/ntp-notify/{noticeToPayId}", method = {RequestMethod.GET, RequestMethod.POST})
@@ -62,9 +62,9 @@ public class NoticeToPayController {
         service.notifyPayment(noticeToPayId);
     }
 
-	private boolean validateInput(String value, Pattern pattern) {
-		return isNotBlank(value) && pattern.matcher(value).matches();
-	}
+    private boolean validateInput(String value, Pattern pattern) {
+        return isNotBlank(value) && pattern.matcher(value).matches();
+    }
 
     
 }

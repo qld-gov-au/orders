@@ -14,16 +14,16 @@ import au.gov.qld.pub.orders.service.PaymentInformation;
 
 @Entity
 public class NoticeToPay {
-	@Id private String id;
+    @Id private String id;
     @Column(nullable = false) private String paymentInformationId;
     @Column(nullable = false) private String description;
     @Column(nullable = false) private long amount;
     @Column(nullable = false) private long amountGst;
     @Column private Date notifiedAt;
     @Column private String receiptNumber;
-	
+    
     private NoticeToPay() {
-    	this.id = UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().toString();
     }
     
     public NoticeToPay(String id, PaymentInformation paymentInformation) {
@@ -31,18 +31,18 @@ public class NoticeToPay {
         this.id = id;
     }
     
-	public NoticeToPay(PaymentInformation paymentInformation) {
-	    this();
-	    this.paymentInformationId = paymentInformation.getReference();
+    public NoticeToPay(PaymentInformation paymentInformation) {
+        this();
+        this.paymentInformationId = paymentInformation.getReference();
         this.amount = paymentInformation.getAmountOwingInCents();
         this.amountGst = paymentInformation.getAmountOwingGstInCents();
         this.description = paymentInformation.getDescription();
     }
 
     public String getPaymentInformationId() {
-		return paymentInformationId;
-	}
-	
+        return paymentInformationId;
+    }
+    
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(id).build();
@@ -53,9 +53,9 @@ public class NoticeToPay {
         return new EqualsBuilder().append(id, ((NoticeToPay)obj).id).build();
     }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
     public void setReceiptNumber(String receiptNumber) {
         this.receiptNumber = receiptNumber;
