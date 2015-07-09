@@ -64,6 +64,7 @@ public class NoticeToPayServiceTest {
 		when(soapClient.sendRequest(USERNAME, PASSWORD.getBytes("UTF-8"), NoticeToPayService.NS, REQUEST)).thenReturn(RESPONSE);
 		when(soapClient.sendRequest(USERNAME, PASSWORD.getBytes("UTF-8"), NoticeToPayService.NS, NTP_QUERY)).thenReturn(PAID_QUERY_RESPONSE);
 		when(paymentInformation.getAmountOwingInCents()).thenReturn(OWING);
+		when(paymentInformation.getReference()).thenReturn(SOURCE_ID);
 		when(paymentInformationService.fetch(SOURCE_ID)).thenReturn(paymentInformation);
 		when(noticeToPayDAO.findOne(NOTICE_TO_PAY_ID)).thenReturn(noticeToPay);
 		

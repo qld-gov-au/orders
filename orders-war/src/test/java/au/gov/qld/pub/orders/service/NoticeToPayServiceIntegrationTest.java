@@ -19,12 +19,17 @@ public class NoticeToPayServiceIntegrationTest extends ApplicationContextAwareTe
     private static final String SOURCE_ID = "some id";
 	private static final String SOURCE_URL = "http://www.example.com";
     private static final String RECEIPT_NUMBER = "1866179";
+    private static final String DESCRIPTION = "some description";
+    private static final long AMOUNT = 123;
+    private static final long AMOUNT_GST = 45;
 	
 	@Autowired NoticeToPayService service;
 	@Autowired NoticeToPayDAO dao;
+    PaymentInformation paymentInformation;
 	
 	@Before
     public void setUp() throws Exception {
+	    paymentInformation = new PaymentInformation(SOURCE_ID, DESCRIPTION, AMOUNT, AMOUNT_GST);
 	    dao.deleteAll();
 	}
 	
@@ -36,7 +41,7 @@ public class NoticeToPayServiceIntegrationTest extends ApplicationContextAwareTe
 	
 	@Test
 	public void setPaymentOnNoticeToPay() throws ServiceException {
-	    dao.save(new NoticeToPay(PAID_NTP_ID, SOURCE_ID));
+	    dao.save(new NoticeToPay(PAID_NTP_ID, paymentInformation));
 	    NoticeToPay unpaid = dao.findOne(PAID_NTP_ID);
 	    assertThat(unpaid.getReceiptNumber(), nullValue());
         assertThat(unpaid.getNotifiedAt(), nullValue());

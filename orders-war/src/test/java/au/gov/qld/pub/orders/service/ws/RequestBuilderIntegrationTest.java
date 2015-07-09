@@ -83,7 +83,7 @@ public class RequestBuilderIntegrationTest extends ApplicationContextAwareTest {
     
     @Test
     public void createNoticeToPayRequestWithInformation() throws ServiceException {
-    	PaymentInformation paymentInformation = StubPaymentInformationService.STUB;
+    	PaymentInformation paymentInformation = new StubPaymentInformationService().fetch("some id");
 		String request = builder.noticeToPay(paymentInformation, NTP_ID, SOURCE_URL);
 		assertThat(request, containsString("<paymentRequest id=\"" + NTP_ID.substring(NTP_ID.length() - 10) +  "\">"));
 		assertThat(request, containsString("<returnUrl>" + SOURCE_URL + "</returnUrl>"));

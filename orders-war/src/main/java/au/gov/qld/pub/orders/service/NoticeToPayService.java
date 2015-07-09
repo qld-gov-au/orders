@@ -51,7 +51,7 @@ public class NoticeToPayService {
 			throw new ServiceException("No amount owing for " + sourceId);
 		}
 
-		NoticeToPay noticeToPay = new NoticeToPay(sourceId);
+		NoticeToPay noticeToPay = new NoticeToPay(paymentInformation);
 		noticeToPayDAO.save(noticeToPay);
 		String request = requestBuilder.noticeToPay(paymentInformation, noticeToPay.getId() , sourceUrl);
 		

@@ -10,10 +10,15 @@ import javax.persistence.Id;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import au.gov.qld.pub.orders.service.PaymentInformation;
+
 @Entity
 public class NoticeToPay {
 	@Id private String id;
-    @Column private String paymentInformationId;
+    @Column(nullable = false) private String paymentInformationId;
+    @Column(nullable = false) private String description;
+    @Column(nullable = false) private long amount;
+    @Column(nullable = false) private long amountGst;
     @Column private Date notifiedAt;
     @Column private String receiptNumber;
 	
@@ -21,17 +26,20 @@ public class NoticeToPay {
     	this.id = UUID.randomUUID().toString();
     }
     
-    public NoticeToPay(String paymentInformationId) {
-    	this();
-    	this.paymentInformationId = paymentInformationId;
-    }
-    
-    public NoticeToPay(String id, String paymentInformationId) {
+    public NoticeToPay(String id, PaymentInformation paymentInformation) {
+        this(paymentInformation);
         this.id = id;
-        this.paymentInformationId = paymentInformationId;
     }
     
-	public String getPaymentInformationId() {
+	public NoticeToPay(PaymentInformation paymentInformation) {
+	    this();
+	    this.paymentInformationId = paymentInformation.getReference();
+        this.amount = paymentInformation.getAmountOwingInCents();
+        this.amountGst = paymentInformation.getAmountOwingGstInCents();
+        this.description = paymentInformation.getDescription();
+    }
+
+    public String getPaymentInformationId() {
 		return paymentInformationId;
 	}
 	
@@ -63,5 +71,17 @@ public class NoticeToPay {
 
     public Date getNotifiedAt() {
         return notifiedAt != null ? new Date(notifiedAt.getTime()) : null;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public long getAmount() {
+        return amount;
+    }
+    
+    public long getAmountGst() {
+        return amountGst;
     }
 }
