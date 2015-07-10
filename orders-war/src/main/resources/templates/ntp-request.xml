@@ -2,7 +2,7 @@
 <NoticeToPayRequest
 	xmlns="http://smartservice.qld.gov.au/payment/schemas/notice_to_pay_1_4">
 	<paymentRequest id="${paymentRequestId}">
-		<onlineService>${config.serviceWsUsername}</onlineService>
+		<onlineService>${config.noticeToPayServiceWsUsername}</onlineService>
 		<paymentOptions>
 			<creditCard />
 		</paymentOptions>
