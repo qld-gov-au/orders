@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.view.RedirectView;
 
 import au.gov.qld.pub.orders.service.ConfigurationService;
@@ -79,7 +81,8 @@ public class NoticeToPayControllerTest {
     
     @Test
     public void notifyById() throws ServiceException {
-        controller.notifyPayment(NOTICE_TO_PAY_ID);
+        ResponseEntity<String> result = controller.notifyPayment(NOTICE_TO_PAY_ID);
+        assertThat(result.getStatusCode(), is(HttpStatus.OK));
         verify(service).notifyPayment(NOTICE_TO_PAY_ID);
     }
     

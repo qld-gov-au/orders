@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,12 +56,13 @@ public class NoticeToPayController {
     }
     
     @RequestMapping(value = "/ntp-notify/{noticeToPayId}", method = {RequestMethod.GET, RequestMethod.POST})
-    public void notifyPayment(@PathVariable String noticeToPayId) throws ServiceException {
+    public ResponseEntity<String> notifyPayment(@PathVariable String noticeToPayId) throws ServiceException {
         if (isBlank(noticeToPayId) || noticeToPayId.trim().length() >= MAX_NOTICE_TO_PAY_ID_LENGTH) {
             throw new ServiceException("Invalid notice to pay id");
         }
         
         service.notifyPayment(noticeToPayId);
+        return new ResponseEntity<String>(HttpStatus.OK);
     }
 
     private boolean validateInput(String value, Pattern pattern) {
