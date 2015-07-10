@@ -85,8 +85,11 @@ public class RequestBuilderIntegrationTest extends ApplicationContextAwareTest {
     public void createNoticeToPayRequestWithInformation() throws ServiceException {
         PaymentInformation paymentInformation = new StubPaymentInformationService().fetch("some id");
         String request = builder.noticeToPay(paymentInformation, NTP_ID, SOURCE_URL);
+        assertThat(request, containsString("<onlineService>" + config.getNoticeToPayServiceWsUsername() + "</onlineService>"));
         assertThat(request, containsString("<paymentRequest id=\"" + NTP_ID.substring(NTP_ID.length() - 10) +  "\">"));
         assertThat(request, containsString("<returnUrl>" + SOURCE_URL + "</returnUrl>"));
+        assertThat(request, containsString("<gst>45</gst>"));
+        assertThat(request, containsString("<cost>123</cost>"));
         assertThat(request, containsString("<notificationUrl>" + config.getNoticeToPayServiceWsNotify() + "/ntp-notify/" + NTP_ID + "</notificationUrl>"));
     }
     
