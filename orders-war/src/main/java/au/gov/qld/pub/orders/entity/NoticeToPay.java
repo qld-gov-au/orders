@@ -21,9 +21,11 @@ public class NoticeToPay {
     @Column(nullable = false) private long amountGst;
     @Column private Date notifiedAt;
     @Column private String receiptNumber;
+    @Column private boolean exported;
     
     private NoticeToPay() {
         this.id = UUID.randomUUID().toString();
+        this.exported = false;
     }
     
     public NoticeToPay(String id, PaymentInformation paymentInformation) {
@@ -83,5 +85,9 @@ public class NoticeToPay {
     
     public long getAmountGst() {
         return amountGst;
+    }
+    
+    public boolean isExported() {
+        return exported;
     }
 }
