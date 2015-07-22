@@ -36,8 +36,8 @@ import au.gov.qld.pub.orders.service.ws.RequestBuilder;
 public class OrderService {
     private static final Logger LOG = LoggerFactory.getLogger(OrderService.class);
     
-    private static final Pattern CART_ID_PATTERN = Pattern.compile("<cartId>(.+)</cartId>");
-    private static final Pattern GENERATED_ORDER_ID_PATTERN = Pattern.compile("<generatedOrderId>(.+)</generatedOrderId>");
+    private static final Pattern CART_ID_PATTERN = Pattern.compile("<.*[:]?cartId>(.+)</.*[:]?cartId>");
+    private static final Pattern GENERATED_ORDER_ID_PATTERN = Pattern.compile("<.*[:]?generatedOrderId>(.+)</.*[:]?generatedOrderId>");
     
     private final CartService cartService;
     private final OrderDAO orderDAO;

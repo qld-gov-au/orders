@@ -104,6 +104,21 @@ public class OrderServiceTest {
     }
     
     @Test
+    public void addToNewOrderWithOptionalNamespaceInResponse() throws ServiceException {
+        when(cartService.addToCart(ADD_REQUEST)).thenReturn("<ns1:cartId>" + CART_ID + "</ns1:cartId>"
+                + "<ns1:generatedOrderId>" + GENERATED_ID + "</ns1:generatedOrderId>");
+        Matcher<Order> orderWithCartId = allOf(hasProperty("cartId", nullValue()),
+                hasProperty("items", is(asList(item))));
+        
+        when(requestBuilder.addRequest(argThat(orderWithCartId))).thenReturn(ADD_REQUEST);
+        Order addedOrder = orderService.add(asList(item), null);
+        assertThat(addedOrder.getCartId(), is(CART_ID));
+        assertThat(addedOrder.getGeneratedId(), is(GENERATED_ID));
+        verify(orderDAO, times(2)).save(addedOrder);
+        assertThat(addedOrder.getItems(), is(asList(item)));
+    }
+    
+    @Test
     public void createNewOrderWhenCartPaid() throws ServiceException {
         order.setPaid("something", new OrderDetails());
         Matcher<Order> orderWithCartId = allOf(hasProperty("cartId", nullValue()),

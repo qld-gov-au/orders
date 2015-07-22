@@ -23,9 +23,9 @@ public class NoticeToPayService {
     private static final Logger LOG = LoggerFactory.getLogger(NotifyService.class);
     public static final String NS = "http://smartservice.qld.gov.au/payment/schemas/notice_to_pay_1_4";
     private static final String PAID_STATUS = "PAID";
-    private static final Pattern RESPONSE_PATTERN = Pattern.compile("<redirectUrl>(.+)</redirectUrl>");
-    private static final Pattern STATUS_PATTERN = Pattern.compile("<status>(.+)</status>");
-    private static final Pattern RECEIPT_NUMBER_PATTERN = Pattern.compile("<receiptNumber>(.+)</receiptNumber>");
+    private static final Pattern RESPONSE_PATTERN = Pattern.compile("<.*[:]?redirectUrl>(.+)</.*[:]?redirectUrl>");
+    private static final Pattern STATUS_PATTERN = Pattern.compile("<.*[:]?status>(.+)</.*[:]?status>");
+    private static final Pattern RECEIPT_NUMBER_PATTERN = Pattern.compile("<.*[:]?receiptNumber>(.+)</.*[:]?receiptNumber>");
     private final NoticeToPayDAO noticeToPayDAO;
     private final RequestBuilder requestBuilder;
     private final SOAPClient soapClient;
