@@ -59,8 +59,7 @@ public class RequestBuilder {
 
     public String noticeToPay(PaymentInformation paymentInformation, String noticeToPayId, String sourceUrl) throws ServiceException {
         Map<String, Object> dataModel = new HashMap<>();
-        // Payment gateway only allows 8-10 character IDs
-        dataModel.put("paymentRequestId", noticeToPayId.substring(noticeToPayId.length() - 10));
+        dataModel.put("paymentRequestId", noticeToPayId);
         dataModel.put("paymentInformation", paymentInformation);
         dataModel.put("config", configurationService);
         dataModel.put("noticeToPayId", noticeToPayId);
@@ -69,8 +68,7 @@ public class RequestBuilder {
     }
     
     public String noticeToPayQuery(String noticeToPayId) {
-        String paymentRequestId = noticeToPayId.substring(noticeToPayId.length() - 10);
-        return String.format(NTP_QUERY_TEMPLATE, paymentRequestId);
+        return String.format(NTP_QUERY_TEMPLATE, noticeToPayId);
     }
 
 }

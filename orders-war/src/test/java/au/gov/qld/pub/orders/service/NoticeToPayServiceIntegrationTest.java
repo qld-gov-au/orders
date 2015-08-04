@@ -15,10 +15,10 @@ import au.gov.qld.pub.orders.dao.NoticeToPayDAO;
 import au.gov.qld.pub.orders.entity.NoticeToPay;
 
 public class NoticeToPayServiceIntegrationTest extends ApplicationContextAwareTest {
-    private static final String PAID_NTP_ID = "292284ff-a4fe-4304-a7fe-9e5575be91cb";
+    private static final String PAID_NTP_ID = "3579d7de-928c-4f70-a574-a5a847e5329c";
     private static final String SOURCE_ID = "some id";
     private static final String SOURCE_URL = "http://www.example.com";
-    private static final String RECEIPT_NUMBER = "1866179";
+    private static final String RECEIPT_NUMBER = "1868456";
     private static final String DESCRIPTION = "some description";
     private static final long AMOUNT = 123;
     private static final long AMOUNT_GST = 45;
