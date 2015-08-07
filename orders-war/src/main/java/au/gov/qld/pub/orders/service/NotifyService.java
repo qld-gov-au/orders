@@ -5,7 +5,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.mail.MessagingException;
@@ -39,16 +41,19 @@ public class NotifyService {
     private final OrderGrouper orderGrouper;
     private final InlineTemplateService inlineTemplateService;
     private final AttachmentService attachmentService;
+	private final AdditionalMailContentService additionalMailContentService;
     
     @Autowired
     public NotifyService(ConfigurationService configurationService, OrderDAO orderDAO, JavaMailSender mailSender, 
-            OrderGrouper orderGrouper, InlineTemplateService inlineTemplateService, AttachmentService attachmentService) {
+            OrderGrouper orderGrouper, InlineTemplateService inlineTemplateService, AttachmentService attachmentService,
+            AdditionalMailContentService additionalMailContentService) {
         this.orderDAO = orderDAO;
         this.mailSender = mailSender;
         this.configurationService = configurationService;
         this.orderGrouper = orderGrouper;
         this.inlineTemplateService = inlineTemplateService;
         this.attachmentService = attachmentService;
+		this.additionalMailContentService = additionalMailContentService;
         this.templateConfiguration = getTemplateConfiguration();
         this.templateConfiguration.setClassForTemplateLoading(getClass(), "/products/emails/");
     }
@@ -116,7 +121,7 @@ public class NotifyService {
         
         String emailBody = prepareTemplate(productId, order, "business");
         LOG.info("Sending business email to: {} for order receipt: {}", to, order.getReceipt());
-        sendEmail(order, to, subject, emailBody, filename, attachments);
+        sendEmail(order, to, subject, emailBody, filename, attachments, false);
     }
 
     private void notifyCustomerOrder(String productId, Order order, String to, String subject, String filename) throws TemplateException, IOException, MessagingException, InterruptedException {
@@ -129,10 +134,10 @@ public class NotifyService {
         
         String emailBody = prepareTemplate(productId, order, "customer");
         LOG.info("Sending customer email to: {} for order receipt: {}", to, order.getReceipt());
-        sendEmail(order, to, subject, emailBody, filename, attachments);
+        sendEmail(order, to, subject, emailBody, filename, attachments, true);
     }
     
-    private void sendEmail(Order order, String to, String subject, String emailBody, String filename, Map<String, byte[]> attachments) throws MessagingException {
+    private void sendEmail(Order order, String to, String subject, String emailBody, String filename, Map<String, byte[]> attachments, boolean customerEmail) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, !attachments.isEmpty());
     
@@ -147,10 +152,22 @@ public class NotifyService {
             helper.addAttachment(attachmentCounter + "-" + filename, new ByteArrayResource(attachment.getValue()));
         }
         
+        List<Map<String, String>> paidItemsFields = filterPaidItemsFields(order.getItems());
+        additionalMailContentService.append(message, helper, customerEmail, paidItemsFields);
         mailSender.send(message);
     }
 
-    private String prepareTemplate(String productId, Order order, String templateName) throws TemplateException, IOException {
+    private List<Map<String, String>> filterPaidItemsFields(List<Item> items) {
+    	List<Map<String, String>> paid = new ArrayList<>();
+    	for (Item item : items) {
+    		if (item.isPaid()) {
+    			paid.add(item.getFieldsMap());
+    		}
+    	}
+		return paid;
+	}
+
+	private String prepareTemplate(String productId, Order order, String templateName) throws TemplateException, IOException {
         Template template = templateConfiguration.getTemplate(productId + "." + templateName + ".email.ftl");
         StringWriter out = new StringWriter();
         

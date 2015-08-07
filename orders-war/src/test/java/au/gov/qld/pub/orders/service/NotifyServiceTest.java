@@ -2,6 +2,7 @@ package au.gov.qld.pub.orders.service;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static java.util.Arrays.asList;
+import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.when;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Map;
 
 import javax.mail.Address;
 import javax.mail.Message.RecipientType;
@@ -32,6 +34,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
 import au.gov.qld.pub.orders.dao.OrderDAO;
 import au.gov.qld.pub.orders.entity.Item;
@@ -59,6 +62,7 @@ public class NotifyServiceTest {
     @Mock Order order;
     @Mock Order groupedOrder;
     @Mock Item item;
+    @Mock Item unpaidItem;
     @Mock Configuration configuration;
     @Mock Template customerTemplate;
     @Mock Template businessTemplate;
@@ -66,6 +70,7 @@ public class NotifyServiceTest {
     @Mock MimeMessage message;
     @Mock AttachmentService attachmentService;
     @Mock InputStream attachmentStream;
+    @Mock AdditionalMailContentService additionalMailContentService;
     
     NotifyService service;
 
@@ -98,7 +103,7 @@ public class NotifyServiceTest {
         when(configuration.getTemplate(PRODUCT_ID + ".customer.email.ftl")).thenReturn(customerTemplate);
         when(configuration.getTemplate(PRODUCT_ID + ".business.email.ftl")).thenReturn(businessTemplate);
         when(orderDAO.findOne(order.getId())).thenReturn(order);
-        service = new NotifyService(configurationService, orderDAO, mailSender, orderGrouper, inlineTemplateService, attachmentService) {
+        service = new NotifyService(configurationService, orderDAO, mailSender, orderGrouper, inlineTemplateService, attachmentService, additionalMailContentService) {
             @Override
             protected Configuration getTemplateConfiguration() {
                 return configuration;
@@ -114,12 +119,22 @@ public class NotifyServiceTest {
         verifyZeroInteractions(mailSender);
         verify(order, never()).setNotified(anyString());
         verify(orderDAO, never()).save(order);
+        verifyZeroInteractions(additionalMailContentService);
     }
     
     @Test
     public void notifyToBusiness() throws Exception {
+        when(unpaidItem.isPaid()).thenReturn(false);
+        when(item.isPaid()).thenReturn(true);
+        when(item.getFieldsMap()).thenReturn((Map<String, String>)of("field", "value"));
+        when(unpaidItem.getFieldsMap()).thenReturn((Map<String, String>)of("unpaid field", "value"));
+		when(order.getItems()).thenReturn(asList(unpaidItem, item));
+		when(groupedOrder.getItems()).thenReturn(asList(unpaidItem, item));
+		
         when(item.getNotifyBusinessEmail()).thenReturn(BUSINESS_TO);
         when(item.getNotifyBusinessEmailSubject()).thenReturn(BUSINESS_SUBJECT);
+        when(unpaidItem.getNotifyBusinessEmail()).thenReturn(BUSINESS_TO);
+        when(unpaidItem.getNotifyBusinessEmailSubject()).thenReturn(BUSINESS_SUBJECT);
         when(order.getPaid()).thenReturn(PAID);
         service.send(order.getId());
 
@@ -129,7 +144,8 @@ public class NotifyServiceTest {
         verify(message).setFrom(argThat(addressOf(FROM)));
         verify(attachmentService).retrieve(groupedOrder, NotifyType.BUSINESS);
         verify(order).setNotified(anyString());
-        verify(orderDAO).save(order);        
+        verify(orderDAO).save(order);
+		verify(additionalMailContentService).append(eq(message), isA(MimeMessageHelper.class), eq(false), eq(asList((Map<String, String>)of("field", "value"))));
     }
     
     @Test
@@ -139,6 +155,7 @@ public class NotifyServiceTest {
 
         verifyZeroInteractions(mailSender);
         verifyZeroInteractions(attachmentService);
+        verifyZeroInteractions(additionalMailContentService);
         verify(order, never()).setNotified(anyString());
         verify(orderDAO, never()).save(order);
     }
@@ -158,6 +175,7 @@ public class NotifyServiceTest {
         verify(attachmentService).retrieve(groupedOrder, NotifyType.CUSTOMER);
         verify(order).setNotified(anyString());
         verify(orderDAO).save(order);
+        verify(additionalMailContentService).append(eq(message), isA(MimeMessageHelper.class), eq(true), anyList());
     }
     
     @Test
@@ -175,6 +193,7 @@ public class NotifyServiceTest {
         verify(attachmentService).retrieve(groupedOrder, NotifyType.CUSTOMER);
         verify(order).setNotified(anyString());
         verify(orderDAO).save(order);
+        verify(additionalMailContentService).append(eq(message), isA(MimeMessageHelper.class), eq(true), anyList());
     }
     
     private Matcher<Address> addressOf(final String to) {
