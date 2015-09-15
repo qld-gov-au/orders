@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,11 @@ public class NoticeToPayService {
         PaymentInformation paymentInformation = paymentInformationService.fetch(sourceId);
         if (paymentInformation.getAmountOwingInCents() <= 0l) {
             throw new ServiceException("No amount owing for " + sourceId);
+        }
+        
+        boolean recentlyPaid = noticeToPayDAO.existsBySourceIdAndNotifiedAtAfter(new DateTime().minusHours(1).toDate());
+        if (recentlyPaid) {
+            throw new ServiceException("This source ID was recently paid for and could be a duplicate");
         }
 
         NoticeToPay noticeToPay = new NoticeToPay(paymentInformation);

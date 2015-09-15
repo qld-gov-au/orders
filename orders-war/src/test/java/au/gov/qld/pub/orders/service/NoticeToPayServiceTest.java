@@ -16,6 +16,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,6 +59,7 @@ public class NoticeToPayServiceTest {
     
     @Before
     public void setUp() throws Exception {
+        DateTimeUtils.setCurrentMillisFixed(new DateTime().toDate().getTime());
         when(config.getServiceWsEndpoint()).thenReturn(ENDPOINT);
         when(config.getNoticeToPayServiceWsPassword()).thenReturn(PASSWORD);
         when(config.getNoticeToPayServiceWsUsername()).thenReturn(USERNAME);
@@ -75,6 +79,11 @@ public class NoticeToPayServiceTest {
         };
     }
     
+    @After
+    public void tearDown() {
+        DateTimeUtils.setCurrentMillisSystem();
+    }
+    
     @Test
     public void returnRedirectForFetchedAndSavedPaymentInformation() throws Exception {
         String redirect = service.create(SOURCE_ID, SOURCE_URL);
@@ -89,7 +98,19 @@ public class NoticeToPayServiceTest {
             service.create(SOURCE_ID, SOURCE_URL);
             fail("Should have thrown exception");
         } catch (ServiceException e) {
+            verifyZeroInteractions(soapClient);
             verifyZeroInteractions(noticeToPayDAO);
+        }
+    }
+    
+    @Test
+    public void throwExceptionIfRecentlyPaid() throws Exception {
+        when(noticeToPayDAO.existsBySourceIdAndNotifiedAtAfter(new DateTime().minusHours(1).toDate())).thenReturn(true);
+        try {
+            service.create(SOURCE_ID, SOURCE_URL);
+            fail("Should have thrown exception");
+        } catch (ServiceException e) {
+            verifyZeroInteractions(soapClient);
         }
     }
     
