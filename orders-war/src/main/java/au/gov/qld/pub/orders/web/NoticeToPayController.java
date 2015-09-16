@@ -1,5 +1,6 @@
 package au.gov.qld.pub.orders.web;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -41,22 +42,24 @@ public class NoticeToPayController {
     
     @RequestMapping(value = "/pay-in-full", method = {RequestMethod.GET, RequestMethod.POST})
     public RedirectView payInFull(@RequestParam String sourceId, @RequestParam String sourceUrl) {
-        if (!validateInput(sourceUrl, sourcePattern)) {
+        String trimmedSourceUrl = defaultString(sourceUrl).trim();
+        if (!validateInput(trimmedSourceUrl, sourcePattern)) {
             LOG.info("Invalid source url");
             return WebUtils.redirect(defaultRedirect);
         }
-        
-        if (!validateInput(sourceId, idPattern)) {
+
+        String trimmedSourceId = defaultString(sourceId).trim();
+        if (!validateInput(trimmedSourceId, idPattern)) {
             LOG.info("Invalid source ID");
-            return WebUtils.redirect(sourceUrl);
+            return WebUtils.redirect(trimmedSourceUrl);
         }
         
-        LOG.info("Creating notice to pay for {}", sourceId);
+        LOG.info("Creating notice to pay for {}", trimmedSourceId);
         try {
-            return WebUtils.redirect(service.create(sourceId, sourceUrl));
+            return WebUtils.redirect(service.create(trimmedSourceId, trimmedSourceUrl));
         } catch (ServiceException e) {
             LOG.error(e.getMessage());
-            return WebUtils.redirect(sourceUrl);
+            return WebUtils.redirect(trimmedSourceUrl);
         }
     }
     

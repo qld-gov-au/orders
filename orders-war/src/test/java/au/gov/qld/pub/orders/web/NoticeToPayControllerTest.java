@@ -26,8 +26,8 @@ public class NoticeToPayControllerTest {
     private static final String DEFAULT_REDIRECT = "default redirect";
     private static final String SOURCE_PATTERN = "[a-z]";
     private static final String ID_PATTERN = "[0-9]";
-    private static final String ID = "1";
-    private static final String SOURCE = "t";
+    private static final String ID = " 1 ";
+    private static final String SOURCE = " t ";
     private static final String NOTICE_TO_PAY = "some notice to pay";
     private static final String NOTICE_TO_PAY_ID = "some notice to pay id";    
 
@@ -40,7 +40,7 @@ public class NoticeToPayControllerTest {
         when(config.getNoticeToPayDefaultRedirect()).thenReturn(DEFAULT_REDIRECT);
         when(config.getNoticeToPaySourcePattern()).thenReturn(SOURCE_PATTERN);
         when(config.getNoticeToPayIdPattern()).thenReturn(ID_PATTERN);
-        when(service.create(ID, SOURCE)).thenReturn(NOTICE_TO_PAY);
+        when(service.create(ID.trim(), SOURCE.trim())).thenReturn(NOTICE_TO_PAY);
         controller = new NoticeToPayController(config, service);
     }
     
@@ -61,22 +61,22 @@ public class NoticeToPayControllerTest {
     @Test
     public void redirectToSourceWhenInvalidId() throws ServiceException {
         RedirectView redirect = controller.payInFull("bogus", SOURCE);
-        assertThat(redirect.getUrl(), is(SOURCE));
+        assertThat(redirect.getUrl(), is(SOURCE.trim()));
         assertThat(redirect.isExposePathVariables(), is(false));
     }
     
     @Test
     public void redirectToSourceWhenExceptionFromService() throws ServiceException {
-        when(service.create(ID, SOURCE)).thenThrow(new ServiceException("expected"));
+        when(service.create(ID.trim(), SOURCE.trim())).thenThrow(new ServiceException("expected"));
         RedirectView redirect = controller.payInFull(ID, SOURCE);
-        assertThat(redirect.getUrl(), is(SOURCE));
+        assertThat(redirect.getUrl(), is(SOURCE.trim()));
         assertThat(redirect.isExposePathVariables(), is(false));
     }
     
     @Test
     public void redirectToSourceWhenBlankId() throws ServiceException {
         RedirectView redirect = controller.payInFull(null, SOURCE);
-        assertThat(redirect.getUrl(), is(SOURCE));
+        assertThat(redirect.getUrl(), is(SOURCE.trim()));
         assertThat(redirect.isExposePathVariables(), is(false));
     }
     
