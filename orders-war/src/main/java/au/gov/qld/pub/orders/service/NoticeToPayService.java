@@ -52,7 +52,7 @@ public class NoticeToPayService {
             throw new ServiceException("No amount owing for " + sourceId);
         }
         
-        boolean recentlyPaid = noticeToPayDAO.existsBySourceIdAndNotifiedAtAfter(new DateTime().minusHours(1).toDate());
+        boolean recentlyPaid = noticeToPayDAO.existsByPaymentInformationIdAndNotifiedAtAfter(sourceId, new DateTime().minusHours(1).toDate());
         if (recentlyPaid) {
             throw new ServiceException("This source ID was recently paid for and could be a duplicate");
         }

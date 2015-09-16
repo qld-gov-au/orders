@@ -105,7 +105,7 @@ public class NoticeToPayServiceTest {
     
     @Test
     public void throwExceptionIfRecentlyPaid() throws Exception {
-        when(noticeToPayDAO.existsBySourceIdAndNotifiedAtAfter(new DateTime().minusHours(1).toDate())).thenReturn(true);
+        when(noticeToPayDAO.existsByPaymentInformationIdAndNotifiedAtAfter(SOURCE_ID, new DateTime().minusHours(1).toDate())).thenReturn(true);
         try {
             service.create(SOURCE_ID, SOURCE_URL);
             fail("Should have thrown exception");

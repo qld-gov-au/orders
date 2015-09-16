@@ -160,6 +160,7 @@ public class NotifyServiceTest {
         verify(orderDAO, never()).save(order);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void notifyToCustomerFromCustomerDetails() throws Exception {
         when(item.getNotifyCustomerEmailField()).thenReturn("customerDetails");
@@ -178,6 +179,7 @@ public class NotifyServiceTest {
         verify(additionalMailContentService).append(eq(message), isA(MimeMessageHelper.class), eq(true), anyList());
     }
     
+    @SuppressWarnings("unchecked")
     @Test
     public void notifyToCustomerFromDeliveryDetails() throws Exception {
         when(order.getPaid()).thenReturn(PAID);
