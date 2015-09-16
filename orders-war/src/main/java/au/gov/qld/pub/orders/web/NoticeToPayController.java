@@ -40,7 +40,7 @@ public class NoticeToPayController {
     }
     
     @RequestMapping(value = "/pay-in-full", method = {RequestMethod.GET, RequestMethod.POST})
-    public RedirectView payInFull(@RequestParam String sourceId, @RequestParam String sourceUrl) throws ServiceException {
+    public RedirectView payInFull(@RequestParam String sourceId, @RequestParam String sourceUrl) {
         if (!validateInput(sourceUrl, sourcePattern)) {
             LOG.info("Invalid source url");
             return WebUtils.redirect(defaultRedirect);
@@ -52,7 +52,12 @@ public class NoticeToPayController {
         }
         
         LOG.info("Creating notice to pay for {}", sourceId);
-        return WebUtils.redirect(service.create(sourceId, sourceUrl));
+        try {
+            return WebUtils.redirect(service.create(sourceId, sourceUrl));
+        } catch (ServiceException e) {
+            LOG.error(e.getMessage());
+            return WebUtils.redirect(sourceUrl);
+        }
     }
     
     @RequestMapping(value = "/ntp-notify/{noticeToPayId}", method = {RequestMethod.GET, RequestMethod.POST})

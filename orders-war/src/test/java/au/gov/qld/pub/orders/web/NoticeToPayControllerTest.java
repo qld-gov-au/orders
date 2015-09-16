@@ -66,6 +66,14 @@ public class NoticeToPayControllerTest {
     }
     
     @Test
+    public void redirectToSourceWhenExceptionFromService() throws ServiceException {
+        when(service.create(ID, SOURCE)).thenThrow(new ServiceException("expected"));
+        RedirectView redirect = controller.payInFull(ID, SOURCE);
+        assertThat(redirect.getUrl(), is(SOURCE));
+        assertThat(redirect.isExposePathVariables(), is(false));
+    }
+    
+    @Test
     public void redirectToSourceWhenBlankId() throws ServiceException {
         RedirectView redirect = controller.payInFull(null, SOURCE);
         assertThat(redirect.getUrl(), is(SOURCE));
