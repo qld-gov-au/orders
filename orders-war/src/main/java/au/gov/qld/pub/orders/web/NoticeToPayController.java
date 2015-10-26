@@ -59,7 +59,7 @@ public class NoticeToPayController {
             return WebUtils.redirect(service.create(trimmedSourceId, trimmedSourceUrl));
         } catch (ServiceException e) {
             LOG.error(e.getMessage());
-            return WebUtils.redirect(trimmedSourceUrl);
+            return WebUtils.redirect(defaultRedirect);
         }
     }
     
