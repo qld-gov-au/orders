@@ -91,7 +91,7 @@ public class OrderControllerTest {
         RedirectView result = controller.add(COOKIE_CART_ID, REQ_CART_ID, command, request, response);
         assertThat(result.getUrl(), is(FULL_URL + "/added"));
         verify(orderService).add(asList(item), COOKIE_CART_ID);
-        verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, COOKIE_CART_ID)));
+        verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, COOKIE_CART_ID, true)));
     }
     
     @SuppressWarnings("unchecked")
@@ -104,7 +104,7 @@ public class OrderControllerTest {
         RedirectView result = controller.add(null, REQ_CART_ID, command, request, response);
         assertThat(result.getUrl(), is(FULL_URL + "/added"));
         verify(orderService).add(asList(item), REQ_CART_ID);
-        verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, REQ_CART_ID)));
+        verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, REQ_CART_ID, true)));
         verify(item).setFields((Map<String, String>) argThat(allOf(hasEntry("allowedfield", "allowedvalue"), not(hasEntry("badfield", "badvalue")))));
     }
     
@@ -118,7 +118,7 @@ public class OrderControllerTest {
         RedirectView result = controller.add(null, REQ_CART_ID, command, request, response);
         assertThat(result.getUrl(), is(FULL_URL + "/added"));
         verify(orderService).add(asList(item), REQ_CART_ID);
-        verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, REQ_CART_ID)));
+        verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, REQ_CART_ID, true)));
         verify(item).setFields((Map<String, String>) argThat(allOf(hasEntry("allowedfield", repeat("a", 200)))));
     }
     

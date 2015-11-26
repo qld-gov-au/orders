@@ -31,7 +31,7 @@ public class ScheduleService {
                 orderService.notifyPayment(orderId);
                 notifyService.send(orderId);
             } catch (ServiceException e) {
-                LOG.info(e.getMessage());
+                LOG.info(e.getMessage(), e);
             }
         }
         

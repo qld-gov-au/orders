@@ -19,12 +19,12 @@ public class WebUtilsTest {
         assertThat(redirect.isExposePathVariables(), is(false));
     }
     
-    public static Matcher<Cookie> cookieWith(final String name, final String value) {
+    public static Matcher<Cookie> cookieWith(final String name, final String value, final boolean secure) {
         return new BaseMatcher<Cookie>() {
             @Override
             public boolean matches(Object arg0) {
                 Cookie cookie = (Cookie)arg0;
-                return name.equals(cookie.getName()) && value.equals(cookie.getValue());
+                return name.equals(cookie.getName()) && value.equals(cookie.getValue()) && secure == cookie.getSecure();
             }
 
             @Override
