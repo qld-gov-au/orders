@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import au.gov.qld.pub.orders.service.PaymentInformation;
@@ -51,7 +50,7 @@ public class NoticeToPay {
 
     @Override
     public boolean equals(Object obj) {
-        return new EqualsBuilder().append(id, ((NoticeToPay)obj).id).build();
+        return obj instanceof NoticeToPay && id.equals(((NoticeToPay)obj).id);
     }
 
     public String getId() {

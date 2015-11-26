@@ -16,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.joda.time.LocalDateTime;
@@ -162,6 +161,6 @@ public class Order {
 
     @Override
     public boolean equals(Object obj) {
-        return new EqualsBuilder().append(id, ((Order)obj).id).build();
+        return obj instanceof Order && id.equals(((Order)obj).id);
     }
 }

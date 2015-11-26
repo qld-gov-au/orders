@@ -18,7 +18,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -251,7 +250,7 @@ public class Item {
 
     @Override
     public boolean equals(Object obj) {
-        return new EqualsBuilder().append(id, ((Item)obj).id).build();
+        return obj instanceof Item && id.equals(((Item)obj).id);
     }
 
     public String getProductGroup() {
