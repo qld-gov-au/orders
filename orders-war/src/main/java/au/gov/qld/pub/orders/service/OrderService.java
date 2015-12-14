@@ -119,7 +119,7 @@ public class OrderService {
     }
 
     @Transactional(rollbackFor = ServiceException.class)
-    public void notifyPayment(String orderId) throws ServiceException {
+    public boolean notifyPayment(String orderId) throws ServiceException {
         Order order = findByOrderId(orderId);
         if (order == null) {
             throw new IllegalArgumentException("Could not find order with id: " + orderId);
@@ -127,7 +127,7 @@ public class OrderService {
 
         if (isNotBlank(order.getPaid())) {
             LOG.info("Notify for already paid order: {}", orderId);
-            return;
+            return false;
         }
         
         LOG.info("Getting status of order: {}", orderId);
@@ -136,7 +136,8 @@ public class OrderService {
         
         String receipt = responseParser.getReceipt(statusResponse);
         if (isBlank(receipt)) {
-            throw new ServiceException("Order: " + orderId + " is not paid");
+            LOG.info("Order: {} is not paid", orderId);
+            return false;
         }
         
         LOG.info("Getting cart details of order: {}", orderId);
@@ -147,6 +148,7 @@ public class OrderService {
         order.setPaid(receipt, orderDetails);
         orderDAO.save(order);
         LOG.info("Saved order: {} as paid", orderId);
+        return true;
     }
 
     public Collection<String> getAllowedFields(String productId, ProductProperties acceptFields) {

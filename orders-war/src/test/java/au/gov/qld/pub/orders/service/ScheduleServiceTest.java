@@ -45,11 +45,20 @@ public class ScheduleServiceTest {
     
     @Test
     public void statusCheckerChecksUnpaidAndUnnotifiedOrdersAndFulfills() throws ServiceException {
-        when(orderService.findUnpaidOrderIds(minAge)).thenReturn(new HashSet<String>(asList(UNPAID_ORDER_ID)));
-        
+        when(orderService.findUnpaidOrderIds(minAge)).thenReturn(new HashSet<>(asList(UNPAID_ORDER_ID)));
+        when(orderService.notifyPayment(UNPAID_ORDER_ID)).thenReturn(true);
         service.statusCheck();
         verify(orderService).notifyPayment(UNPAID_ORDER_ID);
         verify(notifyService).send(UNPAID_ORDER_ID);
+    }
+    
+    @Test
+    public void statusCheckerChecksUnpaidButDoesNotNotifyUnpaid() throws ServiceException {
+        when(orderService.findUnpaidOrderIds(minAge)).thenReturn(new HashSet<>(asList(UNPAID_ORDER_ID)));
+        when(orderService.notifyPayment(UNPAID_ORDER_ID)).thenReturn(false);
+        service.statusCheck();
+        verify(orderService).notifyPayment(UNPAID_ORDER_ID);
+        verifyZeroInteractions(notifyService);
     }
     
     @Test

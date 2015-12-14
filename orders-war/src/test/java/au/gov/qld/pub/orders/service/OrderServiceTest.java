@@ -163,13 +163,13 @@ public class OrderServiceTest {
         orderService.notifyPayment("anything");
     }
 
-    @Test(expected = ServiceException.class)
-    public void throwExceptionWhenCartNotPaidOnNotify() throws ServiceException {
+    @Test
+    public void doNothingWhenCartNotPaidOnNotify() throws ServiceException {
         String id = order.getId();
         when(orderDAO.findOne(id)).thenReturn(order);
         
-        orderService.notifyPayment(id);
-        assertThat(order.getPaid(), notNullValue());
+        assertThat(orderService.notifyPayment(id), is(false));
+        assertThat(order.getPaid(), nullValue());
         verify(orderDAO, never()).save(order);
     }
     
@@ -179,7 +179,7 @@ public class OrderServiceTest {
         order.setPaid("receipt", orderDetails);
         when(orderDAO.findOne(id)).thenReturn(order);
         
-        orderService.notifyPayment(id);
+        assertThat(orderService.notifyPayment(id), is(false));
         verify(orderDAO, never()).save(order);
     }
     
@@ -195,7 +195,7 @@ public class OrderServiceTest {
         when(responseParser.getPaidOrderDetails(ORDER_DETAILS)).thenReturn(orderDetails);
         when(orderDAO.findOne(id)).thenReturn(order);
         
-        orderService.notifyPayment(id);
+        assertThat(orderService.notifyPayment(id), is(true));
         assertThat(order.getPaid(), notNullValue());
         assertThat(order.getReceipt(), is(RECEIPT));
         

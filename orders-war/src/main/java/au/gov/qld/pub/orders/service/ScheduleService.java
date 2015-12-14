@@ -28,8 +28,9 @@ public class ScheduleService {
         
         for (String orderId : orderService.findUnpaidOrderIds(minCreated)) {
             try {
-                orderService.notifyPayment(orderId);
-                notifyService.send(orderId);
+                if (orderService.notifyPayment(orderId)) {
+                    notifyService.send(orderId);
+                }
             } catch (ServiceException e) {
                 LOG.info(e.getMessage(), e);
             }
