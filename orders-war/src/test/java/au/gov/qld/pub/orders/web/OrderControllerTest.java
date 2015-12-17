@@ -111,7 +111,7 @@ public class OrderControllerTest {
     @SuppressWarnings("unchecked")
     @Test
     public void addWithTruncatedFields() throws ServiceException {
-        request.setParameters(ImmutableMap.of("allowedfield", repeat("a", 201)));
+        request.setParameters(ImmutableMap.of("allowedfield", repeat("a", OrderController.MAX_FIELD_LENGTH + 1)));
         when(orderService.add(asList(item), REQ_CART_ID)).thenReturn(order);
         when(order.getCartId()).thenReturn(REQ_CART_ID);
         
@@ -119,7 +119,7 @@ public class OrderControllerTest {
         assertThat(result.getUrl(), is(FULL_URL + "/added"));
         verify(orderService).add(asList(item), REQ_CART_ID);
         verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, REQ_CART_ID, true)));
-        verify(item).setFields((Map<String, String>) argThat(allOf(hasEntry("allowedfield", repeat("a", 200)))));
+        verify(item).setFields((Map<String, String>) argThat(allOf(hasEntry("allowedfield", repeat("a", OrderController.MAX_FIELD_LENGTH)))));
     }
     
 }
