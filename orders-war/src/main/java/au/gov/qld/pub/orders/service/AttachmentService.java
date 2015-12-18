@@ -102,7 +102,10 @@ public class AttachmentService {
         for (Map.Entry<String, String> field : item.getFieldsMap().entrySet()) {
             nvps.add(createField(field.getKey(), field.getValue()));
         }
-        
+
+        nvps.add(createField("priceTotal", String.valueOf(Long.valueOf(item.getPriceGst()) + Long.valueOf(item.getPriceExGst()))));
+        nvps.add(createField("priceGst", item.getPriceGst()));
+        nvps.add(createField("priceExGst", item.getPriceExGst()));
         nvps.add(createField("paid", order.getPaid()));
         nvps.add(createField("receipt", order.getReceipt()));
 

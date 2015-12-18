@@ -36,6 +36,9 @@ import com.google.common.collect.ImmutableMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AttachmentServiceTest {
+    private static final String EXPECTED_FORM_DATA = "quantityPaid=1&name=value&priceTotal=579&priceGst=456&priceExGst=123&paid=paid+at&receipt=receipt";
+    private static final String PRICE_GST = "456";
+    private static final String PRICE_EX_GST = "123";
     private static final Integer RETRY_COUNT = 1;
     private static final Integer RETRY_WAIT = 1;
     private static final Integer TIMEOUT = 1;
@@ -67,7 +70,9 @@ public class AttachmentServiceTest {
         when(order.getItems()).thenReturn(asList(item));
         when(order.getPaid()).thenReturn(PAID_AT);
         when(order.getReceipt()).thenReturn(RECEIPT);
-        
+
+        when(item.getPriceExGst()).thenReturn(PRICE_EX_GST);
+        when(item.getPriceGst()).thenReturn(PRICE_GST);
         when(item.getId()).thenReturn(ITEM_ID);
         when(item.getFieldsMap()).thenReturn(fieldsMap);
         when(item.getNotifyBusinessFormUri()).thenReturn(BUSINESS_FORM_URI);
@@ -104,7 +109,7 @@ public class AttachmentServiceTest {
     
     @Test
     public void sendOrderAndItemDetailsToFormServiceAndReturnAsAttachmentsForBusiness() throws Exception {
-        when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))))
+        when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(businessResponse);
         
         Map<String, byte[]> result = service.retrieve(order, NotifyType.BUSINESS);
@@ -114,7 +119,7 @@ public class AttachmentServiceTest {
     
     @Test
     public void sendOrderAndItemDetailsToFormServiceAndReturnAsAttachmentsForCustomer() throws Exception {
-        when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))))
+        when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(customerResponse);
         
         Map<String, byte[]> result = service.retrieve(order, NotifyType.CUSTOMER);
@@ -133,14 +138,14 @@ public class AttachmentServiceTest {
         };
         
         when(statusLine.getStatusCode()).thenReturn(500, AttachmentService.OKAY_STATUS_CODE);
-        when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))))
+        when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(customerResponse);
         
         Map<String, byte[]> result = service.retrieve(order, NotifyType.CUSTOMER);
         assertThat(result, hasKey(ITEM_ID));
         assertThat(new String(result.get(ITEM_ID)), is(CUSTOMER_CONTENT));
         
-        verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))));
+        verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))));
     }
     
     @Test(expected = IOException.class)
@@ -160,13 +165,13 @@ public class AttachmentServiceTest {
         };
         
         when(statusLine.getStatusCode()).thenReturn(500);
-        when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))))
+        when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(customerResponse);
         
         try {
             service.retrieve(order, NotifyType.CUSTOMER);
         } catch(IOException e) {
-            verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, "quantityPaid=1&name=value&paid=paid+at&receipt=receipt"))));
+            verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))));
             throw e;
         }
     }
