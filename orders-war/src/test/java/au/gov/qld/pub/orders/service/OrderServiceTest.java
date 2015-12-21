@@ -14,6 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -67,6 +68,7 @@ public class OrderServiceTest {
     @Mock Properties properties;
     @Mock CartResponseParser responseParser;
     @Mock OrderDetails orderDetails;
+    @Mock NotifyService notifyService;
     Map<String, String> customerDetails;
     Map<String, String> deliveryDetails;
     
@@ -87,7 +89,7 @@ public class OrderServiceTest {
         
         
         orderService = new OrderService(cartService, orderDAO, itemDAO, itemPropertiesDAO, 
-                requestBuilder, responseParser);
+                requestBuilder, responseParser, notifyService);
     }
     
     @Test
@@ -171,6 +173,7 @@ public class OrderServiceTest {
         assertThat(orderService.notifyPayment(id), is(false));
         assertThat(order.getPaid(), nullValue());
         verify(orderDAO, never()).save(order);
+        verifyZeroInteractions(notifyService);
     }
     
     @Test
@@ -181,6 +184,7 @@ public class OrderServiceTest {
         
         assertThat(orderService.notifyPayment(id), is(false));
         verify(orderDAO, never()).save(order);
+        verifyZeroInteractions(notifyService);
     }
     
     @Test
@@ -202,6 +206,7 @@ public class OrderServiceTest {
         assertThat(order.getDeliveryDetailsMap(), is(deliveryDetails));
         assertThat(order.getCustomerDetailsMap(), is(customerDetails));
         verify(orderDAO).save(order);
+        verify(notifyService).send(order);
     }
     
     @Test

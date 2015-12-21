@@ -114,7 +114,7 @@ public class NotifyServiceTest {
     @Test
     public void dontNotifyAlreadyNotified() throws ServiceException {
         when(order.getNotified()).thenReturn("anything");
-        service.send(order.getId());
+        service.send(order);
 
         verifyZeroInteractions(mailSender);
         verify(order, never()).setNotified(anyString());
@@ -136,7 +136,7 @@ public class NotifyServiceTest {
         when(unpaidItem.getNotifyBusinessEmail()).thenReturn(BUSINESS_TO);
         when(unpaidItem.getNotifyBusinessEmailSubject()).thenReturn(BUSINESS_SUBJECT);
         when(order.getPaid()).thenReturn(PAID);
-        service.send(order.getId());
+        service.send(order);
 
         verify(mailSender).send(message);
         verify(message).setText(BUSINESS_BODY);
@@ -151,7 +151,7 @@ public class NotifyServiceTest {
     @Test
     public void dontNotifyWhenNotPaid() throws Exception {
         when(order.getPaid()).thenReturn(null);
-        service.send(order.getId());
+        service.send(order);
 
         verifyZeroInteractions(mailSender);
         verifyZeroInteractions(attachmentService);
@@ -167,7 +167,7 @@ public class NotifyServiceTest {
         when(item.getNotifyCustomerEmailSubject()).thenReturn(CUSTOMER_SUBJECT);
         when(groupedOrder.getCustomerDetailsMap()).thenReturn(of("email", CUSTOMER_TO));
         when(order.getPaid()).thenReturn(PAID);
-        service.send(order.getId());
+        service.send(order);
 
         verify(mailSender).send(message);
         verify(message).setText(CUSTOMER_BODY);
@@ -186,7 +186,7 @@ public class NotifyServiceTest {
         when(item.getNotifyCustomerEmailField()).thenReturn("deliveryDetails");
         when(item.getNotifyCustomerEmailSubject()).thenReturn(CUSTOMER_SUBJECT);
         when(groupedOrder.getDeliveryDetailsMap()).thenReturn(of("email", CUSTOMER_TO));        
-        service.send(order.getId());
+        service.send(order);
 
         verify(mailSender).send(message);
         verify(message).setText(CUSTOMER_BODY);

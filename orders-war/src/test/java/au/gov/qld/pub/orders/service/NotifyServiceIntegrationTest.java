@@ -52,7 +52,7 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
     @SuppressWarnings("unchecked")
     @Test
     public void notifyAndSetOrderNotifiedForEachProductId() throws ServiceException, InterruptedException {
-        service.send(order.getId());
+        service.send(order);
         
         Order saved = orderDAO.findOne(order.getId());
         assertThat(saved.getNotified(), notNullValue());
@@ -80,7 +80,7 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
         itemDAO.save(order.getItems());
         orderDAO.save(order);
         
-        service.send(order.getId());
+        service.send(order);
         
         Order saved = orderDAO.findOne(order.getId());
         assertThat(saved.getNotified(), notNullValue());

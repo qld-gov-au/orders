@@ -16,7 +16,6 @@ import au.gov.qld.pub.orders.dao.ItemDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.service.AttachmentService;
-import au.gov.qld.pub.orders.service.NotifyService;
 import au.gov.qld.pub.orders.service.NotifyType;
 import au.gov.qld.pub.orders.service.OrderService;
 import au.gov.qld.pub.orders.service.ServiceException;
@@ -27,15 +26,13 @@ public class DownloadItemController {
     private static final String CONTENT_TYPE = "application/pdf";
 
     private final OrderService orderService;
-    private final NotifyService notifyService;
     private final ItemDAO itemDao;
     private final AttachmentService attachmentService;
     private final OrderDAO orderDao;
     
     @Autowired
-    public DownloadItemController(OrderService orderService, NotifyService notifyService, AttachmentService attachmentService, ItemDAO itemDao, OrderDAO orderDao) {
+    public DownloadItemController(OrderService orderService, AttachmentService attachmentService, ItemDAO itemDao, OrderDAO orderDao) {
         this.orderService = orderService;
-        this.notifyService = notifyService;
         this.itemDao = itemDao;
         this.attachmentService = attachmentService;
         this.orderDao = orderDao;
@@ -52,7 +49,6 @@ public class DownloadItemController {
         
         if (!item.isPaid()) {
             orderService.notifyPayment(orderId);
-            notifyService.send(orderId);
             item = itemDao.findOne(itemId);
         }
         

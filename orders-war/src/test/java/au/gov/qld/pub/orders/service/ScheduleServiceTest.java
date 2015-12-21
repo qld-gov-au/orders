@@ -3,7 +3,6 @@ package au.gov.qld.pub.orders.service;
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
@@ -25,7 +24,6 @@ public class ScheduleServiceTest {
 
     @Mock ConfigurationService config;
     @Mock OrderService orderService;
-    @Mock NotifyService notifyService;
     
     Date minAge;
     ScheduleService service;
@@ -35,7 +33,7 @@ public class ScheduleServiceTest {
         DateTimeUtils.setCurrentMillisFixed(new Date().getTime());
         minAge = new LocalDateTime().minusMillis(MAX_AGE).toDate();
         when(config.getMaxAgeForRetry()).thenReturn(MAX_AGE);
-        service = new ScheduleService(config, orderService, notifyService);
+        service = new ScheduleService(config, orderService);
     }
     
     @After
@@ -49,7 +47,6 @@ public class ScheduleServiceTest {
         when(orderService.notifyPayment(UNPAID_ORDER_ID)).thenReturn(true);
         service.statusCheck();
         verify(orderService).notifyPayment(UNPAID_ORDER_ID);
-        verify(notifyService).send(UNPAID_ORDER_ID);
     }
     
     @Test
@@ -58,7 +55,6 @@ public class ScheduleServiceTest {
         when(orderService.notifyPayment(UNPAID_ORDER_ID)).thenReturn(false);
         service.statusCheck();
         verify(orderService).notifyPayment(UNPAID_ORDER_ID);
-        verifyZeroInteractions(notifyService);
     }
     
     @Test
@@ -68,6 +64,5 @@ public class ScheduleServiceTest {
         
         service.statusCheck();
         verify(orderService).notifyPayment(UNPAID_ORDER_ID);
-        verifyZeroInteractions(notifyService);
     }
 }

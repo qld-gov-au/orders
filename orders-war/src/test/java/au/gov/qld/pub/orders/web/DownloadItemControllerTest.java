@@ -60,7 +60,7 @@ public class DownloadItemControllerTest {
         when(itemDao.findOne(ITEM_ID)).thenReturn(unpaidItem, paidItem);
         when(orderDao.findOne(ORDER_ID)).thenReturn(order);
         
-        controller = new DownloadItemController(orderService, notifyService, attachmentService, itemDao, orderDao);
+        controller = new DownloadItemController(orderService, attachmentService, itemDao, orderDao);
     }
 
     @Test
@@ -69,8 +69,6 @@ public class DownloadItemControllerTest {
         controller.download(ORDER_ID, ITEM_ID, response);
         
         verify(orderService).notifyPayment(ORDER_ID);
-        verify(notifyService).send(ORDER_ID);
-
         verify(response).setContentType("application/pdf");
         verify(response).setHeader("Content-Disposition", "attachment; filename=\"" + FILENAME + "\"");
         verify(output).write("test".getBytes());
@@ -103,8 +101,6 @@ public class DownloadItemControllerTest {
             assertThat(e.getMessage(), is("Attempted to download unpaid item id: " + ITEM_ID + " with order id" + ORDER_ID));
         } finally {
             verify(orderService).notifyPayment(ORDER_ID);
-            verify(notifyService).send(ORDER_ID);
-            
             verifyZeroInteractions(output);
             verifyZeroInteractions(attachmentService);
         }

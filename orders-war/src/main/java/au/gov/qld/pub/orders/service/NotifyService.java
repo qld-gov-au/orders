@@ -63,15 +63,14 @@ public class NotifyService {
     }
 
     @Transactional(rollbackFor = ServiceException.class)
-    public void send(String orderId) throws ServiceException {
-        Order order = orderDAO.findOne(orderId);
+    public void send(Order order) throws ServiceException {
         if (isNotBlank(order.getNotified())) {
-            LOG.info("Notify for already notified order: {}", orderId);
+            LOG.info("Notify for already notified order: {}", order.getId());
             return;
         }
         
         if (isBlank(order.getPaid())) {
-            LOG.error("Attempted to notify unpaid order: {}", orderId);
+            LOG.error("Attempted to notify unpaid order: {}", order.getId());
             return;
         }
         

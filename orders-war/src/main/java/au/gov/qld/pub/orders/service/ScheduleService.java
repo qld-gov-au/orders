@@ -12,14 +12,12 @@ import org.springframework.stereotype.Service;
 public class ScheduleService {
     private static final Logger LOG = LoggerFactory.getLogger(ScheduleService.class);
     private final OrderService orderService;
-    private final NotifyService notifyService;
     private final int maxAge;
     
     @Autowired
-    public ScheduleService(ConfigurationService config, OrderService orderService, NotifyService notifyService) {
+    public ScheduleService(ConfigurationService config, OrderService orderService) {
         this.maxAge = config.getMaxAgeForRetry();
         this.orderService = orderService;
-        this.notifyService = notifyService;
     }
     
     public void statusCheck() {
@@ -28,9 +26,7 @@ public class ScheduleService {
         
         for (String orderId : orderService.findUnpaidOrderIds(minCreated)) {
             try {
-                if (orderService.notifyPayment(orderId)) {
-                    notifyService.send(orderId);
-                }
+                orderService.notifyPayment(orderId);
             } catch (ServiceException e) {
                 LOG.info(e.getMessage(), e);
             }

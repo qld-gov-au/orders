@@ -40,6 +40,7 @@ public class OrderService {
     private static final Pattern GENERATED_ORDER_ID_PATTERN = Pattern.compile("<.*[:]?generatedOrderId>(.+)</.*[:]?generatedOrderId>");
     
     private final CartService cartService;
+    private final NotifyService notifyService;
     private final OrderDAO orderDAO;
     private final ItemPropertiesDAO itemPropertiesDAO;
     private final ItemDAO itemDAO;
@@ -48,13 +49,14 @@ public class OrderService {
 
     @Autowired
     public OrderService(CartService cartService, OrderDAO orderDAO, ItemDAO itemDAO, ItemPropertiesDAO itemPropertiesDAO,
-            RequestBuilder requestBuilder, CartResponseParser responseParser) {
+            RequestBuilder requestBuilder, CartResponseParser responseParser, NotifyService notifyService) {
         this.cartService = cartService;
         this.orderDAO = orderDAO;
         this.itemDAO = itemDAO;
         this.itemPropertiesDAO = itemPropertiesDAO;
         this.requestBuilder = requestBuilder;
         this.responseParser = responseParser;
+        this.notifyService = notifyService;
     }
     
     @Transactional(rollbackFor = ServiceException.class)
@@ -148,6 +150,7 @@ public class OrderService {
         order.setPaid(receipt, orderDetails);
         orderDAO.save(order);
         LOG.info("Saved order: {} as paid", orderId);
+        notifyService.send(order);
         return true;
     }
 

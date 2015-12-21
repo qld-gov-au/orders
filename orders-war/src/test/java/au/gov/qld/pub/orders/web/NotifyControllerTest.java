@@ -28,7 +28,7 @@ public class NotifyControllerTest {
     
     @Before
     public void setUp() {
-        controller = new NotifyController(orderService, notifyService);
+        controller = new NotifyController(orderService);
     }
     
     @Test
@@ -36,7 +36,6 @@ public class NotifyControllerTest {
         ResponseEntity<String> entity = controller.confirm("id");
         assertThat(entity.getStatusCode(), is(HttpStatus.OK));
         verify(orderService).notifyPayment("id");
-        verify(notifyService).send("id");
     }
     
     @Test
