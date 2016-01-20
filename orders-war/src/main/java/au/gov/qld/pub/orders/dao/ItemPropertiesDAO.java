@@ -1,12 +1,11 @@
 package au.gov.qld.pub.orders.dao;
 
-import java.util.Properties;
-
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ItemPropertiesDAO {
+import au.gov.qld.pub.orders.entity.ItemProperties;
 
-    Properties find(String productId);
+@Repository
+public interface ItemPropertiesDAO extends CrudRepository<ItemProperties, String> {
 
 }

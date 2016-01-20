@@ -20,7 +20,6 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -35,6 +34,7 @@ import au.gov.qld.pub.orders.dao.ItemDAO;
 import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
 import au.gov.qld.pub.orders.entity.Item;
+import au.gov.qld.pub.orders.entity.ItemProperties;
 import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.ws.CartResponseParser;
 import au.gov.qld.pub.orders.service.ws.CartService;
@@ -64,7 +64,7 @@ public class OrderServiceTest {
     @Mock Item item;
     @Mock ItemCommand command;
     @Mock RequestBuilder requestBuilder;
-    @Mock Properties properties;
+    @Mock ItemProperties properties;
     @Mock CartResponseParser responseParser;
     @Mock OrderDetails orderDetails;
     @Mock NotifyService notifyService;
@@ -76,7 +76,8 @@ public class OrderServiceTest {
         order = new Order(CART_ID);
         deliveryDetails = ImmutableMap.of("delivery type", "value");
         customerDetails = ImmutableMap.of("customer type", "value");
-        
+
+        when(properties.createItem()).thenReturn(item);
         when(requestBuilder.addRequest(order)).thenReturn(ADD_REQUEST);
         when(orderDAO.findByCartId(CART_ID)).thenReturn(order);
         when(command.getProductId()).thenReturn(asList(PRODUCT_ID));        
@@ -148,13 +149,13 @@ public class OrderServiceTest {
     
     @Test
     public void itemFromDAO() {
-        when(itemPropertiesDAO.find(PRODUCT_ID)).thenReturn(properties);
+        when(itemPropertiesDAO.findOne(PRODUCT_ID)).thenReturn(properties);
         assertThat(orderService.findAndPopulate(PRODUCT_ID), notNullValue());
     }
     
     @Test
     public void nullItemWhenProductIdNotFound() {
-        when(itemPropertiesDAO.find(PRODUCT_ID)).thenReturn(null);
+        when(itemPropertiesDAO.findOne(PRODUCT_ID)).thenReturn(null);
         assertThat(orderService.findAndPopulate(PRODUCT_ID), nullValue());
     }
     
@@ -210,24 +211,24 @@ public class OrderServiceTest {
     
     @Test
     public void returnCollectionOfAllowedFieldsFromItemProperties() {
-        Properties properties1 = mock(Properties.class);
-        when(properties1.getProperty("fields")).thenReturn("field1, field2");
-        when(itemPropertiesDAO.find(PRODUCT_ID)).thenReturn(properties1);
+        ItemProperties properties1 = mock(ItemProperties.class);
+        when(properties1.getFields()).thenReturn("field1, field2");
+        when(itemPropertiesDAO.findOne(PRODUCT_ID)).thenReturn(properties1);
         
         assertThat(orderService.getAllowedFields(PRODUCT_ID), hasItems("field1", "field2"));
     }
     
     @Test
     public void returnEmptyCollectionOfAllowedFieldsWhenUnknownItem() {
-        when(itemPropertiesDAO.find(PRODUCT_ID)).thenReturn(null);
+        when(itemPropertiesDAO.findOne(PRODUCT_ID)).thenReturn(null);
         assertThat((Set<String>)orderService.getAllowedFields(PRODUCT_ID), is(Collections.EMPTY_SET));
     }
     
     @Test
     public void returnEmptyCollectionOfAllowedFieldsWhenItemHasNoAllowedFields() {
-        Properties properties1 = mock(Properties.class);
-        when(properties1.getProperty("fields")).thenReturn(null);
-        when(itemPropertiesDAO.find(PRODUCT_ID)).thenReturn(properties1);
+        ItemProperties properties1 = mock(ItemProperties.class);
+        when(properties1.getFields()).thenReturn(null);
+        when(itemPropertiesDAO.findOne(PRODUCT_ID)).thenReturn(properties1);
         
         assertThat((Set<String>)orderService.getAllowedFields(PRODUCT_ID), is(Collections.EMPTY_SET));
     }

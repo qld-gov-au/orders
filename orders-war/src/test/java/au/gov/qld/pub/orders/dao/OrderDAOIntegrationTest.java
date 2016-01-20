@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import au.gov.qld.pub.orders.ApplicationContextAwareTest;
-import au.gov.qld.pub.orders.ProductProperties;
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.ws.OrderDetails;
@@ -32,7 +31,7 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
         String cartId = UUID.randomUUID().toString();
         
         Order order = new Order(cartId);
-        Item item = ProductProperties.populate(itemPropertiesDAO.find("test"));
+        Item item = itemPropertiesDAO.findOne("test").createItem();
         Map<String, String> fields = ImmutableMap.of("field1", "value1", "field2", "value2");
         item.setFields(fields);
         itemDAO.save(item);
@@ -77,7 +76,7 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
     public void dontSaveCartIdWhenNull() {
         Order order = new Order(null);
         String id = order.getId();
-        order.add(ProductProperties.populate(itemPropertiesDAO.find("test")));
+        order.add(itemPropertiesDAO.findOne("test").createItem());
         itemDAO.save(order.getItems());
         dao.save(order);
         

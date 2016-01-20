@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import au.gov.qld.pub.orders.ApplicationContextAwareTest;
-import au.gov.qld.pub.orders.ProductProperties;
 import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
 import au.gov.qld.pub.orders.entity.CartState;
 import au.gov.qld.pub.orders.entity.Item;
@@ -37,7 +36,7 @@ public class RequestBuilderIntegrationTest extends ApplicationContextAwareTest {
     @Before
     public void setUp() {
         order = new Order(CART_ID);
-        item = ProductProperties.populate(itemPropertiesDAO.find("test"));
+        item = itemPropertiesDAO.findOne("test").createItem();
         item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
         order.add(item);
     }
@@ -57,7 +56,7 @@ public class RequestBuilderIntegrationTest extends ApplicationContextAwareTest {
     
     @Test
     public void createAddRequestWithoutItemsNotNew() throws ServiceException {
-        Item paidItem = ProductProperties.populate(itemPropertiesDAO.find("test"));
+        Item paidItem = itemPropertiesDAO.findOne("test").createItem();
         paidItem.setCartState(CartState.PAID);
         paidItem.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
         order.add(paidItem);

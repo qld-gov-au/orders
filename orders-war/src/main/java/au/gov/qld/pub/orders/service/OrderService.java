@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,12 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import au.gov.qld.pub.orders.ProductProperties;
 import au.gov.qld.pub.orders.dao.ItemDAO;
 import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
 import au.gov.qld.pub.orders.entity.CartState;
 import au.gov.qld.pub.orders.entity.Item;
+import au.gov.qld.pub.orders.entity.ItemProperties;
 import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.ws.CartResponseParser;
 import au.gov.qld.pub.orders.service.ws.CartService;
@@ -34,7 +33,6 @@ import au.gov.qld.pub.orders.service.ws.RequestBuilder;
 
 @Service
 public class OrderService {
-    private static final String ACCEPT_FIELDS = "fields";
     private static final Logger LOG = LoggerFactory.getLogger(OrderService.class);
     private static final Pattern CART_ID_PATTERN = Pattern.compile("<.*[:]?cartId>(.+)</.*[:]?cartId>");
     private static final Pattern GENERATED_ORDER_ID_PATTERN = Pattern.compile("<.*[:]?generatedOrderId>(.+)</.*[:]?generatedOrderId>");
@@ -95,12 +93,12 @@ public class OrderService {
     }
     
     public Item findAndPopulate(String productId) {
-        Properties properties = itemPropertiesDAO.find(productId);
+        ItemProperties properties = itemPropertiesDAO.findOne(productId);
         if (properties == null) {
             return null;
         }
         
-        return ProductProperties.populate(properties);
+        return properties.createItem();
     }
 
     private String getValueFrom(Pattern pattern, String text) {
@@ -156,12 +154,12 @@ public class OrderService {
 
     public Collection<String> getAllowedFields(String productId) {
         Set<String> allowedFields = new HashSet<String>();
-        Properties properties = itemPropertiesDAO.find(productId);
+        ItemProperties properties = itemPropertiesDAO.findOne(productId);
         if (properties == null) {
             return Collections.emptySet();
         }
         
-        String rawFields = properties.getProperty(ACCEPT_FIELDS);
+        String rawFields = properties.getFields();
         if (isBlank(rawFields)) {
             return Collections.emptySet();
         }
