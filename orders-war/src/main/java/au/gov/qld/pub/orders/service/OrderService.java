@@ -34,8 +34,8 @@ import au.gov.qld.pub.orders.service.ws.RequestBuilder;
 
 @Service
 public class OrderService {
+    private static final String ACCEPT_FIELDS = "fields";
     private static final Logger LOG = LoggerFactory.getLogger(OrderService.class);
-    
     private static final Pattern CART_ID_PATTERN = Pattern.compile("<.*[:]?cartId>(.+)</.*[:]?cartId>");
     private static final Pattern GENERATED_ORDER_ID_PATTERN = Pattern.compile("<.*[:]?generatedOrderId>(.+)</.*[:]?generatedOrderId>");
     
@@ -161,7 +161,7 @@ public class OrderService {
             return Collections.emptySet();
         }
         
-        String rawFields = properties.getProperty(ProductProperties.ACCEPT_FIELDS);
+        String rawFields = properties.getProperty(ACCEPT_FIELDS);
         if (isBlank(rawFields)) {
             return Collections.emptySet();
         }

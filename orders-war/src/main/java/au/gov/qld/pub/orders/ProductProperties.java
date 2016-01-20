@@ -5,8 +5,6 @@ import java.util.Properties;
 import au.gov.qld.pub.orders.entity.Item;
 
 public class ProductProperties {
-    public static final String ACCEPT_FIELDS = "fields";
-
     public static final Item populate(Properties properties) {
         return new Item(properties.getProperty("productId"), properties.getProperty("productGroup"), properties.getProperty("title"), properties.getProperty("reference"),
                 properties.getProperty("agency"), properties.getProperty("description"), properties.getProperty("disbursementId"),
