@@ -25,7 +25,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import au.gov.qld.pub.orders.ProductProperties;
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.ConfigurationService;
@@ -58,7 +57,7 @@ public class OrderControllerTest {
         when(orderService.findAndPopulate(PRODUCT_ID)).thenReturn(item);
         when(configurationService.getErrorRedirect()).thenReturn(ERROR_REDIRECT);
         when(configurationService.getServiceFullUrl()).thenReturn(FULL_URL);
-        when(orderService.getAllowedFields(PRODUCT_ID, ProductProperties.ACCEPT_FIELDS)).thenReturn(asList("allowedfield"));
+        when(orderService.getAllowedFields(PRODUCT_ID)).thenReturn(asList("allowedfield"));
         when(item.getProductId()).thenReturn(PRODUCT_ID);
         controller = new OrderController(orderService, configurationService);
     }

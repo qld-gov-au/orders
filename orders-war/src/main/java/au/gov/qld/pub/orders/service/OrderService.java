@@ -154,14 +154,14 @@ public class OrderService {
         return true;
     }
 
-    public Collection<String> getAllowedFields(String productId, ProductProperties acceptFields) {
+    public Collection<String> getAllowedFields(String productId) {
         Set<String> allowedFields = new HashSet<String>();
         Properties properties = itemPropertiesDAO.find(productId);
         if (properties == null) {
             return Collections.emptySet();
         }
         
-        String rawFields = properties.getProperty(acceptFields.getProperty());
+        String rawFields = properties.getProperty(ProductProperties.ACCEPT_FIELDS);
         if (isBlank(rawFields)) {
             return Collections.emptySet();
         }

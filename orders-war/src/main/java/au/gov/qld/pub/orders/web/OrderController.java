@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import au.gov.qld.pub.orders.ProductProperties;
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.ConfigurationService;
@@ -119,7 +118,7 @@ public class OrderController {
         }
         
         for (Item item : items) {
-            Collection<String> allowedFields = orderService.getAllowedFields(item.getProductId(), ProductProperties.ACCEPT_FIELDS);
+            Collection<String> allowedFields = orderService.getAllowedFields(item.getProductId());
             item.setFields(validateAndGetFields(request, allowedFields));
         }
         

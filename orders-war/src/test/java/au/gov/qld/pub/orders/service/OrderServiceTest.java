@@ -31,7 +31,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import au.gov.qld.pub.orders.ProductProperties;
 import au.gov.qld.pub.orders.dao.ItemDAO;
 import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
@@ -215,13 +214,13 @@ public class OrderServiceTest {
         when(properties1.getProperty("fields")).thenReturn("field1, field2");
         when(itemPropertiesDAO.find(PRODUCT_ID)).thenReturn(properties1);
         
-        assertThat(orderService.getAllowedFields(PRODUCT_ID, ProductProperties.ACCEPT_FIELDS), hasItems("field1", "field2"));
+        assertThat(orderService.getAllowedFields(PRODUCT_ID), hasItems("field1", "field2"));
     }
     
     @Test
     public void returnEmptyCollectionOfAllowedFieldsWhenUnknownItem() {
         when(itemPropertiesDAO.find(PRODUCT_ID)).thenReturn(null);
-        assertThat((Set<String>)orderService.getAllowedFields(PRODUCT_ID, ProductProperties.ACCEPT_FIELDS), is(Collections.EMPTY_SET));
+        assertThat((Set<String>)orderService.getAllowedFields(PRODUCT_ID), is(Collections.EMPTY_SET));
     }
     
     @Test
@@ -230,7 +229,7 @@ public class OrderServiceTest {
         when(properties1.getProperty("fields")).thenReturn(null);
         when(itemPropertiesDAO.find(PRODUCT_ID)).thenReturn(properties1);
         
-        assertThat((Set<String>)orderService.getAllowedFields(PRODUCT_ID, ProductProperties.ACCEPT_FIELDS), is(Collections.EMPTY_SET));
+        assertThat((Set<String>)orderService.getAllowedFields(PRODUCT_ID), is(Collections.EMPTY_SET));
     }
     
     @SuppressWarnings("unchecked")
