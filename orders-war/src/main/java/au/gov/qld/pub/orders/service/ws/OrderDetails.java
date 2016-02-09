@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class OrderDetails {
     
-    private Map<String, String> orderlineQuantities = new HashMap<String, String>();
-    private Map<String, String> deliveryDetails = new HashMap<String, String>();
-    private Map<String, String> customerDetails = new HashMap<String, String>();
+    private Map<String, String> orderlineQuantities = new HashMap<>();
+    private Map<String, String> deliveryDetails = new HashMap<>();
+    private Map<String, String> customerDetails = new HashMap<>();
     
     public Map<String, String> getDeliveryDetails() {
         return deliveryDetails;

@@ -76,7 +76,7 @@ public class NotifyService {
         
         LOG.info("Notifying order: {}", order.getId());
         
-        Map<String, Order> productIdOrders = orderGrouper.byProductGroup(order);
+        Map<String, Order> productIdOrders = orderGrouper.paidByProductGroup(order);
         try {
             for (Map.Entry<String, Order> productIdOrder : productIdOrders.entrySet()) {
                 notifyOrderWithProductId(productIdOrder.getKey(), productIdOrder.getValue());

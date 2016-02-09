@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.util.Map;
 
@@ -26,24 +27,29 @@ public class OrderGrouperTest {
     }
     
     @Test
-    public void byGroup() {
-        Item itemA = new ItemBuilder().withGroup("a").build();
-        Item itemB = new ItemBuilder().withGroup("b").build();
+    public void paidByGroup() {
+        Item itemA = new ItemBuilder().withGroup("a").withPaid("1").build();
+        Item itemB = new ItemBuilder().withGroup("b").withPaid("1").build();
+        Item itemBUnpaid = new ItemBuilder().withGroup("b").withPaid("0").build();
+        Item itemC = new ItemBuilder().withGroup("c").withPaid("0").build();
         
         Order order = new Order("cart id");
         order.setPaid("paid");
         order.setReceipt("receipt");
         order.add(itemA);
         order.add(itemB);
+        order.add(itemBUnpaid);
+        order.add(itemC);
         
         Map<String, String> deliveryDetails = ImmutableMap.of("delivery field 1", "delivery value 1");
         Map<String, String> customerDetails = ImmutableMap.of("customer field 1", "customer value 1");
         order.setDeliveryDetailsMap(deliveryDetails);
         order.setCustomerDetailsMap(customerDetails);
 
-        Map<String, Order> byGroup = orderGrouper.byProductGroup(order);
+        Map<String, Order> byGroup = orderGrouper.paidByProductGroup(order);
         Order productA = byGroup.get("a");
         Order productB = byGroup.get("b");
+        assertThat(byGroup.get("c"), nullValue());
         
         assertThat(productA, notNullValue());
         assertThat(productB, notNullValue());

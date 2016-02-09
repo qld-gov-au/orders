@@ -77,7 +77,7 @@ public class NotifyServiceTest {
     @SuppressWarnings("rawtypes")
     @Before
     public void setUp() throws Exception {
-        when(orderGrouper.byProductGroup(order)).thenReturn(of(PRODUCT_ID, groupedOrder));
+        when(orderGrouper.paidByProductGroup(order)).thenReturn(of(PRODUCT_ID, groupedOrder));
         when(groupedOrder.getItems()).thenReturn(asList(item));
         doAnswer(new Answer() {
             @Override

@@ -27,6 +27,7 @@ public class ItemBuilder {
     private String notifyCustomerFormUri;
     private String notifyCustomerFormFilename;
     private String notifyCustomerFormDownloadTitle;
+    private String quantityPaid = "0";
 
     public ItemBuilder withProductId(String productId) {
         this.productId = productId;
@@ -44,9 +45,16 @@ public class ItemBuilder {
     }
     
     public Item build() {
-        return new Item(productId, group, title, reference, agency, description, disbursementId,
+        Item item = new Item(productId, group, title, reference, agency, description, disbursementId,
                 priceGst, priceExGst, costCenter, glCode, taxCode, narrative, notifyCustomerEmailField,
                 notifyBusinessEmail, notifyBusinessEmailSubject, notifyCustomerEmailSubject, deliveryDetailsRequired, customerDetailsRequired,
                 notifyBusinessFormUri, notifyBusinessFormFilename, notifyCustomerFormUri, notifyCustomerFormFilename, notifyCustomerFormDownloadTitle);
+        item.setQuantityPaid(quantityPaid);
+        return item;
+    }
+
+    public ItemBuilder withPaid(String quantityPaid) {
+        this.quantityPaid = quantityPaid; 
+        return this;
     }
 }
