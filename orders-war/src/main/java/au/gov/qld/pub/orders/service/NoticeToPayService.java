@@ -1,9 +1,12 @@
 package au.gov.qld.pub.orders.service;
 
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +27,8 @@ public class NoticeToPayService {
     private static final Logger LOG = LoggerFactory.getLogger(NotifyService.class);
     public static final String NS = "http://smartservice.qld.gov.au/payment/schemas/notice_to_pay_1_4";
     private static final String PAID_STATUS = "PAID";
+    private static final String FAILED_STATUS = "FAILED";
+    private static final Set<String> VALID_STATUSES = new HashSet<>(asList(PAID_STATUS, FAILED_STATUS));
     private static final Pattern RESPONSE_PATTERN = Pattern.compile("<.*[:]?redirectUrl>(.+)</.*[:]?redirectUrl>");
     private static final Pattern STATUS_PATTERN = Pattern.compile("<.*[:]?status>(.+)</.*[:]?status>");
     private static final Pattern RECEIPT_NUMBER_PATTERN = Pattern.compile("<.*[:]?receiptNumber>(.+)</.*[:]?receiptNumber>");
@@ -93,7 +98,10 @@ public class NoticeToPayService {
         
         String request = requestBuilder.noticeToPayQuery(noticeToPayId);
         String response = defaultString(soapClient.sendRequest(username, password, NS, request));
-        verifyPaid(response);
+        if (isNotPaid(response)) {
+            LOG.info("Received notification for unpaid");
+            return;
+        }
         
         String receiptNumber = getReceiptNumber(response);        
         LOG.info("Received payment notification for: {} with receipt: {}", noticeToPayId, receiptNumber);
@@ -108,10 +116,15 @@ public class NoticeToPayService {
         return receiptMatcher.group(1);
     }
 
-    private void verifyPaid(String response) throws ServiceException {
+    private boolean isNotPaid(String response) throws ServiceException {
         Matcher matcher = STATUS_PATTERN.matcher(response);
-        if (!matcher.find() || !PAID_STATUS.equals(matcher.group(1))) {
-            throw new ServiceException("Notification on NTP with invalid response from payment gateway: " + response);
+        matcher.find();
+        
+        final String status = matcher.group(1);
+        if (VALID_STATUSES.contains(status)) {
+            return !PAID_STATUS.equals(status);
         }
+        
+        throw new ServiceException("Notification on NTP with invalid response from payment gateway: " + response); 
     }
 }

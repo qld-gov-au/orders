@@ -44,6 +44,7 @@ public class NoticeToPayServiceTest {
     private static final String NOTICE_TO_PAY_ID = "some notice to pay id";
     private static final String RECEIPT_NUMBER = "some receipt number";
     private static final String UNPAID_QUERY_RESPONSE = "<status>NOT_PAID</status>";
+    private static final String FAILED_QUERY_RESPONSE = "<status>FAILED</status>";
     private static final String PAID_QUERY_RESPONSE = "<status>PAID</status><receiptNumber>" + RECEIPT_NUMBER + "</receiptNumber>";
     private static final String NTP_QUERY = "some ntp query";
     
@@ -115,7 +116,7 @@ public class NoticeToPayServiceTest {
     }
     
     @Test
-    public void throwExceptionWhenInvalidResponse() throws Exception {
+    public void throwExceptionWhenInvalidResponseFromRequest() throws Exception {
         when(soapClient.sendRequest(USERNAME, PASSWORD.getBytes("UTF-8"), NoticeToPayService.NS, REQUEST)).thenReturn("bogus");
         try {
             service.create(SOURCE_ID, SOURCE_URL);
@@ -165,6 +166,13 @@ public class NoticeToPayServiceTest {
         } catch (ServiceException e) {
             verify(noticeToPayDAO, never()).save(argThat(isA(NoticeToPay.class)));
         }
+    }
+    
+    @Test
+    public void ignoreNotificationOnFailed() throws Exception {
+        when(soapClient.sendRequest(USERNAME, PASSWORD.getBytes("UTF-8"), NoticeToPayService.NS, NTP_QUERY)).thenReturn(FAILED_QUERY_RESPONSE);
+        service.notifyPayment(NOTICE_TO_PAY_ID);
+        verify(noticeToPayDAO, never()).save(argThat(isA(NoticeToPay.class)));
     }
     
 }
