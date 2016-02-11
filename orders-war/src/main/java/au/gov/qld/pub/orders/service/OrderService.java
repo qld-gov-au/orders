@@ -69,6 +69,9 @@ public class OrderService {
         }
         
         for (Item item : items) {
+        	if (item.getFieldsMap().isEmpty()) {
+        		throw new ServiceException("Item missing fields");
+        	}
             order.add(item);
         }
         itemDAO.save(order.getItems());

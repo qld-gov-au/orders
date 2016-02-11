@@ -8,8 +8,10 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -86,6 +88,7 @@ public class OrderServiceTest {
         when(responseParser.getReceipt(ORDER_STATUS)).thenReturn(RECEIPT);
         when(orderDetails.getCustomerDetails()).thenReturn(customerDetails);
         when(orderDetails.getDeliveryDetails()).thenReturn(deliveryDetails);
+        when(item.getFieldsMap()).thenReturn(ImmutableMap.of("field", "value"));
         
         
         orderService = new OrderService(cartService, orderDAO, itemDAO, itemPropertiesDAO, 
@@ -103,6 +106,19 @@ public class OrderServiceTest {
         assertThat(addedOrder.getGeneratedId(), is(GENERATED_ID));
         verify(orderDAO, times(2)).save(addedOrder);
         assertThat(addedOrder.getItems(), is(asList(item)));
+    }
+    
+    @SuppressWarnings("unchecked")
+	@Test
+    public void throwExceptionIfItemMissingFields() throws ServiceException {
+    	when(item.getFieldsMap()).thenReturn(Collections.EMPTY_MAP);
+        try {
+        	orderService.add(asList(item), null);
+        	fail("Should have thrown exception");
+        } catch (ServiceException e) {
+        	assertThat(e.getMessage(), is("Item missing fields"));
+        	verify(orderDAO, never()).save(isA(Order.class));
+        }
     }
     
     @Test

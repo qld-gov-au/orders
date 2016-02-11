@@ -20,8 +20,6 @@ public class JettyServer {
 
     public static void start() throws Exception {
         server = new Server(8091);
-        
-        server = new Server(8091);
         Properties applicationProps = new Properties();
         applicationProps.load(JettyServer.class.getClassLoader().getResourceAsStream("application.properties"));
         

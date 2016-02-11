@@ -70,7 +70,7 @@ public class OrderController {
 
     @SuppressWarnings("unchecked")
     private Map<String, String> validateAndGetFields(HttpServletRequest request, Collection<String> allowedFields) {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         Enumeration<String> parameterNames = (Enumeration<String>)request.getParameterNames();
         for (int i=0; i < MAX_FIELDS && parameterNames.hasMoreElements(); i++) {
             String name = (String)parameterNames.nextElement();
@@ -96,7 +96,7 @@ public class OrderController {
             return Collections.emptyList();
         }
 
-        List<Item> items = new ArrayList<Item>();
+        List<Item> items = new ArrayList<>();
         for (String productId : command.getProductId()) {
             Item item = orderService.findAndPopulate(productId);
             if (item != null) {
