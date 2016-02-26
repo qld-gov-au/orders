@@ -10,6 +10,9 @@
     <!-- Extend with your own payment information service by overwriting this file in your overlay project -->
     <bean id="paymentInformationService" class="au.gov.qld.pub.orders.service.StubPaymentInformationService" />
     
+    <!-- Extend with your own payment information service by overwriting this file in your overlay project -->
+    <bean id="itemPropertiesService" class="au.gov.qld.pub.orders.service.DatabaseItemPropertiesService" />
+    
     <!-- Extend with your own additional mail content service by overwriting this file in your overlay project -->
     <bean id="additionalMailContentService" class="au.gov.qld.pub.orders.service.StubAdditionalMailContentService" />
     

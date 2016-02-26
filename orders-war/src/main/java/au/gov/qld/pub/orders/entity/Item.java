@@ -3,10 +3,8 @@ package au.gov.qld.pub.orders.entity;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -20,14 +18,14 @@ import javax.persistence.Id;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.boon.core.reflection.BeanUtils;
 
 import au.gov.qld.pub.orders.dao.JsonHelper;
+import au.gov.qld.pub.orders.service.ItemPropertiesDTO;
 
 @Entity
 public class Item {
 
-    private static final List<String> VALID_NOTIFY_CUSTOMER_EMAIL_FIELDS = asList("deliveryDetails", "customerDetails");
-    
     @Id
     private String id;
     @Column private String productId;
@@ -60,50 +58,15 @@ public class Item {
     @Column @Enumerated(EnumType.STRING)
     private CartState cartState;
     
-    @SuppressWarnings("unused")
-    private Item() {
-        //for hibernate
-    }
-    
-    public Item(String productId, String productGroup, String title, String reference,
-            String agency, String description, String disbursementId,
-            String priceGst, String priceExGst, String costCenter,
-            String glCode, String taxCode, String narrative, String notifyCustomerEmailField,
-            String notifyBusinessEmail, String notifyBusinessEmailSubject, String notifyCustomerEmailSubject,
-            String deliveryDetailsRequired, String customerDetailsRequired,
-            String notifyBusinessFormUri, String notifyBusinessFormFilename, String notifyCustomerFormUri, String notifyCustomerFormFilename, String notifyCustomerFormDownloadTitle) {
+    protected Item() {
         this.id = UUID.randomUUID().toString();
         this.cartState = CartState.NEW;
-        
-        this.notifyCustomerEmailField = notifyCustomerEmailField;
-        this.notifyBusinessEmail = notifyBusinessEmail;
-        this.notifyBusinessEmailSubject = notifyBusinessEmailSubject;
-        this.notifyCustomerEmailSubject = notifyCustomerEmailSubject;
-        if (isNotBlank(notifyCustomerEmailField) && !VALID_NOTIFY_CUSTOMER_EMAIL_FIELDS.contains(notifyCustomerEmailField)) {
-            throw new IllegalStateException("Invalid notifyCustomerEmailField of " 
-                + notifyCustomerEmailField + " and should be in " + VALID_NOTIFY_CUSTOMER_EMAIL_FIELDS);
-        }
-        
-        this.deliveryDetailsRequired = deliveryDetailsRequired;
-        this.customerDetailsRequired = customerDetailsRequired;
-        this.productId = productId;
-        this.productGroup = productGroup;
-        this.title = title;
-        this.reference = reference;
-        this.agency = agency;
-        this.description = description;
-        this.disbursementId = disbursementId;
-        this.priceGst = priceGst;
-        this.priceExGst = priceExGst;
-        this.costCenter = costCenter;
-        this.glCode = glCode;
-        this.taxCode = taxCode;
-        this.narrative = narrative;
-        this.notifyBusinessFormUri = notifyBusinessFormUri;
-        this.notifyBusinessFormFilename = notifyBusinessFormFilename;
-        this.notifyCustomerFormUri = notifyCustomerFormUri;
-        this.notifyCustomerFormFilename = notifyCustomerFormFilename;
-        this.notifyCustomerFormDownloadTitle = notifyCustomerFormDownloadTitle;
+    }
+    
+    public static Item createItem(ItemPropertiesDTO dto) {
+        Item item = new Item();
+        BeanUtils.copyProperties(dto, item);
+        return item;
     }
 
     public String getId() {

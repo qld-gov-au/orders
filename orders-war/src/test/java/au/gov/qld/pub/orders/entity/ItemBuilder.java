@@ -1,5 +1,7 @@
 package au.gov.qld.pub.orders.entity;
 
+import au.gov.qld.pub.orders.service.ItemPropertiesDTO;
+
 
 
 public class ItemBuilder {
@@ -45,10 +47,33 @@ public class ItemBuilder {
     }
     
     public Item build() {
-        Item item = new Item(productId, group, title, reference, agency, description, disbursementId,
-                priceGst, priceExGst, costCenter, glCode, taxCode, narrative, notifyCustomerEmailField,
-                notifyBusinessEmail, notifyBusinessEmailSubject, notifyCustomerEmailSubject, deliveryDetailsRequired, customerDetailsRequired,
-                notifyBusinessFormUri, notifyBusinessFormFilename, notifyCustomerFormUri, notifyCustomerFormFilename, notifyCustomerFormDownloadTitle);
+        ItemPropertiesDTO properties = new ItemPropertiesDTO();
+        properties.setProductId(productId); 
+        properties.setProductGroup(group); 
+        properties.setTitle(title); 
+        properties.setReference(reference); 
+        properties.setAgency(agency); 
+        properties.setDescription(description); 
+        properties.setDisbursementId(disbursementId);
+        properties.setPriceGst(priceGst);
+        properties.setPriceExGst(priceExGst); 
+        properties.setCostCenter(costCenter); 
+        properties.setGlCode(glCode); 
+        properties.setTaxCode(taxCode); 
+        properties.setNarrative(narrative); 
+        properties.setNotifyCustomerEmailField(notifyCustomerEmailField);
+        properties.setNotifyBusinessEmail(notifyBusinessEmail); 
+        properties.setNotifyBusinessEmailSubject(notifyBusinessEmailSubject); 
+        properties.setNotifyCustomerEmailSubject(notifyCustomerEmailSubject); 
+        properties.setDeliveryDetailsRequired(deliveryDetailsRequired); 
+        properties.setCustomerDetailsRequired(customerDetailsRequired);
+        properties.setNotifyBusinessFormUri(notifyBusinessFormUri); 
+        properties.setNotifyBusinessFormFilename(notifyBusinessFormFilename); 
+        properties.setNotifyCustomerFormUri(notifyCustomerFormUri); 
+        properties.setNotifyCustomerFormFilename(notifyCustomerFormFilename); 
+        properties.setNotifyCustomerFormDownloadTitle(notifyCustomerFormDownloadTitle);
+
+        Item item = Item.createItem(properties);
         item.setQuantityPaid(quantityPaid);
         return item;
     }

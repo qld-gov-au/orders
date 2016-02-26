@@ -9,11 +9,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import au.gov.qld.pub.orders.ApplicationContextAwareTest;
-import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
 import au.gov.qld.pub.orders.entity.CartState;
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.ConfigurationService;
+import au.gov.qld.pub.orders.service.ItemPropertiesService;
 import au.gov.qld.pub.orders.service.PaymentInformation;
 import au.gov.qld.pub.orders.service.ServiceException;
 import au.gov.qld.pub.orders.service.StubPaymentInformationService;
@@ -27,7 +27,7 @@ public class RequestBuilderIntegrationTest extends ApplicationContextAwareTest {
     private static final String NTP_ID = "some ntp id";
     
     @Autowired RequestBuilder builder;
-    @Autowired ItemPropertiesDAO itemPropertiesDAO;
+    @Autowired ItemPropertiesService itemPropertiesService;
     @Autowired ConfigurationService config;
     
     Order order;
@@ -36,7 +36,7 @@ public class RequestBuilderIntegrationTest extends ApplicationContextAwareTest {
     @Before
     public void setUp() {
         order = new Order(CART_ID);
-        item = itemPropertiesDAO.findOne("test").createItem();
+        item = Item.createItem(itemPropertiesService.find("test"));
         item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
         order.add(item);
     }
@@ -56,7 +56,7 @@ public class RequestBuilderIntegrationTest extends ApplicationContextAwareTest {
     
     @Test
     public void createAddRequestWithoutItemsNotNew() throws ServiceException {
-        Item paidItem = itemPropertiesDAO.findOne("test").createItem();
+        Item paidItem = Item.createItem(itemPropertiesService.find("test"));
         paidItem.setCartState(CartState.PAID);
         paidItem.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
         order.add(paidItem);

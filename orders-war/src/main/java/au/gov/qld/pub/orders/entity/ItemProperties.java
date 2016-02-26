@@ -1,206 +1,116 @@
 package au.gov.qld.pub.orders.entity;
 
-import java.util.Properties;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import au.gov.qld.pub.orders.service.ItemPropertiesDTO;
+
 @Entity
-public class ItemProperties {
+public class ItemProperties extends ItemPropertiesDTO {
     @Id
-    private String productId;
-    @Column
-    private String productGroup;
-    @Column
-    private String title;
-    @Column
-    private String reference;
-    @Column
-    private String agency;
-    @Column
-    private String description;
-    @Column
-    private String disbursementId;
-    @Column
-    private String priceGst;
-    @Column
-    private String priceExGst;
-    @Column
-    private String costCenter;
-    @Column
-    private String glCode;
-    @Column
-    private String taxCode;
-    @Column
-    private String narrative;
-    @Column
-    private String notifyCustomerEmailField;
-    @Column
-    private String notifyBusinessEmail;
-    @Column
-    private String notifyCustomerEmailSubject;
-    @Column
-    private String notifyBusinessEmailSubject;
-    @Column
-    private String deliveryDetailsRequired;
-    @Column
-    private String customerDetailsRequired;
-    @Column
-    private String fields;
-    @Column
-    private String notifyBusinessFormUri;
-    @Column
-    private String notifyBusinessFormFilename;
-    @Column
-    private String notifyCustomerFormUri;
-    @Column
-    private String notifyCustomerFormFilename;
-    @Column
-    private String notifyCustomerFormDownloadTitle;
-
-    public Item createItem() {
-        return new Item(productId, productGroup, title, reference, agency,
-                description, disbursementId, priceGst, priceExGst, costCenter,
-                glCode, taxCode, narrative, notifyCustomerEmailField,
-                notifyBusinessEmail, notifyBusinessEmailSubject,
-                notifyCustomerEmailSubject, deliveryDetailsRequired,
-                customerDetailsRequired, notifyBusinessFormUri,
-                notifyBusinessFormFilename, notifyCustomerFormUri,
-                notifyCustomerFormFilename, notifyCustomerFormDownloadTitle);
-    }
-
     public String getProductId() {
         return productId;
     }
-
+    @Column
     public String getProductGroup() {
         return productGroup;
     }
-
+    @Column
     public String getTitle() {
         return title;
     }
-
+    @Column
     public String getReference() {
         return reference;
     }
-
+    @Column
     public String getAgency() {
         return agency;
     }
-
+    @Column
     public String getDescription() {
         return description;
     }
-
+    @Column
     public String getDisbursementId() {
         return disbursementId;
     }
-
+    @Column
     public String getPriceGst() {
         return priceGst;
     }
-
+    @Column
     public String getPriceExGst() {
         return priceExGst;
     }
-
+    @Column
     public String getCostCenter() {
         return costCenter;
     }
-
+    @Column
     public String getGlCode() {
         return glCode;
     }
-
+    @Column
     public String getTaxCode() {
         return taxCode;
     }
-
+    @Column
     public String getNarrative() {
         return narrative;
     }
-
+    @Column
     public String getNotifyCustomerEmailField() {
         return notifyCustomerEmailField;
     }
-
+    @Column
     public String getNotifyBusinessEmail() {
         return notifyBusinessEmail;
     }
-
+    @Column
     public String getNotifyCustomerEmailSubject() {
         return notifyCustomerEmailSubject;
     }
-
+    @Column
     public String getNotifyBusinessEmailSubject() {
         return notifyBusinessEmailSubject;
     }
-
+    @Column
     public String getDeliveryDetailsRequired() {
         return deliveryDetailsRequired;
     }
-
+    @Column
     public String getCustomerDetailsRequired() {
         return customerDetailsRequired;
     }
-
+    @Column
     public String getFields() {
         return fields;
     }
-
+    @Column
     public String getNotifyBusinessFormUri() {
         return notifyBusinessFormUri;
     }
-
+    @Column
     public String getNotifyBusinessFormFilename() {
         return notifyBusinessFormFilename;
     }
-
+    @Column
     public String getNotifyCustomerFormUri() {
         return notifyCustomerFormUri;
     }
-
+    @Column
     public String getNotifyCustomerFormFilename() {
         return notifyCustomerFormFilename;
     }
-
+    @Column
     public String getNotifyCustomerFormDownloadTitle() {
         return notifyCustomerFormDownloadTitle;
     }
     
-    public static ItemProperties create(Properties properties) {
-        if (properties == null) {
-            return null;
-        }
-        
-        ItemProperties itemProperties = new ItemProperties();
-        itemProperties.productId = properties.getProperty("productId");
-        itemProperties.productGroup = properties.getProperty("productGroup"); 
-        itemProperties.title = properties.getProperty("title"); 
-        itemProperties.fields = properties.getProperty("fields");
-        itemProperties.reference = properties.getProperty("reference"); 
-        itemProperties.agency = properties.getProperty("agency");
-        itemProperties.description = properties.getProperty("description"); 
-        itemProperties.disbursementId = properties.getProperty("disbursementId"); 
-        itemProperties.priceGst = properties.getProperty("priceGst"); 
-        itemProperties.priceExGst = properties.getProperty("priceExGst"); 
-        itemProperties.costCenter = properties.getProperty("costCenter");
-        itemProperties.glCode = properties.getProperty("glCode"); 
-        itemProperties.taxCode = properties.getProperty("taxCode"); 
-        itemProperties.narrative = properties.getProperty("narrative"); 
-        itemProperties.notifyCustomerEmailField = properties.getProperty("notifyCustomerEmailField");
-        itemProperties.notifyBusinessEmail = properties.getProperty("notifyBusinessEmail"); 
-        itemProperties.notifyBusinessEmailSubject = properties.getProperty("notifyBusinessEmailSubject");
-        itemProperties.notifyCustomerEmailSubject = properties.getProperty("notifyCustomerEmailSubject"); 
-        itemProperties.deliveryDetailsRequired = properties.getProperty("deliveryDetailsRequired");
-        itemProperties.customerDetailsRequired = properties.getProperty("customerDetailsRequired"); 
-        itemProperties.notifyBusinessFormUri = properties.getProperty("notifyBusinessFormUri");
-        itemProperties.notifyBusinessFormFilename = properties.getProperty("notifyBusinessFormFilename"); 
-        itemProperties.notifyCustomerFormUri = properties.getProperty("notifyCustomerFormUri");
-        itemProperties.notifyCustomerFormFilename = properties.getProperty("notifyCustomerFormFilename"); 
-        itemProperties.notifyCustomerFormDownloadTitle = properties.getProperty("notifyCustomerFormDownloadTitle");
-        return itemProperties;
+    @Override
+    public String toString() {
+        return getProductId();
     }
 }

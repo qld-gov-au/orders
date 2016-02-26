@@ -31,7 +31,7 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
         String cartId = UUID.randomUUID().toString();
         
         Order order = new Order(cartId);
-        Item item = itemPropertiesDAO.findOne("test").createItem();
+        Item item = Item.createItem(itemPropertiesDAO.findOne("test"));
         Map<String, String> fields = ImmutableMap.of("field1", "value1", "field2", "value2");
         item.setFields(fields);
         itemDAO.save(item);
@@ -76,7 +76,7 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
     public void dontSaveCartIdWhenNull() {
         Order order = new Order(null);
         String id = order.getId();
-        order.add(itemPropertiesDAO.findOne("test").createItem());
+        order.add(Item.createItem(itemPropertiesDAO.findOne("test")));
         itemDAO.save(order.getItems());
         dao.save(order);
         

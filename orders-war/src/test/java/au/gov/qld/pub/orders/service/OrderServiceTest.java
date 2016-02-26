@@ -33,7 +33,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import au.gov.qld.pub.orders.dao.ItemDAO;
-import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.ItemProperties;
@@ -61,7 +60,7 @@ public class OrderServiceTest {
     
     @Mock CartService cartService;
     @Mock OrderDAO orderDAO;
-    @Mock ItemPropertiesDAO itemPropertiesDAO;
+    @Mock ItemPropertiesService itemPropertiesService;
     @Mock ItemDAO itemDAO;
     @Mock Item item;
     @Mock ItemCommand command;
@@ -79,7 +78,6 @@ public class OrderServiceTest {
         deliveryDetails = ImmutableMap.of("delivery type", "value");
         customerDetails = ImmutableMap.of("customer type", "value");
 
-        when(properties.createItem()).thenReturn(item);
         when(requestBuilder.addRequest(order)).thenReturn(ADD_REQUEST);
         when(orderDAO.findByCartId(CART_ID)).thenReturn(order);
         when(command.getProductId()).thenReturn(asList(PRODUCT_ID));        
@@ -91,7 +89,7 @@ public class OrderServiceTest {
         when(item.getFieldsMap()).thenReturn(ImmutableMap.of("field", "value"));
         
         
-        orderService = new OrderService(cartService, orderDAO, itemDAO, itemPropertiesDAO, 
+        orderService = new OrderService(cartService, orderDAO, itemDAO, itemPropertiesService, 
                 requestBuilder, responseParser, notifyService);
     }
     
@@ -165,13 +163,13 @@ public class OrderServiceTest {
     
     @Test
     public void itemFromDAO() {
-        when(itemPropertiesDAO.findOne(PRODUCT_ID)).thenReturn(properties);
+        when(itemPropertiesService.find(PRODUCT_ID)).thenReturn(properties);
         assertThat(orderService.findAndPopulate(PRODUCT_ID), notNullValue());
     }
     
     @Test
     public void nullItemWhenProductIdNotFound() {
-        when(itemPropertiesDAO.findOne(PRODUCT_ID)).thenReturn(null);
+        when(itemPropertiesService.find(PRODUCT_ID)).thenReturn(null);
         assertThat(orderService.findAndPopulate(PRODUCT_ID), nullValue());
     }
     
@@ -229,14 +227,14 @@ public class OrderServiceTest {
     public void returnCollectionOfAllowedFieldsFromItemProperties() {
         ItemProperties properties1 = mock(ItemProperties.class);
         when(properties1.getFields()).thenReturn("field1, field2");
-        when(itemPropertiesDAO.findOne(PRODUCT_ID)).thenReturn(properties1);
+        when(itemPropertiesService.find(PRODUCT_ID)).thenReturn(properties1);
         
         assertThat(orderService.getAllowedFields(PRODUCT_ID), hasItems("field1", "field2"));
     }
     
     @Test
     public void returnEmptyCollectionOfAllowedFieldsWhenUnknownItem() {
-        when(itemPropertiesDAO.findOne(PRODUCT_ID)).thenReturn(null);
+        when(itemPropertiesService.find(PRODUCT_ID)).thenReturn(null);
         assertThat((Set<String>)orderService.getAllowedFields(PRODUCT_ID), is(Collections.EMPTY_SET));
     }
     
@@ -244,7 +242,7 @@ public class OrderServiceTest {
     public void returnEmptyCollectionOfAllowedFieldsWhenItemHasNoAllowedFields() {
         ItemProperties properties1 = mock(ItemProperties.class);
         when(properties1.getFields()).thenReturn(null);
-        when(itemPropertiesDAO.findOne(PRODUCT_ID)).thenReturn(properties1);
+        when(itemPropertiesService.find(PRODUCT_ID)).thenReturn(properties1);
         
         assertThat((Set<String>)orderService.getAllowedFields(PRODUCT_ID), is(Collections.EMPTY_SET));
     }

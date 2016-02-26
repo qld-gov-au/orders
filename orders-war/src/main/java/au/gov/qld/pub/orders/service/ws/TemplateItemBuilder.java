@@ -34,8 +34,7 @@ public class TemplateItemBuilder {
         private final InlineTemplateService inlineTemplateService;
 
         public TemplateItem(InlineTemplateService inlineTemplateService) {
-            super(null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null, null, null);
+            super();
             this.inlineTemplateService = inlineTemplateService;
         }
         

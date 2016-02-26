@@ -20,11 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import au.gov.qld.pub.orders.dao.ItemDAO;
-import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
 import au.gov.qld.pub.orders.entity.CartState;
 import au.gov.qld.pub.orders.entity.Item;
-import au.gov.qld.pub.orders.entity.ItemProperties;
 import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.ws.CartResponseParser;
 import au.gov.qld.pub.orders.service.ws.CartService;
@@ -40,18 +38,18 @@ public class OrderService {
     private final CartService cartService;
     private final NotifyService notifyService;
     private final OrderDAO orderDAO;
-    private final ItemPropertiesDAO itemPropertiesDAO;
+    private final ItemPropertiesService itemPropertiesService;
     private final ItemDAO itemDAO;
     private final RequestBuilder requestBuilder;
     private final CartResponseParser responseParser;
 
     @Autowired
-    public OrderService(CartService cartService, OrderDAO orderDAO, ItemDAO itemDAO, ItemPropertiesDAO itemPropertiesDAO,
+    public OrderService(CartService cartService, OrderDAO orderDAO, ItemDAO itemDAO, ItemPropertiesService itemPropertiesService,
             RequestBuilder requestBuilder, CartResponseParser responseParser, NotifyService notifyService) {
         this.cartService = cartService;
         this.orderDAO = orderDAO;
         this.itemDAO = itemDAO;
-        this.itemPropertiesDAO = itemPropertiesDAO;
+        this.itemPropertiesService = itemPropertiesService;
         this.requestBuilder = requestBuilder;
         this.responseParser = responseParser;
         this.notifyService = notifyService;
@@ -96,12 +94,12 @@ public class OrderService {
     }
     
     public Item findAndPopulate(String productId) {
-        ItemProperties properties = itemPropertiesDAO.findOne(productId);
+        ItemPropertiesDTO properties = itemPropertiesService.find(productId);
         if (properties == null) {
             return null;
         }
         
-        return properties.createItem();
+        return Item.createItem(properties);
     }
 
     private String getValueFrom(Pattern pattern, String text) {
@@ -157,7 +155,7 @@ public class OrderService {
 
     public Collection<String> getAllowedFields(String productId) {
         Set<String> allowedFields = new HashSet<String>();
-        ItemProperties properties = itemPropertiesDAO.findOne(productId);
+        ItemPropertiesDTO properties = itemPropertiesService.find(productId);
         if (properties == null) {
             return Collections.emptySet();
         }
