@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,6 +177,18 @@ public class OrderService {
 
     public Iterable<String> findUnpaidOrderIds(Date minCreated) {
         return orderDAO.findUnpaidOrdersCreatedAfter(minCreated);
+    }
+
+    public void deleteOlderThan(LocalDateTime maxCreated, boolean paid) {
+        LOG.info("Cleanup {} orders created on or before {}", (paid ? "paid" : "unpaid"), maxCreated);
+        Iterable<Order> toDeletes = paid ? orderDAO.findOlderThanCreatedAndPaid(maxCreated.toDate()) 
+                : orderDAO.findOlderThanCreatedAndNotPaid(maxCreated.toDate());
+        
+        for (Order toDelete : toDeletes) {
+            LOG.info("Deleting items and order: {} created at: {}", toDelete.getId(), toDelete.getCreated());
+            itemDAO.delete(toDelete.getItems());
+            orderDAO.delete(toDelete);
+        }
     }
     
     

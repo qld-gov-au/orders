@@ -30,6 +30,7 @@
     <task:annotation-driven executor="taskExecutor" scheduler="taskScheduler"/>
     <task:scheduled-tasks scheduler="taskScheduler">
         <task:scheduled ref="scheduleService" method="statusCheck" fixed-delay="${scheduler.statusCheck.delay}"/>
+        <task:scheduled ref="scheduleService" method="cleanup" fixed-delay="3600000"/>
     </task:scheduled-tasks>
     
     <cache:annotation-driven/>

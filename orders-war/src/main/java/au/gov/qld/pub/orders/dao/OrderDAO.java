@@ -13,6 +13,12 @@ import au.gov.qld.pub.orders.entity.Order;
 public interface OrderDAO extends CrudRepository<Order, String> {
     Order findByCartId(String cartId);
     
-    @Query("select o.id from Order o where o.created >= :minCreated and o.paid is null")
-    Iterable<String> findUnpaidOrdersCreatedAfter(@Param("minCreated") Date minCreated);
+    @Query("select o.id from Order o where o.created >= :created and o.paid is null")
+    Iterable<String> findUnpaidOrdersCreatedAfter(@Param("created") Date created);
+
+    @Query("from Order o where o.created <= :created and (paid <> '' and paid is not null)")
+    Iterable<Order> findOlderThanCreatedAndPaid(@Param("created") Date created);
+    
+    @Query("from Order o where o.created <= :created and (paid = '' or paid is null)")
+    Iterable<Order> findOlderThanCreatedAndNotPaid(@Param("created") Date created);
 }

@@ -163,4 +163,8 @@ public class Order {
     public boolean equals(Object obj) {
         return obj instanceof Order && id.equals(((Order)obj).id);
     }
+
+    public void setCreatedAt(Date createdAt) {
+        this.created = new Date(createdAt.getTime());
+    }
 }

@@ -13,10 +13,14 @@ public class ScheduleService {
     private static final Logger LOG = LoggerFactory.getLogger(ScheduleService.class);
     private final OrderService orderService;
     private final int maxAge;
+    private final int cleanupPaidOrderDays;
+    private final int cleanupUnpaidOrderDays;
     
     @Autowired
     public ScheduleService(ConfigurationService config, OrderService orderService) {
         this.maxAge = config.getMaxAgeForRetry();
+        this.cleanupPaidOrderDays = config.getDeletePaidOrderDays();
+        this.cleanupUnpaidOrderDays = config.getDeleteUnpaidOrderDays();
         this.orderService = orderService;
     }
     
@@ -33,6 +37,17 @@ public class ScheduleService {
         }
         
         LOG.info("Scheduled task: {} finished", "statusCheck");
+    }
+
+    public void cleanup() {
+        LOG.info("Scheduled task: {} starting", "cleanup");
+        if (cleanupPaidOrderDays >= 0) {
+            orderService.deleteOlderThan(new LocalDateTime().minusDays(cleanupPaidOrderDays), true);
+        }
+        if (cleanupUnpaidOrderDays >= 0) {
+            orderService.deleteOlderThan(new LocalDateTime().minusDays(cleanupUnpaidOrderDays), false);
+        }
+        LOG.info("Scheduled task: {} finished", "cleanup");
     }
     
 }

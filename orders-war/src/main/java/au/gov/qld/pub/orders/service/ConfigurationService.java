@@ -19,15 +19,17 @@ public class ConfigurationService {
     @Value("${serviceFullUrl}") private String serviceFullUrl;
     @Value("${errorRedirect}") private String errorRedirect;
     @Value("${mail.from}") private String mailFrom;
-    @Value("${notifyFormRetryCount}") private Integer notifyFormRetryCount;
-    @Value("${notifyFormRetryWait}") private Integer notifyFormRetryWait;
-    @Value("${notifyFormTimeout}") private Integer notifyFormTimeout;
-    @Value("${scheduler.statusCheck.maxAgeForRetry}") private Integer maxAgeForRetry;
+    @Value("${notifyFormRetryCount}") private int notifyFormRetryCount;
+    @Value("${notifyFormRetryWait}") private int notifyFormRetryWait;
+    @Value("${notifyFormTimeout}") private int notifyFormTimeout;
+    @Value("${scheduler.statusCheck.maxAgeForRetry}") private int maxAgeForRetry;
     @Value("${noticeToPay.default.redirect}") private String noticeToPayDefaultRedirect;
     @Value("${noticeToPay.source.pattern}") private String noticeToPaySourcePattern;
     @Value("${noticeToPay.id.pattern}") private String noticeToPayIdPattern;
     @Value("${noticeToPay.disbursementId}") private String noticeToPayDisbursementId;
     @Value("${noticeToPay.serviceWsNotify}") private String noticeToPayServiceWsNotify;
+    @Value("${scheduler.cleanup.deletePaidOrderDays}") private int deletePaidOrderDays;
+    @Value("${scheduler.cleanup.deleteUnpaidOrderDays}") private int deleteUnpaidOrderDays;
 
     public String getContext() {
         return context;
@@ -119,6 +121,14 @@ public class ConfigurationService {
 
     public String getNoticeToPayServiceWsNotify() {
         return noticeToPayServiceWsNotify;
+    }
+
+    public int getDeletePaidOrderDays() {
+        return deletePaidOrderDays;
+    }
+
+    public int getDeleteUnpaidOrderDays() {
+        return deleteUnpaidOrderDays;
     }
 
 }

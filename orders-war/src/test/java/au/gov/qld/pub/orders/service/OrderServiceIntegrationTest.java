@@ -10,10 +10,12 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 import org.hamcrest.Matcher;
+import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import au.gov.qld.pub.orders.ApplicationContextAwareTest;
+import au.gov.qld.pub.orders.dao.ItemDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
 import au.gov.qld.pub.orders.entity.CartState;
 import au.gov.qld.pub.orders.entity.Item;
@@ -25,12 +27,11 @@ import com.google.common.collect.ImmutableMap;
 public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
     @Autowired OrderService service;
     @Autowired OrderDAO orderDAO;
+    @Autowired ItemDAO itemDAO;
     
     @Test
     public void addToNewCart() throws ServiceException {
-        ItemCommand command = new ItemCommand();
-        command.setProductId(asList("test"));
-        Item item = service.findAndPopulate("test");
+        Item item = createItem();
         item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
         
         Order order = service.add(asList(item), null);
@@ -47,9 +48,45 @@ public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
 
     @Test
     public void populateItemFromCommand() {
+        Item item = createItem();
+        assertThat(item.getProductId(), is("test"));
+    }
+
+    private Item createItem() {
         ItemCommand command = new ItemCommand();
         command.setProductId(asList("test"));
         Item item = service.findAndPopulate("test");
-        assertThat(item.getProductId(), is("test"));
+        return item;
+    }
+    
+    @Test
+    public void deletePaidOrdersOlderThanMaxCreatedDate() {
+        LocalDateTime maxCreatedAt = new LocalDateTime().minusDays(10);
+        
+        Order oldPaid = createOrder(maxCreatedAt, true, createItem());
+        Order oldUnpaid = createOrder(maxCreatedAt, false, createItem());
+        Order youngPaid = createOrder(maxCreatedAt.plusDays(1), true, createItem());
+        Order youngUnpaid = createOrder(maxCreatedAt.plusDays(1), false, createItem());
+        
+        service.deleteOlderThan(maxCreatedAt, true);
+        assertThat(orderDAO.findOne(oldPaid.getId()), nullValue());
+        assertThat(orderDAO.findOne(oldUnpaid.getId()), is(oldUnpaid));
+        assertThat(orderDAO.findOne(youngPaid.getId()), is(youngPaid));
+        assertThat(orderDAO.findOne(youngUnpaid.getId()), is(youngUnpaid));
+        
+        service.deleteOlderThan(maxCreatedAt, false);
+        assertThat(orderDAO.findOne(oldUnpaid.getId()), nullValue());
+        assertThat(orderDAO.findOne(youngPaid.getId()), is(youngPaid));
+        assertThat(orderDAO.findOne(youngUnpaid.getId()), is(youngUnpaid));
+    }
+    
+    private Order createOrder(LocalDateTime created, boolean paid, Item item) {
+        item = itemDAO.save(item);
+        Order order = new Order("");
+        order.setCreatedAt(created.toDate());
+        order.add(item);
+        order.setPaid(paid ? "paid" : null);
+        orderDAO.save(order);
+        return order;
     }
 }
