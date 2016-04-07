@@ -187,7 +187,8 @@ public class OrderService {
         for (Order toDelete : toDeletes) {
             LOG.info("Deleting items and order: {} created at: {}", toDelete.getId(), toDelete.getCreated());
             itemDAO.delete(toDelete.getItems());
-            orderDAO.delete(toDelete);
+            toDelete.getItems().clear();
+            orderDAO.delete(toDelete.getId());
         }
     }
     
