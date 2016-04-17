@@ -47,31 +47,31 @@ public class DatabaseItemPropertiesService implements ItemPropertiesService, App
     
     private static ItemProperties create(Properties properties) {
         ItemProperties itemProperties = new ItemProperties();
-        itemProperties.productId = properties.getProperty("productId");
-        itemProperties.productGroup = properties.getProperty("productGroup"); 
-        itemProperties.title = properties.getProperty("title"); 
-        itemProperties.fields = properties.getProperty("fields");
-        itemProperties.reference = properties.getProperty("reference"); 
-        itemProperties.agency = properties.getProperty("agency");
-        itemProperties.description = properties.getProperty("description"); 
-        itemProperties.disbursementId = properties.getProperty("disbursementId"); 
-        itemProperties.priceGst = properties.getProperty("priceGst"); 
-        itemProperties.priceExGst = properties.getProperty("priceExGst"); 
-        itemProperties.costCenter = properties.getProperty("costCenter");
-        itemProperties.glCode = properties.getProperty("glCode"); 
-        itemProperties.taxCode = properties.getProperty("taxCode"); 
-        itemProperties.narrative = properties.getProperty("narrative"); 
-        itemProperties.notifyCustomerEmailField = properties.getProperty("notifyCustomerEmailField");
-        itemProperties.notifyBusinessEmail = properties.getProperty("notifyBusinessEmail"); 
-        itemProperties.notifyBusinessEmailSubject = properties.getProperty("notifyBusinessEmailSubject");
-        itemProperties.notifyCustomerEmailSubject = properties.getProperty("notifyCustomerEmailSubject"); 
-        itemProperties.deliveryDetailsRequired = properties.getProperty("deliveryDetailsRequired");
-        itemProperties.customerDetailsRequired = properties.getProperty("customerDetailsRequired"); 
-        itemProperties.notifyBusinessFormUri = properties.getProperty("notifyBusinessFormUri");
-        itemProperties.notifyBusinessFormFilename = properties.getProperty("notifyBusinessFormFilename"); 
-        itemProperties.notifyCustomerFormUri = properties.getProperty("notifyCustomerFormUri");
-        itemProperties.notifyCustomerFormFilename = properties.getProperty("notifyCustomerFormFilename"); 
-        itemProperties.notifyCustomerFormDownloadTitle = properties.getProperty("notifyCustomerFormDownloadTitle");
+        itemProperties.setProductId(properties.getProperty("productId"));
+        itemProperties.setProductGroup(properties.getProperty("productGroup")); 
+        itemProperties.setTitle(properties.getProperty("title")); 
+        itemProperties.setFields(properties.getProperty("fields"));
+        itemProperties.setReference(properties.getProperty("reference")); 
+        itemProperties.setAgency(properties.getProperty("agency"));
+        itemProperties.setDescription(properties.getProperty("description")); 
+        itemProperties.setDisbursementId(properties.getProperty("disbursementId")); 
+        itemProperties.setPriceGst(properties.getProperty("priceGst")); 
+        itemProperties.setPriceExGst(properties.getProperty("priceExGst")); 
+        itemProperties.setCostCenter(properties.getProperty("costCenter"));
+        itemProperties.setGlCode(properties.getProperty("glCode")); 
+        itemProperties.setTaxCode(properties.getProperty("taxCode")); 
+        itemProperties.setNarrative(properties.getProperty("narrative")); 
+        itemProperties.setNotifyCustomerEmailField(properties.getProperty("notifyCustomerEmailField"));
+        itemProperties.setNotifyBusinessEmail(properties.getProperty("notifyBusinessEmail")); 
+        itemProperties.setNotifyBusinessEmailSubject(properties.getProperty("notifyBusinessEmailSubject"));
+        itemProperties.setNotifyCustomerEmailSubject(properties.getProperty("notifyCustomerEmailSubject")); 
+        itemProperties.setDeliveryDetailsRequired(properties.getProperty("deliveryDetailsRequired"));
+        itemProperties.setCustomerDetailsRequired(properties.getProperty("customerDetailsRequired")); 
+        itemProperties.setNotifyBusinessFormUri(properties.getProperty("notifyBusinessFormUri"));
+        itemProperties.setNotifyBusinessFormFilename(properties.getProperty("notifyBusinessFormFilename")); 
+        itemProperties.setNotifyCustomerFormUri(properties.getProperty("notifyCustomerFormUri"));
+        itemProperties.setNotifyCustomerFormFilename(properties.getProperty("notifyCustomerFormFilename")); 
+        itemProperties.setNotifyCustomerFormDownloadTitle(properties.getProperty("notifyCustomerFormDownloadTitle"));
         return itemProperties;
     }
 }
