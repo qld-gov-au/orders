@@ -56,7 +56,12 @@ public class NoticeToPayController {
         
         LOG.info("Creating notice to pay for {}", trimmedSourceId);
         try {
-            return WebUtils.redirect(service.create(trimmedSourceId, trimmedSourceUrl));
+            String redirect = service.create(trimmedSourceId, trimmedSourceUrl);
+            if (isBlank(redirect)) {
+            	return WebUtils.redirect(defaultRedirect);
+            }
+            
+			return WebUtils.redirect(redirect);
         } catch (ServiceException e) {
             LOG.error(e.getMessage(), e);
             return WebUtils.redirect(defaultRedirect);

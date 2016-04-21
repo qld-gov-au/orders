@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -84,6 +85,14 @@ public class NoticeToPayControllerTest {
     public void redirectToNoticeToPay() throws ServiceException {
         RedirectView redirect = controller.payInFull(ID, SOURCE);
         assertThat(redirect.getUrl(), is(NOTICE_TO_PAY));
+        assertThat(redirect.isExposePathVariables(), is(false));
+    }
+    
+    @Test
+    public void redirectToSourceWhenBlankServiceRedirection() throws ServiceException {
+    	when(service.create(anyString(), anyString())).thenReturn(null);
+        RedirectView redirect = controller.payInFull(ID, SOURCE);
+        assertThat(redirect.getUrl(), is(DEFAULT_REDIRECT));
         assertThat(redirect.isExposePathVariables(), is(false));
     }
     

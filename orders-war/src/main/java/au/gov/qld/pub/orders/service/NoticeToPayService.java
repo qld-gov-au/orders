@@ -54,12 +54,14 @@ public class NoticeToPayService {
     public String create(String sourceId, String sourceUrl) throws ServiceException {
         PaymentInformation paymentInformation = paymentInformationService.fetch(sourceId);
         if (paymentInformation.getAmountOwingInCents() <= 0l) {
-            throw new ServiceException("No amount owing for " + sourceId);
+        	LOG.warn("No amount owing for %s", sourceId);
+            return null;
         }
         
         boolean recentlyPaid = noticeToPayDAO.existsByPaymentInformationIdAndNotifiedAtAfter(sourceId, new DateTime().minusHours(1).toDate());
         if (recentlyPaid) {
-            throw new ServiceException("This source ID was recently paid for and could be a duplicate");
+        	LOG.warn("This source ID was recently paid for and could be a duplicate: %s", sourceId);
+        	return null;
         }
 
         NoticeToPay noticeToPay = new NoticeToPay(paymentInformation);

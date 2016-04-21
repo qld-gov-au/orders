@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isA;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
@@ -93,26 +94,18 @@ public class NoticeToPayServiceTest {
     }
     
     @Test
-    public void throwExceptionIfNoOwingAmount() throws Exception {
+    public void returnNullWHenIfNoOwingAmount() throws Exception {
         when(paymentInformation.getAmountOwingInCents()).thenReturn(0l);
-        try {
-            service.create(SOURCE_ID, SOURCE_URL);
-            fail("Should have thrown exception");
-        } catch (ServiceException e) {
-            verifyZeroInteractions(soapClient);
-            verifyZeroInteractions(noticeToPayDAO);
-        }
+        assertThat(service.create(SOURCE_ID, SOURCE_URL), nullValue());
+        verifyZeroInteractions(soapClient);
+        verifyZeroInteractions(noticeToPayDAO);
     }
     
     @Test
     public void throwExceptionIfRecentlyPaid() throws Exception {
         when(noticeToPayDAO.existsByPaymentInformationIdAndNotifiedAtAfter(SOURCE_ID, new DateTime().minusHours(1).toDate())).thenReturn(true);
-        try {
-            service.create(SOURCE_ID, SOURCE_URL);
-            fail("Should have thrown exception");
-        } catch (ServiceException e) {
-            verifyZeroInteractions(soapClient);
-        }
+        assertThat(service.create(SOURCE_ID, SOURCE_URL), nullValue());
+        verifyZeroInteractions(soapClient);
     }
     
     @Test
