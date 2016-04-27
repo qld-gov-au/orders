@@ -16,9 +16,9 @@
             agency="${item.agency}"
             description="${item.description}"
             disbursementId="${item.disbursementId}">
-            
-            <#if item.costCentre?has_content && item.glCode?has_content && item.glCode?has_content>
-            <accounting costCenter="${item.costCenter}" glCode="${item.glCode}" taxCode="${item.glCode}" narrative="${item.narrative}"/>
+
+            <#if item.costCentre?has_content || item.glCode?has_content || item.taxCode?has_content || item.narrative?has_content>
+            <accounting costCenter="${item.costCenter!''}" glCode="${item.glCode!''}" taxCode="${item.taxCode!''}" narrative="${item.narrative!''}"/>
             </#if>
             
             <#if item.notifyCustomerFormDownloadTitle?has_content>

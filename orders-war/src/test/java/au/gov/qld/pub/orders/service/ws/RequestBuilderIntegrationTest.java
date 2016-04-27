@@ -52,6 +52,7 @@ public class RequestBuilderIntegrationTest extends ApplicationContextAwareTest {
         assertThat(request, containsString("<customerDetailsRequest type=\"PHONE\" required=\"true\"/>"));
         assertThat(request, containsString("title=\"test title value1\""));
         assertThat(request, containsString("description=\"test description value2\""));
+        assertThat(request, containsString("accounting costCenter=\"cc\" glCode=\"gl\" taxCode=\"tc\" narrative=\"narrative\""));
     }
     
     @Test
