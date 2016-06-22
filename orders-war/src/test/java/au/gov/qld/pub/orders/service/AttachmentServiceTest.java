@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AttachmentServiceTest {
-    private static final String EXPECTED_FORM_DATA = "quantityPaid=1&name=value&priceTotal=579&priceGst=456&priceExGst=123&paid=paid+at&receipt=receipt";
+    private static final String EXPECTED_FORM_DATA = "quantityPaid=1&name=value&productGroup=some+product+group&productId=some+product+id&priceTotal=579&priceGst=456&priceExGst=123&paid=paid+at&receipt=receipt";
     private static final String PRICE_GST = "456";
     private static final String PRICE_EX_GST = "123";
     private static final Integer RETRY_COUNT = 1;
@@ -44,6 +44,8 @@ public class AttachmentServiceTest {
     private static final Integer TIMEOUT = 1;
     private static final String PAID_AT = "paid at";
     private static final String RECEIPT = "receipt";
+    private static final String PRODUCT_ID = "some product id";
+    private static final String PRODUCT_GROUP = "some product group";
     private static final String QUANTITY_PAID = "1";
     private static final String BUSINESS_CONTENT = "business content";
     private static final String CUSTOMER_CONTENT = "customer content";
@@ -71,6 +73,8 @@ public class AttachmentServiceTest {
         when(order.getPaid()).thenReturn(PAID_AT);
         when(order.getReceipt()).thenReturn(RECEIPT);
 
+        when(item.getProductGroup()).thenReturn(PRODUCT_GROUP);
+        when(item.getProductId()).thenReturn(PRODUCT_ID);
         when(item.getPriceExGst()).thenReturn(PRICE_EX_GST);
         when(item.getPriceGst()).thenReturn(PRICE_GST);
         when(item.getId()).thenReturn(ITEM_ID);

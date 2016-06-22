@@ -103,6 +103,8 @@ public class AttachmentService {
             nvps.add(createField(field.getKey(), field.getValue()));
         }
 
+        nvps.add(createField("productGroup", item.getProductGroup()));
+        nvps.add(createField("productId", item.getProductId()));
         nvps.add(createField("priceTotal", String.valueOf(Long.valueOf(item.getPriceGst()) + Long.valueOf(item.getPriceExGst()))));
         nvps.add(createField("priceGst", item.getPriceGst()));
         nvps.add(createField("priceExGst", item.getPriceExGst()));
