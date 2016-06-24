@@ -1,5 +1,6 @@
 package au.gov.qld.pub.orders.service;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,7 +20,16 @@ public class EncryptionConfiguration extends SimplePBEConfig {
         
         setProvider(new BouncyCastleProvider());
         setAlgorithm(ALGORITHM);
-        char[] password = IOUtils.toCharArray(new FileReader(applicationProps.getProperty("keyfile")));
+        
+        final char[] password;
+        String filename = applicationProps.getProperty("keyfile");
+        File keyfile = new File(filename);
+		if (keyfile.exists()) {
+        	password = IOUtils.toCharArray(new FileReader(keyfile));
+        } else {
+        	password = applicationProps.getProperty("keyfilefallbackvalue").toCharArray();
+        }
+		
         int end = password.length;
         for (int i=0; i < password.length; i++) {
             if (password[i] == '\n' || password[i] == '\r' || password[i] == ' ') {
