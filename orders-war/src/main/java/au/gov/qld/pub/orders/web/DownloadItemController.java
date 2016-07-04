@@ -1,6 +1,7 @@
 package au.gov.qld.pub.orders.web;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import au.gov.qld.pub.orders.dao.ItemDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
 import au.gov.qld.pub.orders.entity.Item;
+import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.AttachmentService;
 import au.gov.qld.pub.orders.service.NotifyType;
+import au.gov.qld.pub.orders.service.OrderGrouper;
 import au.gov.qld.pub.orders.service.OrderService;
 import au.gov.qld.pub.orders.service.ServiceException;
 
@@ -29,13 +32,15 @@ public class DownloadItemController {
     private final ItemDAO itemDao;
     private final AttachmentService attachmentService;
     private final OrderDAO orderDao;
+	private final OrderGrouper orderGrouper;
     
     @Autowired
-    public DownloadItemController(OrderService orderService, AttachmentService attachmentService, ItemDAO itemDao, OrderDAO orderDao) {
+    public DownloadItemController(OrderService orderService, AttachmentService attachmentService, ItemDAO itemDao, OrderDAO orderDao, OrderGrouper orderGrouper) {
         this.orderService = orderService;
         this.itemDao = itemDao;
         this.attachmentService = attachmentService;
         this.orderDao = orderDao;
+		this.orderGrouper = orderGrouper;
     }
     
     @RequestMapping(value = "/download/{orderId}/{itemId}")
@@ -50,17 +55,17 @@ public class DownloadItemController {
         if (!item.isPaid()) {
             orderService.notifyPayment(orderId);
             item = itemDao.findOne(itemId);
-        }
-        
-        if (!item.isPaid()) {
-            throw new IllegalArgumentException("Attempted to download unpaid item id: " + itemId + " with order id" + orderId);
+            if (!item.isPaid()) {
+                throw new IllegalArgumentException("Attempted to download unpaid item id: " + itemId + " with order id" + orderId);
+            }
         }
 
-        String filename = item.getNotifyCustomerFormFilename();
-        byte[] data = attachmentService.retrieve(orderDao.findOne(orderId), NotifyType.CUSTOMER).get(itemId);
+        Order order = orderDao.findOne(orderId);
+		Map<String, Order> groupedOrders = orderGrouper.paidByProductGroup(order);
+        byte[] data = attachmentService.retrieve(groupedOrders.get(item.getProductGroup()), NotifyType.CUSTOMER, itemId);
         
         response.setContentType(CONTENT_TYPE);
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + item.getNotifyCustomerFormFilename() + "\"");
         IOUtils.write(data, response.getOutputStream());
         response.getOutputStream().flush();   
         response.getOutputStream().close();

@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.mail.MessagingException;
@@ -91,16 +92,18 @@ public class NotifyService {
         LOG.info("Notified order: {}", order.getId());
     }
 
-    private void notifyOrderWithProductId(String productId, Order order) throws TemplateException, IOException, MessagingException, InterruptedException {
-        Item first = order.getItems().get(0);
+	private void notifyOrderWithProductId(String productId, Order groupedOrder) throws TemplateException, IOException, MessagingException, InterruptedException {
+        Item first = groupedOrder.getPaidItems().get(0);
         if (isNotBlank(first.getNotifyBusinessEmail())) {
-            notifyBusinessOrder(productId, order, first.getNotifyBusinessEmail(), first.getNotifyBusinessEmailSubject(), first.getNotifyBusinessFormFilename());
+            notifyOrder(productId, groupedOrder, first.getNotifyBusinessEmail(), first.getNotifyBusinessEmailSubject(), 
+            		first.getNotifyBusinessFormFilename(), NotifyType.BUSINESS);
         }
         
         String customerEmailField = first.getNotifyCustomerEmailField();
         if (isNotBlank(customerEmailField)) {
-            String customerEmailTo = getCustomerEmailTo(order, customerEmailField);
-            notifyCustomerOrder(productId, order, customerEmailTo, first.getNotifyCustomerEmailSubject(), first.getNotifyCustomerFormFilename());
+            String customerEmailTo = getCustomerEmailTo(groupedOrder, customerEmailField);
+            notifyOrder(productId, groupedOrder, customerEmailTo, first.getNotifyCustomerEmailSubject(), 
+            		first.getNotifyCustomerFormFilename(), NotifyType.CUSTOMER);
         }
     }
 
@@ -109,34 +112,21 @@ public class NotifyService {
                 order.getCustomerDetailsMap().get("email") : order.getDeliveryDetailsMap().get("email");
     }
     
-    private void notifyBusinessOrder(String productId, Order order, String to, String subject, String filename) 
+    private void notifyOrder(String productId, Order groupedOrder, String to, String subject, String filename, NotifyType notifyType) 
         throws TemplateException, IOException, MessagingException, InterruptedException {
         if (isBlank(to)) {
-            LOG.info("No business email to notify for order receipt: {}", order.getReceipt());
+            LOG.info("No {} email to notify for order receipt: {}", notifyType, groupedOrder.getReceipt());
             return;
         }
         
-        Map<String, byte[]> attachments = attachmentService.retrieve(order, NotifyType.BUSINESS);
+        List<byte[]> attachments = attachmentService.retrieve(groupedOrder, notifyType);
         
-        String emailBody = prepareTemplate(productId, order, "business");
-        LOG.info("Sending business email to: {} for order receipt: {}", to, order.getReceipt());
-        sendEmail(order, to, subject, emailBody, filename, attachments, false);
-    }
-
-    private void notifyCustomerOrder(String productId, Order order, String to, String subject, String filename) throws TemplateException, IOException, MessagingException, InterruptedException {
-        if (isBlank(to)) {
-            LOG.info("No customer email to notify for order receipt: {}", order.getReceipt());
-            return;
-        }
-        
-        Map<String, byte[]> attachments = attachmentService.retrieve(order, NotifyType.CUSTOMER);
-        
-        String emailBody = prepareTemplate(productId, order, "customer");
-        LOG.info("Sending customer email to: {} for order receipt: {}", to, order.getReceipt());
-        sendEmail(order, to, subject, emailBody, filename, attachments, true);
+        String emailBody = prepareTemplate(productId, groupedOrder, notifyType.name().toLowerCase(Locale.ENGLISH));
+        LOG.info("Sending {} email to: {} for order receipt: {}", notifyType, to, groupedOrder.getReceipt());
+        sendEmail(groupedOrder, to, subject, emailBody, filename, attachments, NotifyType.CUSTOMER.equals(notifyType));
     }
     
-    private void sendEmail(Order order, String to, String subject, String emailBody, String filename, Map<String, byte[]> attachments, boolean customerEmail) throws MessagingException {
+    private void sendEmail(Order order, String to, String subject, String emailBody, String filename, List<byte[]> attachments, boolean customerEmail) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, !attachments.isEmpty());
     
@@ -146,12 +136,12 @@ public class NotifyService {
         helper.setFrom(configurationService.getMailFrom());
         
         int attachmentCounter = 0;
-        for (Map.Entry<String, byte[]> attachment : attachments.entrySet()) {
+        for (byte[] attachment : attachments) {
             attachmentCounter++;
-            helper.addAttachment(attachmentCounter + "-" + filename, new ByteArrayResource(attachment.getValue()));
+            helper.addAttachment(attachmentCounter + "-" + filename, new ByteArrayResource(attachment));
         }
         
-        List<Map<String, String>> paidItemsFields = filterPaidItemsFields(order.getItems());
+        List<Map<String, String>> paidItemsFields = filterPaidItemsFields(order.getPaidItems());
         additionalMailContentService.append(message, helper, customerEmail, paidItemsFields);
         mailSender.send(message);
     }
@@ -159,9 +149,7 @@ public class NotifyService {
     private List<Map<String, String>> filterPaidItemsFields(List<Item> items) {
     	List<Map<String, String>> paid = new ArrayList<>();
     	for (Item item : items) {
-    		if (item.isPaid()) {
-    			paid.add(item.getFieldsMap());
-    		}
+			paid.add(item.getFieldsMap());
     	}
 		return paid;
 	}

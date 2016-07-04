@@ -108,6 +108,10 @@ public class ItemProperties extends ItemPropertiesDTO {
     public String getNotifyCustomerFormDownloadTitle() {
         return notifyCustomerFormDownloadTitle;
     }
+    @Column
+    public boolean isBundledDownload() {
+        return bundledDownload;
+    }
     
     @Override
     public String toString() {

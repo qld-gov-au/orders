@@ -124,17 +124,13 @@ public class NotifyServiceTest {
     
     @Test
     public void notifyToBusiness() throws Exception {
-        when(unpaidItem.isPaid()).thenReturn(false);
         when(item.isPaid()).thenReturn(true);
         when(item.getFieldsMap()).thenReturn((Map<String, String>)of("field", "value"));
-        when(unpaidItem.getFieldsMap()).thenReturn((Map<String, String>)of("unpaid field", "value"));
-		when(order.getItems()).thenReturn(asList(unpaidItem, item));
-		when(groupedOrder.getItems()).thenReturn(asList(unpaidItem, item));
+		when(order.getPaidItems()).thenReturn(asList(item));
+		when(groupedOrder.getPaidItems()).thenReturn(asList(item));
 		
         when(item.getNotifyBusinessEmail()).thenReturn(BUSINESS_TO);
         when(item.getNotifyBusinessEmailSubject()).thenReturn(BUSINESS_SUBJECT);
-        when(unpaidItem.getNotifyBusinessEmail()).thenReturn(BUSINESS_TO);
-        when(unpaidItem.getNotifyBusinessEmailSubject()).thenReturn(BUSINESS_SUBJECT);
         when(order.getPaid()).thenReturn(PAID);
         service.send(order);
 
@@ -166,6 +162,7 @@ public class NotifyServiceTest {
         when(item.getNotifyCustomerEmailField()).thenReturn("customerDetails");
         when(item.getNotifyCustomerEmailSubject()).thenReturn(CUSTOMER_SUBJECT);
         when(groupedOrder.getCustomerDetailsMap()).thenReturn(of("email", CUSTOMER_TO));
+        when(groupedOrder.getPaidItems()).thenReturn(asList(item));
         when(order.getPaid()).thenReturn(PAID);
         service.send(order);
 
@@ -183,6 +180,8 @@ public class NotifyServiceTest {
     @Test
     public void notifyToCustomerFromDeliveryDetails() throws Exception {
         when(order.getPaid()).thenReturn(PAID);
+        when(order.getPaidItems()).thenReturn(asList(item));
+        when(groupedOrder.getPaidItems()).thenReturn(asList(item));
         when(item.getNotifyCustomerEmailField()).thenReturn("deliveryDetails");
         when(item.getNotifyCustomerEmailSubject()).thenReturn(CUSTOMER_SUBJECT);
         when(groupedOrder.getDeliveryDetailsMap()).thenReturn(of("email", CUSTOMER_TO));        

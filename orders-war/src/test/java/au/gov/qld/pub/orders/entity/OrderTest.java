@@ -1,11 +1,13 @@
 package au.gov.qld.pub.orders.entity;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -20,7 +22,8 @@ import com.google.common.collect.ImmutableMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderTest {
-    @Mock Item item1;
+    private static final String PAID = "some paid item id";
+	@Mock Item item1;
     @Mock Item item2;
     @Mock Item item3;
     @Mock OrderDetails orderDetails;
@@ -45,6 +48,17 @@ public class OrderTest {
     @Test(expected = IllegalStateException.class)
     public void throwExceptionWhenNoReceiptAndSettingPaid() {
         order.setPaid(null, null);
+    }
+    
+    @Test
+    public void returnPaidItems() {
+    	when(item1.isPaid()).thenReturn(true);
+    	when(item1.getId()).thenReturn(PAID);
+
+    	assertThat(order.getItems().size(), greaterThan(1));
+    	List<Item> paid = order.getPaidItems();
+    	assertThat(paid.size(), is(1));
+    	assertThat(paid.get(0).getId(), is(PAID));
     }
     
     @Test

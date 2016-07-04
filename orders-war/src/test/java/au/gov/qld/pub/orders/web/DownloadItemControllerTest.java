@@ -23,6 +23,7 @@ import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.AttachmentService;
 import au.gov.qld.pub.orders.service.NotifyService;
 import au.gov.qld.pub.orders.service.NotifyType;
+import au.gov.qld.pub.orders.service.OrderGrouper;
 import au.gov.qld.pub.orders.service.OrderService;
 
 import com.google.common.collect.ImmutableMap;
@@ -30,7 +31,8 @@ import com.google.common.collect.ImmutableMap;
 @RunWith(MockitoJUnitRunner.class)
 public class DownloadItemControllerTest {
     
-    private static final String ITEM_ID = "some item id";
+    private static final String PRODUCT_GROUP = "product group";
+	private static final String ITEM_ID = "some item id";
     private static final String ORDER_ID = "some order id";
     private static final String FILENAME = "some filename";
 
@@ -46,26 +48,30 @@ public class DownloadItemControllerTest {
     @Mock Item unpaidItem;
     @Mock Item paidItem;
     @Mock Order order;
+    @Mock Order groupedOrder;
+    @Mock OrderGrouper orderGrouper;
     
     @Before
     public void setUp() throws Exception {
         when(response.getOutputStream()).thenReturn(output);
         when(unpaidItem.getId()).thenReturn(ITEM_ID);
         when(paidItem.getId()).thenReturn(ITEM_ID);
-        when(order.getId()).thenReturn(ORDER_ID);
+        when(paidItem.getProductGroup()).thenReturn(PRODUCT_GROUP);
+        when(groupedOrder.getId()).thenReturn(ORDER_ID);
         
         when(paidItem.getNotifyCustomerFormFilename()).thenReturn(FILENAME);
         when(unpaidItem.isPaid()).thenReturn(false);
         when(paidItem.isPaid()).thenReturn(true);
         when(itemDao.findOne(ITEM_ID)).thenReturn(unpaidItem, paidItem);
         when(orderDao.findOne(ORDER_ID)).thenReturn(order);
+        when(orderGrouper.paidByProductGroup(order)).thenReturn(ImmutableMap.of(PRODUCT_GROUP, groupedOrder));
         
-        controller = new DownloadItemController(orderService, attachmentService, itemDao, orderDao);
+        controller = new DownloadItemController(orderService, attachmentService, itemDao, orderDao, orderGrouper);
     }
 
     @Test
     public void outputAttachmentForUnpaidItemToResponseAfterCheckingPaid() throws Exception {
-        when(attachmentService.retrieve(order, NotifyType.CUSTOMER)).thenReturn(ImmutableMap.of(ITEM_ID, "test".getBytes()));
+        when(attachmentService.retrieve(groupedOrder, NotifyType.CUSTOMER, ITEM_ID)).thenReturn("test".getBytes());
         controller.download(ORDER_ID, ITEM_ID, response);
         
         verify(orderService).notifyPayment(ORDER_ID);
@@ -78,7 +84,7 @@ public class DownloadItemControllerTest {
     
     @Test
     public void immediatelyOutputAttachmentForItemWhenAlreadyPaid() throws Exception {
-        when(attachmentService.retrieve(order, NotifyType.CUSTOMER)).thenReturn(ImmutableMap.of(ITEM_ID, "test".getBytes()));
+        when(attachmentService.retrieve(groupedOrder, NotifyType.CUSTOMER, ITEM_ID)).thenReturn("test".getBytes());
         when(itemDao.findOne(ITEM_ID)).thenReturn(paidItem);
         controller.download(ORDER_ID, ITEM_ID, response);
         

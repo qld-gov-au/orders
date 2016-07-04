@@ -1,5 +1,6 @@
 package au.gov.qld.pub.orders.service;
 
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -7,7 +8,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,29 +45,69 @@ public class AttachmentService {
         this.retryWait = config.getNotifyFormRetryWait();
         this.timeout = config.getNotifyFormTimeout();
     }
-
-    public Map<String, byte[]> retrieve(Order order, NotifyType type) throws IOException, InterruptedException {
-        LOG.info("Starting downloading attachments for order {} and type {}", order.getId(), type);
-        Map<String, byte[]> attachments = new HashMap<String, byte[]>();
-        HttpClient client = createClient();
-        
-        for (Item item : order.getItems()) {
-            if (!item.isPaid()) {
-                continue;
-            }
-            
-            String uri = NotifyType.BUSINESS == type ? item.getNotifyBusinessFormUri() : item.getNotifyCustomerFormUri();
-            if (isNotBlank(uri)) {
-                LOG.info("Downloading attachments for item {} and type {}", item.getId(), type);
-                attachments.put(item.getId(), downloadRetrying(client, uri, order, item));
-            }
+    
+    public byte[] retrieve(Order groupedOrder, NotifyType type, String itemId) throws IOException, InterruptedException {
+        LOG.info("Starting downloading attachments for order {} and type {} for item {}", groupedOrder.getId(), type, itemId);
+        List<Item> bundled = groupedOrder.getBundledPaidItems();
+        Item inBundle = findItemInList(bundled, itemId);
+        if (inBundle != null) {
+        	String uri = inBundle.getNotifyFormUri(type);
+        	if (isNotBlank(uri)) {
+		        LOG.info("Downloading attachments for bundled items in order {} and type {}", groupedOrder.getId(), type);
+		        return downloadRetrying(createClient(), uri, groupedOrder, bundled);
+        	}
         }
+
+        List<Item> unbundled = groupedOrder.getUnbundledPaidItems();
+        Item inUnbundled = findItemInList(unbundled, itemId);
+        if (inUnbundled != null) {
+		    String uri = inUnbundled.getNotifyFormUri(type);
+		    if (isNotBlank(uri)) {
+		        LOG.info("Downloading attachments for item {} and type {}", inUnbundled.getId(), type);
+		        return downloadRetrying(createClient(), uri, groupedOrder, asList(inUnbundled));
+		    }
+        }
+
+        LOG.warn("Could not download attachments for item because it was not paid or does not exist in order {}", groupedOrder.getId());
+		return new byte[0];
+    }
+
+    public List<byte[]> retrieve(Order groupedOrder, NotifyType type) throws IOException, InterruptedException {
+        LOG.info("Starting downloading attachments for order {} and type {}", groupedOrder.getId(), type);
+        List<byte[]> attachments = new ArrayList<>();
         
-        return attachments;
+		List<Item> bundled = groupedOrder.getBundledPaidItems();
+        if (bundled.size() > 0) {
+        	String uri = bundled.get(0).getNotifyFormUri(type);
+        	if (isNotBlank(uri)) {
+		        LOG.info("Downloading attachments for bundled items in order {} and type {}", groupedOrder.getId(), type);
+		        attachments.add(downloadRetrying(createClient(), uri, groupedOrder, bundled));
+		    }
+        }
+
+        List<Item> unbundled = groupedOrder.getUnbundledPaidItems();
+		for (Item item : unbundled) {
+		    String uri = item.getNotifyFormUri(type);
+		    if (isNotBlank(uri)) {
+		        LOG.info("Downloading attachments for item {} and type {}", item.getId(), type);
+		        attachments.add(downloadRetrying(createClient(), uri, groupedOrder, asList(item)));
+		    }
+		}
+		
+		return attachments;
     }
     
-    private byte[] downloadRetrying(HttpClient client, String uri, Order order, Item item) throws IOException, InterruptedException {
-        HttpPost httpPost = createRequest(uri, order, item);
+    private Item findItemInList(List<Item> items, String id) {
+        for (Item item : items) {
+        	if (id.equals(item.getId())) {
+        		return item;
+        	}
+        }
+        return null;
+    }
+
+	private byte[] downloadRetrying(HttpClient client, String uri, Order order, List<Item> items) throws IOException, InterruptedException {
+        HttpPost httpPost = createRequest(uri, order, items);
         for (int attempt=0; attempt < retryCount; attempt++) {
             try {
                 return download(client, httpPost);
@@ -77,7 +117,7 @@ public class AttachmentService {
             }
         }
         
-        throw new IOException("Retries exhausted for " + order.getId() + " with item " + item.getId() + " to uri " + uri);
+        throw new IOException("Retries exhausted for bundled items in order" + order.getId() + " to uri " + uri);
     }
 
     private byte[] download(HttpClient client, HttpPost httpPost) throws IOException {
@@ -94,26 +134,38 @@ public class AttachmentService {
         return output.toByteArray();
     }
 
-    private HttpPost createRequest(String uri, Order order, Item item) throws UnsupportedEncodingException {
+    private HttpPost createRequest(String uri, Order order, List<Item> items) throws UnsupportedEncodingException {
         HttpPost httpPost = new HttpPost(uri);
         
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-        nvps.add(createField("quantityPaid", item.getQuantityPaid()));
-        for (Map.Entry<String, String> field : item.getFieldsMap().entrySet()) {
-            nvps.add(createField(field.getKey(), field.getValue()));
+        List<NameValuePair> nvps = new ArrayList<>();
+        nvps.addAll(createItemPostData(items.get(0), ""));
+        if (items.size() > 1) {
+        	for (int i=1; i < items.size(); i++) {
+        		nvps.addAll(createItemPostData(items.get(i), "-" + i));	
+        	}
         }
-
-        nvps.add(createField("productGroup", item.getProductGroup()));
-        nvps.add(createField("productId", item.getProductId()));
-        nvps.add(createField("priceTotal", String.valueOf(Long.valueOf(item.getPriceGst()) + Long.valueOf(item.getPriceExGst()))));
-        nvps.add(createField("priceGst", item.getPriceGst()));
-        nvps.add(createField("priceExGst", item.getPriceExGst()));
+        
         nvps.add(createField("paid", order.getPaid()));
         nvps.add(createField("receipt", order.getReceipt()));
 
         httpPost.setEntity(new UrlEncodedFormEntity(nvps));
         return httpPost;
     }
+
+	private List<NameValuePair> createItemPostData(Item item, String suffix) {
+		List<NameValuePair> nvps = new ArrayList<>();
+        for (Map.Entry<String, String> field : item.getFieldsMap().entrySet()) {
+            nvps.add(createField(field.getKey() + suffix, field.getValue()));
+        }
+
+        nvps.add(createField("quantityPaid" + suffix, item.getQuantityPaid()));
+        nvps.add(createField("productGroup" + suffix, item.getProductGroup()));
+        nvps.add(createField("productId" + suffix, item.getProductId()));
+        nvps.add(createField("priceTotal" + suffix, String.valueOf(Long.valueOf(item.getPriceGst()) + Long.valueOf(item.getPriceExGst()))));
+        nvps.add(createField("priceGst" + suffix, item.getPriceGst()));
+        nvps.add(createField("priceExGst" + suffix, item.getPriceExGst()));
+		return nvps;
+	}
 
     private NameValuePair createField(String name, String value) {
         return new BasicNameValuePair(name, defaultString(value).trim());

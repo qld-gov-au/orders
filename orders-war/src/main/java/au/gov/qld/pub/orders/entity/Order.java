@@ -167,4 +167,34 @@ public class Order {
     public void setCreatedAt(Date createdAt) {
         this.created = new Date(createdAt.getTime());
     }
+
+	public List<Item> getPaidItems() {
+		List<Item> paid = new ArrayList<>();
+		for (Item item : items) {
+			if (item.isPaid()) {
+				paid.add(item);
+			}
+		}
+		return paid;
+	}
+
+	public List<Item> getBundledPaidItems() {
+		List<Item> bundled = new ArrayList<>();
+		for (Item item : bundled) {
+			if (item.isPaid() && item.isBundledDownload()) {
+				bundled.add(item);
+			}
+		}
+		return bundled;
+	}
+	
+	public List<Item> getUnbundledPaidItems() {
+		List<Item> unbundled = new ArrayList<>();
+		for (Item item : unbundled) {
+			if (item.isPaid() && !item.isBundledDownload()) {
+				unbundled.add(item);
+			}
+		}
+		return unbundled;
+	}
 }

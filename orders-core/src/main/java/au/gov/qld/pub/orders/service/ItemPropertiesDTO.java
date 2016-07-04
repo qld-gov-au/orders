@@ -34,6 +34,7 @@ public class ItemPropertiesDTO {
     protected String notifyCustomerFormUri;
     protected String notifyCustomerFormFilename;
     protected String notifyCustomerFormDownloadTitle;
+    protected boolean bundledDownload;
     
     public String getProductId() {
         return productId;
@@ -189,4 +190,10 @@ public class ItemPropertiesDTO {
     public void setNotifyCustomerFormDownloadTitle(String notifyCustomerFormDownloadTitle) {
         this.notifyCustomerFormDownloadTitle = notifyCustomerFormDownloadTitle;
     }
+	public void setBundledDownload(boolean bundledDownload) {
+		this.bundledDownload = bundledDownload;
+	}
+	public boolean isBundledDownload() {
+		return bundledDownload;				
+	}
 }

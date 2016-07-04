@@ -20,7 +20,6 @@ import au.gov.qld.pub.orders.dao.OrderDAO;
 import au.gov.qld.pub.orders.entity.CartState;
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
-import au.gov.qld.pub.orders.web.ItemCommand;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -45,18 +44,17 @@ public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
         Matcher<Item> itemWith = allOf(hasProperty("productId", is("test")), hasProperty("cartState", is(CartState.ADDED)));
         assertThat(saved.getItems(), hasItem(itemWith));
     }
-
+    
     @Test
-    public void populateItemFromCommand() {
-        Item item = createItem();
+    public void populateItemFromDto() {
+        Item item = service.findAndPopulate("test");
         assertThat(item.getProductId(), is("test"));
+        assertThat(item.getProductGroup(), is("testgroup"));
+        assertThat(item.isBundledDownload(), is(true));
     }
 
     private Item createItem() {
-        ItemCommand command = new ItemCommand();
-        command.setProductId(asList("test"));
-        Item item = service.findAndPopulate("test");
-        return item;
+        return service.findAndPopulate("test");
     }
     
     @Test

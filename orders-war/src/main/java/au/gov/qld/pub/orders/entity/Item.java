@@ -22,6 +22,7 @@ import org.boon.core.reflection.BeanUtils;
 
 import au.gov.qld.pub.orders.dao.JsonHelper;
 import au.gov.qld.pub.orders.service.ItemPropertiesDTO;
+import au.gov.qld.pub.orders.service.NotifyType;
 
 @Entity
 public class Item {
@@ -57,6 +58,7 @@ public class Item {
     
     @Column @Enumerated(EnumType.STRING)
     private CartState cartState;
+    @Column private boolean bundledDownload;
     
     protected Item() {
         this.id = UUID.randomUUID().toString();
@@ -227,6 +229,10 @@ public class Item {
     public String getNotifyBusinessFormUri() {
         return notifyBusinessFormUri;
     }
+    
+    public String getNotifyFormUri(NotifyType type) {
+    	return NotifyType.BUSINESS.equals(type) ? getNotifyBusinessFormUri() : getNotifyCustomerFormUri();
+    }
 
     public String getNotifyBusinessFormFilename() {
         return notifyBusinessFormFilename;
@@ -243,4 +249,12 @@ public class Item {
     public String getNotifyCustomerFormDownloadTitle() {
         return notifyCustomerFormDownloadTitle;
     }
+
+	public boolean isBundledDownload() {
+		return bundledDownload;
+	}
+	
+	public void setBundledDownload(boolean bundledDownload) {
+		this.bundledDownload = bundledDownload;
+	}
 }

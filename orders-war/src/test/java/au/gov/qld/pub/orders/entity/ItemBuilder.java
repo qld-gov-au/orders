@@ -30,6 +30,7 @@ public class ItemBuilder {
     private String notifyCustomerFormFilename;
     private String notifyCustomerFormDownloadTitle;
     private String quantityPaid = "0";
+	private boolean bundledDownload;
 
     public ItemBuilder withProductId(String productId) {
         this.productId = productId;
@@ -72,6 +73,7 @@ public class ItemBuilder {
         properties.setNotifyCustomerFormUri(notifyCustomerFormUri); 
         properties.setNotifyCustomerFormFilename(notifyCustomerFormFilename); 
         properties.setNotifyCustomerFormDownloadTitle(notifyCustomerFormDownloadTitle);
+        properties.setBundledDownload(bundledDownload);
 
         Item item = Item.createItem(properties);
         item.setQuantityPaid(quantityPaid);
@@ -82,4 +84,14 @@ public class ItemBuilder {
         this.quantityPaid = quantityPaid; 
         return this;
     }
+
+	public ItemBuilder withNotifyCustomerFormUri(String uri) {
+		this.notifyCustomerFormUri = uri;
+		return this;
+	}
+
+	public ItemBuilder withNotifyBusinessFormUri(String uri) {
+		this.notifyBusinessFormUri = uri;
+		return this;
+	}
 }

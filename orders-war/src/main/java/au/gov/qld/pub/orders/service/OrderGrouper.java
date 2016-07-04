@@ -14,11 +14,7 @@ public class OrderGrouper {
 
     public Map<String, Order> paidByProductGroup(Order order) {
         Map<String, Order> grouped = new HashMap<>();
-        for (Item item : order.getItems()) {
-            if (!item.isPaid()) {
-                continue;
-            }
-            
+        for (Item item : order.getPaidItems()) {
             String group = item.getProductGroup();
             Order orderForGroup = grouped.containsKey(group) ? grouped.get(group) : new Order(order.getCartId());
             orderForGroup.setReceipt(order.getReceipt());

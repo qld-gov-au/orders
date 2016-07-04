@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.Test;
 
+import au.gov.qld.pub.orders.service.NotifyType;
+
 
 public class ItemTest {
     @Test(expected = IllegalStateException.class)
@@ -35,6 +37,13 @@ public class ItemTest {
         item.setQuantityPaid(" ");
         assertThat(item.isPaid(), is(false));
         assertThat(item.getQuantityPaid(), is("0"));
+    }
+    
+    @Test
+    public void returnNotifyUriForType() {
+    	Item item = new ItemBuilder().withNotifyCustomerFormUri("customer").withNotifyBusinessFormUri("business").build();
+    	assertThat(item.getNotifyFormUri(NotifyType.CUSTOMER), is("customer"));
+    	assertThat(item.getNotifyFormUri(NotifyType.BUSINESS), is("business"));
     }
     
     @Test

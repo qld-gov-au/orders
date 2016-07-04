@@ -72,6 +72,7 @@ public class DatabaseItemPropertiesService implements ItemPropertiesService, App
         itemProperties.setNotifyCustomerFormUri(properties.getProperty("notifyCustomerFormUri"));
         itemProperties.setNotifyCustomerFormFilename(properties.getProperty("notifyCustomerFormFilename")); 
         itemProperties.setNotifyCustomerFormDownloadTitle(properties.getProperty("notifyCustomerFormDownloadTitle"));
+        itemProperties.setBundledDownload(Boolean.parseBoolean(properties.getProperty("bundledDownload")));
         return itemProperties;
     }
 }
