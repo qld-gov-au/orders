@@ -65,7 +65,7 @@ public class Order {
     }
     
     public Date getCreated() {
-        return created;
+        return new Date(created.getTime());
     }
     
     public void setCartId(String cartId) {

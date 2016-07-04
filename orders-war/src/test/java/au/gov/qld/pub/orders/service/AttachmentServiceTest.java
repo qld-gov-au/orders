@@ -172,6 +172,14 @@ public class AttachmentServiceTest {
     	assertThat(result.size(), is(2));
     	assertThat(new String(result.get(0)), is(BUNDLED_CUSTOMER_CONTENT));
     	assertThat(new String(result.get(1)), is(CUSTOMER_CONTENT));
+    	
+    	String itemResult = new String(service.retrieve(order, NotifyType.CUSTOMER, item2.getId()));
+    	assertThat(itemResult, is(BUNDLED_CUSTOMER_CONTENT));
+    	itemResult = new String(service.retrieve(order, NotifyType.CUSTOMER, item3.getId()));
+    	assertThat(itemResult, is(BUNDLED_CUSTOMER_CONTENT));
+    	
+    	itemResult = new String(service.retrieve(order, NotifyType.CUSTOMER, item.getId()));
+    	assertThat(itemResult, is(CUSTOMER_CONTENT));
     }
     
     @Test

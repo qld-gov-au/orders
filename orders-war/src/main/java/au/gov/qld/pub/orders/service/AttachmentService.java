@@ -161,7 +161,7 @@ public class AttachmentService {
         nvps.add(createField("quantityPaid" + suffix, item.getQuantityPaid()));
         nvps.add(createField("productGroup" + suffix, item.getProductGroup()));
         nvps.add(createField("productId" + suffix, item.getProductId()));
-        nvps.add(createField("priceTotal" + suffix, String.valueOf(Long.valueOf(item.getPriceGst()) + Long.valueOf(item.getPriceExGst()))));
+        nvps.add(createField("priceTotal" + suffix, String.valueOf(Long.parseLong(item.getPriceGst()) + Long.parseLong(item.getPriceExGst()))));
         nvps.add(createField("priceGst" + suffix, item.getPriceGst()));
         nvps.add(createField("priceExGst" + suffix, item.getPriceExGst()));
 		return nvps;
