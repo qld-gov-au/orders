@@ -1,5 +1,7 @@
 package au.gov.qld.pub.orders.service;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 import java.util.Map;
 import java.util.Properties;
 
@@ -72,7 +74,7 @@ public class DatabaseItemPropertiesService implements ItemPropertiesService, App
         itemProperties.setNotifyCustomerFormUri(properties.getProperty("notifyCustomerFormUri"));
         itemProperties.setNotifyCustomerFormFilename(properties.getProperty("notifyCustomerFormFilename")); 
         itemProperties.setNotifyCustomerFormDownloadTitle(properties.getProperty("notifyCustomerFormDownloadTitle"));
-        itemProperties.setBundledDownload(Boolean.parseBoolean(properties.getProperty("bundledDownload")));
+        itemProperties.setBundledDownload(Boolean.parseBoolean(defaultString(properties.getProperty("bundledDownload"), "false")));
         return itemProperties;
     }
 }
