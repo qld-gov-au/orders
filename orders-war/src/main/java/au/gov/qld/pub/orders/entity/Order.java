@@ -26,8 +26,7 @@ import au.gov.qld.pub.orders.service.ws.OrderDetails;
 @Entity
 @Table(name = "customer_order")
 public class Order {
-    @Id
-    private final String id;
+    @Id private String id;
     
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn
@@ -179,22 +178,26 @@ public class Order {
 	}
 
 	public List<Item> getBundledPaidItems() {
-		List<Item> bundled = new ArrayList<>();
-		for (Item item : bundled) {
+		List<Item> result = new ArrayList<>();
+		for (Item item : items) {
 			if (item.isPaid() && item.isBundledDownload()) {
-				bundled.add(item);
+				result.add(item);
 			}
 		}
-		return bundled;
+		return result;
 	}
 	
 	public List<Item> getUnbundledPaidItems() {
-		List<Item> unbundled = new ArrayList<>();
-		for (Item item : unbundled) {
+		List<Item> result = new ArrayList<>();
+		for (Item item : items) {
 			if (item.isPaid() && !item.isBundledDownload()) {
-				unbundled.add(item);
+				result.add(item);
 			}
 		}
-		return unbundled;
+		return result;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }

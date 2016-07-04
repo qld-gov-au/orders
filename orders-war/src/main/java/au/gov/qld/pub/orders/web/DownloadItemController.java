@@ -25,7 +25,9 @@ import au.gov.qld.pub.orders.service.ServiceException;
 
 @Controller
 public class DownloadItemController {
-    private static final Logger LOG = LoggerFactory.getLogger(DownloadItemController.class);
+    private static final String ATTACHMENT_HEADER = "Content-Disposition";
+	private static final String ATTACHMENT_FILENAME_FMT = "attachment; filename=\"%s\"";
+	private static final Logger LOG = LoggerFactory.getLogger(DownloadItemController.class);
     private static final String CONTENT_TYPE = "application/pdf";
 
     private final OrderService orderService;
@@ -65,7 +67,7 @@ public class DownloadItemController {
         byte[] data = attachmentService.retrieve(groupedOrders.get(item.getProductGroup()), NotifyType.CUSTOMER, itemId);
         
         response.setContentType(CONTENT_TYPE);
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + item.getNotifyCustomerFormFilename() + "\"");
+        response.setHeader(ATTACHMENT_HEADER, String.format(ATTACHMENT_FILENAME_FMT, item.getNotifyCustomerFormFilename()));
         IOUtils.write(data, response.getOutputStream());
         response.getOutputStream().flush();   
         response.getOutputStream().close();

@@ -48,7 +48,9 @@ public class OrderGrouperTest {
 
         Map<String, Order> byGroup = orderGrouper.paidByProductGroup(order);
         Order productA = byGroup.get("a");
+        assertThat(productA.getId(), is(order.getId()));
         Order productB = byGroup.get("b");
+        assertThat(productB.getId(), is(order.getId()));
         assertThat(byGroup.get("c"), nullValue());
         
         assertThat(productA, notNullValue());

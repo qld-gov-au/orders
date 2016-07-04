@@ -2,9 +2,9 @@ package au.gov.qld.pub.orders.entity;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -22,10 +22,9 @@ import com.google.common.collect.ImmutableMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderTest {
-    private static final String PAID = "some paid item id";
-	@Mock Item item1;
-    @Mock Item item2;
-    @Mock Item item3;
+	Item item1;
+    Item item2;
+    Item item3;
     @Mock OrderDetails orderDetails;
     Map<String, String> deliveryDetails = ImmutableMap.of("delivery", "delivery details");
     Map<String, String> customerDetails = ImmutableMap.of("customer", "customer details");
@@ -35,9 +34,9 @@ public class OrderTest {
     public void setUp() {
         when(orderDetails.getDeliveryDetails()).thenReturn(deliveryDetails);
         when(orderDetails.getCustomerDetails()).thenReturn(customerDetails);
-        when(item1.getId()).thenReturn("a");
-        when(item2.getId()).thenReturn("b");
-        when(item3.getId()).thenReturn("c");
+        item1 = new Item();
+        item2 = new Item();
+        item3 = new Item();
         
         order = new Order("anything");
         order.add(item1);
@@ -52,18 +51,17 @@ public class OrderTest {
     
     @Test
     public void returnPaidItems() {
-    	when(item1.isPaid()).thenReturn(true);
-    	when(item1.getId()).thenReturn(PAID);
+    	item1.setQuantityPaid("1");
 
     	assertThat(order.getItems().size(), greaterThan(1));
     	List<Item> paid = order.getPaidItems();
     	assertThat(paid.size(), is(1));
-    	assertThat(paid.get(0).getId(), is(PAID));
+    	assertThat(paid, hasItem(item1));
     }
     
     @Test
     public void setPaidAndDetails() {
-        when(orderDetails.getOrderlineQuantities()).thenReturn(ImmutableMap.of("a", "1", "c", "2"));
+        when(orderDetails.getOrderlineQuantities()).thenReturn(ImmutableMap.of(item1.getId(), "1", item3.getId(), "2"));
         
         order.setPaid("receipt", orderDetails);
         assertThat(order.getReceipt(), is("receipt"));
@@ -71,9 +69,23 @@ public class OrderTest {
         
         assertThat(order.getCustomerDetailsMap(), is(customerDetails));
         assertThat(order.getDeliveryDetailsMap(), is(deliveryDetails));
-        verify(item1).setQuantityPaid("1");
-        verify(item2).setQuantityPaid(null);
-        verify(item3).setQuantityPaid("2");
+        assertThat(item1.isPaid(), is(true));
+        assertThat(item2.isPaid(), is(false));
+        assertThat(item3.isPaid(), is(true));
+    }
+    
+    @Test
+    public void returnBundledAndUnbundledItems() {
+    	item1.setQuantityPaid("1");
+    	item3.setQuantityPaid("1");
+    	item1.setBundledDownload(true);
+    	item2.setBundledDownload(true);
+    	item3.setBundledDownload(false);
+    	
+    	assertThat(order.getBundledPaidItems().size(), is(1));
+    	assertThat(order.getBundledPaidItems(), hasItem(item1));
+    	assertThat(order.getUnbundledPaidItems().size(), is(1));
+    	assertThat(order.getUnbundledPaidItems(), hasItem(item3));
     }
 }
 
