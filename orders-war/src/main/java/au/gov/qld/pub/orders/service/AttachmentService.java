@@ -54,7 +54,7 @@ public class AttachmentService {
         	String uri = inBundle.getNotifyFormUri(type);
         	if (isNotBlank(uri)) {
 		        LOG.info("Downloading attachments for bundled items in order {} and type {}", groupedOrder.getId(), type);
-		        return downloadRetrying(createClient(), uri, groupedOrder, bundled);
+		        return downloadRetrying(createClient(), uri, groupedOrder, bundled, NotifyType.CUSTOMER).getData();
         	}
         }
 
@@ -64,7 +64,7 @@ public class AttachmentService {
 		    String uri = inUnbundled.getNotifyFormUri(type);
 		    if (isNotBlank(uri)) {
 		        LOG.info("Downloading attachments for item {} and type {}", inUnbundled.getId(), type);
-		        return downloadRetrying(createClient(), uri, groupedOrder, asList(inUnbundled));
+		        return downloadRetrying(createClient(), uri, groupedOrder, asList(inUnbundled), NotifyType.CUSTOMER).getData();
 		    }
         }
 
@@ -72,16 +72,16 @@ public class AttachmentService {
 		return new byte[0];
     }
 
-    public List<byte[]> retrieve(Order groupedOrder, NotifyType type) throws IOException, InterruptedException {
+    public List<EmailAttachment> retrieve(Order groupedOrder, NotifyType type) throws IOException, InterruptedException {
         LOG.info("Starting downloading attachments for order {} and type {}", groupedOrder.getId(), type);
-        List<byte[]> attachments = new ArrayList<>();
+        List<EmailAttachment> attachments = new ArrayList<>();
         
 		List<Item> bundled = groupedOrder.getBundledPaidItems();
         if (bundled.size() > 0) {
         	String uri = bundled.get(0).getNotifyFormUri(type);
         	if (isNotBlank(uri)) {
 		        LOG.info("Downloading attachments for bundled items in order {} and type {}", groupedOrder.getId(), type);
-		        attachments.add(downloadRetrying(createClient(), uri, groupedOrder, bundled));
+		        attachments.add(downloadRetrying(createClient(), uri, groupedOrder, bundled, type));
 		    }
         }
 
@@ -90,7 +90,7 @@ public class AttachmentService {
 		    String uri = item.getNotifyFormUri(type);
 		    if (isNotBlank(uri)) {
 		        LOG.info("Downloading attachments for item {} and type {}", item.getId(), type);
-		        attachments.add(downloadRetrying(createClient(), uri, groupedOrder, asList(item)));
+		        attachments.add(downloadRetrying(createClient(), uri, groupedOrder, asList(item), type));
 		    }
 		}
 		
@@ -106,11 +106,11 @@ public class AttachmentService {
         return null;
     }
 
-	private byte[] downloadRetrying(HttpClient client, String uri, Order order, List<Item> items) throws IOException, InterruptedException {
+	private EmailAttachment downloadRetrying(HttpClient client, String uri, Order order, List<Item> items, NotifyType type) throws IOException, InterruptedException {
         HttpPost httpPost = createRequest(uri, order, items);
         for (int attempt=0; attempt < retryCount; attempt++) {
             try {
-                return download(client, httpPost);
+                return new EmailAttachment(firstFilename(items, type), download(client, httpPost));
             } catch(IOException e) {
                 LOG.error(e.getMessage(), e);
                 Thread.sleep(retryWait);
@@ -120,7 +120,17 @@ public class AttachmentService {
         throw new IOException("Retries exhausted for bundled items in order" + order.getId() + " to uri " + uri);
     }
 
-    private byte[] download(HttpClient client, HttpPost httpPost) throws IOException {
+    private String firstFilename(List<Item> items, NotifyType type) {
+    	for (Item item : items) {
+    		String filename = NotifyType.BUSINESS.equals(type) ? item.getNotifyBusinessFormFilename() : item.getNotifyCustomerFormFilename();
+    		if (isNotBlank(filename)) {
+    			return filename;
+    		}
+    	}
+		throw new IllegalStateException("Could not get a filename for any items which have attachments");
+	}
+
+	private byte[] download(HttpClient client, HttpPost httpPost) throws IOException {
         CloseableHttpResponse response = (CloseableHttpResponse) client.execute(httpPost);
         
         if (response.getStatusLine().getStatusCode() != OKAY_STATUS_CODE) {

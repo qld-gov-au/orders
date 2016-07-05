@@ -126,9 +126,10 @@ public class AttachmentServiceTest {
         when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(businessResponse);
         
-        List<byte[]> result = service.retrieve(order, NotifyType.BUSINESS);
+        List<EmailAttachment> result = service.retrieve(order, NotifyType.BUSINESS);
         assertThat(result.size(), is(1));
-        assertThat(new String(result.get(0)), is(BUSINESS_CONTENT));
+        assertThat(new String(result.get(0).getName()), is(BUSINESS_FORM_FILE_NAME));
+        assertThat(new String(result.get(0).getData()), is(BUSINESS_CONTENT));
     }
     
     @Test
@@ -154,9 +155,10 @@ public class AttachmentServiceTest {
         when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(customerResponse);
         
-        List<byte[]> result = service.retrieve(order, NotifyType.CUSTOMER);
+        List<EmailAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
         assertThat(result.size(), is(1));
-        assertThat(new String(result.get(0)), is(CUSTOMER_CONTENT));
+        assertThat(new String(result.get(0).getName()), is(CUSTOMER_FORM_FILE_NAME));
+        assertThat(new String(result.get(0).getData()), is(CUSTOMER_CONTENT));
     }
     
     @Test
@@ -168,10 +170,10 @@ public class AttachmentServiceTest {
     	when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA_BUNDLED))))
     		.thenReturn(bundledCustomerResponse);
     	
-    	List<byte[]> result = service.retrieve(order, NotifyType.CUSTOMER);
+    	List<EmailAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
     	assertThat(result.size(), is(2));
-    	assertThat(new String(result.get(0)), is(BUNDLED_CUSTOMER_CONTENT));
-    	assertThat(new String(result.get(1)), is(CUSTOMER_CONTENT));
+    	assertThat(new String(result.get(0).getData()), is(BUNDLED_CUSTOMER_CONTENT));
+    	assertThat(new String(result.get(1).getData()), is(CUSTOMER_CONTENT));
     	
     	String itemResult = new String(service.retrieve(order, NotifyType.CUSTOMER, item2.getId()));
     	assertThat(itemResult, is(BUNDLED_CUSTOMER_CONTENT));
@@ -196,9 +198,9 @@ public class AttachmentServiceTest {
         when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(customerResponse);
         
-        List<byte[]> result = service.retrieve(order, NotifyType.CUSTOMER);
+        List<EmailAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
         assertThat(result.size(), is(1));
-        assertThat(new String(result.get(0)), is(CUSTOMER_CONTENT));
+        assertThat(new String(result.get(0).getData()), is(CUSTOMER_CONTENT));
         
         verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))));
     }

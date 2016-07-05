@@ -128,7 +128,8 @@ public class NotifyServiceTest {
         when(item.getFieldsMap()).thenReturn((Map<String, String>)of("field", "value"));
 		when(order.getPaidItems()).thenReturn(asList(item));
 		when(groupedOrder.getPaidItems()).thenReturn(asList(item));
-		
+
+		when(item.getNotifyBusinessFormFilename()).thenReturn("businessFile");
         when(item.getNotifyBusinessEmail()).thenReturn(BUSINESS_TO);
         when(item.getNotifyBusinessEmailSubject()).thenReturn(BUSINESS_SUBJECT);
         when(order.getPaid()).thenReturn(PAID);
@@ -159,6 +160,7 @@ public class NotifyServiceTest {
     @SuppressWarnings("unchecked")
     @Test
     public void notifyToCustomerFromCustomerDetails() throws Exception {
+    	when(item.getNotifyCustomerFormFilename()).thenReturn("customerFile");
         when(item.getNotifyCustomerEmailField()).thenReturn("customerDetails");
         when(item.getNotifyCustomerEmailSubject()).thenReturn(CUSTOMER_SUBJECT);
         when(groupedOrder.getCustomerDetailsMap()).thenReturn(of("email", CUSTOMER_TO));
@@ -182,6 +184,7 @@ public class NotifyServiceTest {
         when(order.getPaid()).thenReturn(PAID);
         when(order.getPaidItems()).thenReturn(asList(item));
         when(groupedOrder.getPaidItems()).thenReturn(asList(item));
+        when(item.getNotifyCustomerFormFilename()).thenReturn("customerFile");
         when(item.getNotifyCustomerEmailField()).thenReturn("deliveryDetails");
         when(item.getNotifyCustomerEmailSubject()).thenReturn(CUSTOMER_SUBJECT);
         when(groupedOrder.getDeliveryDetailsMap()).thenReturn(of("email", CUSTOMER_TO));        

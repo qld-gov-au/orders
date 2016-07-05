@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -33,7 +34,8 @@ import freemarker.template.TemplateException;
 
 @Service
 public class NotifyService {
-    private static final Logger LOG = LoggerFactory.getLogger(NotifyService.class);
+    private static final String EMAIL_DETAILS_FIELD_IN_ORDER = "email";
+	private static final Logger LOG = LoggerFactory.getLogger(NotifyService.class);
    
     private final OrderDAO orderDAO;
     private final JavaMailSender mailSender;
@@ -93,40 +95,50 @@ public class NotifyService {
     }
 
 	private void notifyOrderWithProductId(String productId, Order groupedOrder) throws TemplateException, IOException, MessagingException, InterruptedException {
-        Item first = groupedOrder.getPaidItems().get(0);
-        if (isNotBlank(first.getNotifyBusinessEmail())) {
-            notifyOrder(productId, groupedOrder, first.getNotifyBusinessEmail(), first.getNotifyBusinessEmailSubject(), 
-            		first.getNotifyBusinessFormFilename(), NotifyType.BUSINESS);
+        Collection<Item> distinctBusinessEmails = findDistinctEmailsInGroup(groupedOrder, NotifyType.BUSINESS);
+        for (Item item : distinctBusinessEmails) {
+            notifyOrder(productId, groupedOrder, item.getNotifyBusinessEmail(), item.getNotifyBusinessEmailSubject(), NotifyType.BUSINESS);
         }
         
-        String customerEmailField = first.getNotifyCustomerEmailField();
-        if (isNotBlank(customerEmailField)) {
-            String customerEmailTo = getCustomerEmailTo(groupedOrder, customerEmailField);
-            notifyOrder(productId, groupedOrder, customerEmailTo, first.getNotifyCustomerEmailSubject(), 
-            		first.getNotifyCustomerFormFilename(), NotifyType.CUSTOMER);
+        Collection<Item> distinctCustomerEmails = findDistinctEmailsInGroup(groupedOrder, NotifyType.CUSTOMER);
+        for (Item item : distinctCustomerEmails) {
+        	String customerEmailTo = getCustomerEmailTo(groupedOrder, item.getNotifyCustomerEmailField());
+            notifyOrder(productId, groupedOrder, customerEmailTo, item.getNotifyCustomerEmailSubject(), NotifyType.CUSTOMER);
         }
     }
 
-    private String getCustomerEmailTo(Order order, String customerEmailField) {
+    private Collection<Item> findDistinctEmailsInGroup(Order groupedOrder, NotifyType type) {
+    	Map<String, Item> distinct = new HashMap<>();
+    	for (Item item : groupedOrder.getPaidItems()) {
+    		String email = NotifyType.BUSINESS.equals(type) ? item.getNotifyBusinessEmail() : getCustomerEmailTo(groupedOrder, item.getNotifyCustomerEmailField());
+    		String subject = NotifyType.BUSINESS.equals(type) ? item.getNotifyBusinessEmailSubject() : item.getNotifyCustomerEmailSubject();
+    		if (isNotBlank(email) && isNotBlank(subject)) {
+    			distinct.put(email, item);
+    		}
+    	}
+		return distinct.values();
+	}
+
+	private String getCustomerEmailTo(Order order, String customerEmailField) {
         return "customerDetails".equals(customerEmailField) ? 
-                order.getCustomerDetailsMap().get("email") : order.getDeliveryDetailsMap().get("email");
+                order.getCustomerDetailsMap().get(EMAIL_DETAILS_FIELD_IN_ORDER) : order.getDeliveryDetailsMap().get(EMAIL_DETAILS_FIELD_IN_ORDER);
     }
     
-    private void notifyOrder(String productId, Order groupedOrder, String to, String subject, String filename, NotifyType notifyType) 
+    private void notifyOrder(String productId, Order groupedOrder, String to, String subject, NotifyType notifyType) 
         throws TemplateException, IOException, MessagingException, InterruptedException {
         if (isBlank(to)) {
             LOG.info("No {} email to notify for order receipt: {}", notifyType, groupedOrder.getReceipt());
             return;
         }
         
-        List<byte[]> attachments = attachmentService.retrieve(groupedOrder, notifyType);
+        List<EmailAttachment> attachments = attachmentService.retrieve(groupedOrder, notifyType);
         
         String emailBody = prepareTemplate(productId, groupedOrder, notifyType.name().toLowerCase(Locale.ENGLISH));
         LOG.info("Sending {} email to: {} for order receipt: {}", notifyType, to, groupedOrder.getReceipt());
-        sendEmail(groupedOrder, to, subject, emailBody, filename, attachments, NotifyType.CUSTOMER.equals(notifyType));
+        sendEmail(groupedOrder, to, subject, emailBody, attachments, NotifyType.CUSTOMER.equals(notifyType));
     }
     
-    private void sendEmail(Order order, String to, String subject, String emailBody, String filename, List<byte[]> attachments, boolean customerEmail) throws MessagingException {
+    private void sendEmail(Order order, String to, String subject, String emailBody, List<EmailAttachment> attachments, boolean customerEmail) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, !attachments.isEmpty());
     
@@ -136,9 +148,9 @@ public class NotifyService {
         helper.setFrom(configurationService.getMailFrom());
         
         int attachmentCounter = 0;
-        for (byte[] attachment : attachments) {
+        for (EmailAttachment attachment : attachments) {
             attachmentCounter++;
-            helper.addAttachment(attachmentCounter + "-" + filename, new ByteArrayResource(attachment));
+            helper.addAttachment(attachmentCounter + "-" + attachment.getName(), new ByteArrayResource(attachment.getData()));
         }
         
         List<Map<String, String>> paidItemsFields = filterPaidItemsFields(order.getPaidItems());

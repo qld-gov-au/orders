@@ -233,7 +233,7 @@ public class Item {
     public String getNotifyFormUri(NotifyType type) {
     	return NotifyType.BUSINESS.equals(type) ? getNotifyBusinessFormUri() : getNotifyCustomerFormUri();
     }
-
+    
     public String getNotifyBusinessFormFilename() {
         return notifyBusinessFormFilename;
     }
