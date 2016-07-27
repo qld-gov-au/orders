@@ -38,11 +38,13 @@ public class NoticeToPayService {
     private final String username;
     private final byte[] password;
     private final PaymentInformationService paymentInformationService;
+	private final AdditionalNotificationService additionalNotificationService;
 
     @Autowired
     public NoticeToPayService(ConfigurationService config, PaymentInformationService paymentInformationService, 
-            NoticeToPayDAO noticeToPayDAO, RequestBuilder requestBuilder) throws UnsupportedEncodingException {
+            NoticeToPayDAO noticeToPayDAO, RequestBuilder requestBuilder, AdditionalNotificationService additionalNotificationService) throws UnsupportedEncodingException {
         this.paymentInformationService = paymentInformationService;
+		this.additionalNotificationService = additionalNotificationService;
         this.username = config.getNoticeToPayServiceWsUsername();
         this.password = config.getNoticeToPayServiceWsPassword().getBytes("UTF-8");
         this.soapClient = getSOAPClient(config.getServiceWsEndpoint());
@@ -109,6 +111,8 @@ public class NoticeToPayService {
         LOG.info("Received payment notification for: {} with receipt: {}", noticeToPayId, receiptNumber);
         noticeToPay.setNotifiedAt(now);
         noticeToPay.setReceiptNumber(receiptNumber);
+        additionalNotificationService.notifedPaidNoticeToPay(noticeToPayId, now, receiptNumber, noticeToPay.getAmount(), noticeToPay.getAmountGst(),
+        		noticeToPay.getDescription(), noticeToPay.getPaymentInformationId());
         noticeToPayDAO.save(noticeToPay);
     }
 

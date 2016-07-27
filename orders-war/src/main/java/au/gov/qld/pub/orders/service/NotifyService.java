@@ -45,11 +45,12 @@ public class NotifyService {
     private final InlineTemplateService inlineTemplateService;
     private final AttachmentService attachmentService;
 	private final AdditionalMailContentService additionalMailContentService;
+	private final AdditionalNotificationService additionalNotificationService;
     
     @Autowired
     public NotifyService(ConfigurationService configurationService, OrderDAO orderDAO, JavaMailSender mailSender, 
             OrderGrouper orderGrouper, InlineTemplateService inlineTemplateService, AttachmentService attachmentService,
-            AdditionalMailContentService additionalMailContentService) {
+            AdditionalMailContentService additionalMailContentService, AdditionalNotificationService additionalNotificationService) {
         this.orderDAO = orderDAO;
         this.mailSender = mailSender;
         this.configurationService = configurationService;
@@ -57,6 +58,7 @@ public class NotifyService {
         this.inlineTemplateService = inlineTemplateService;
         this.attachmentService = attachmentService;
 		this.additionalMailContentService = additionalMailContentService;
+		this.additionalNotificationService = additionalNotificationService;
         this.templateConfiguration = getTemplateConfiguration();
         this.templateConfiguration.setClassForTemplateLoading(getClass(), "/products/emails/");
     }
@@ -89,6 +91,8 @@ public class NotifyService {
             throw new ServiceException(e);
         }
         
+        additionalNotificationService.notifedPaidOrder(order.getId(), order.getCreated(), order.getPaid(), order.getReceipt(), order.getCartId(),
+        		order.getCustomerDetailsMap(), order.getDeliveryDetailsMap(), toFieldMaps(order.getPaidItems()));
         order.setNotified(new LocalDateTime().toString());
         orderDAO.save(order);
         LOG.info("Notified order: {}", order.getId());
@@ -153,12 +157,12 @@ public class NotifyService {
             helper.addAttachment(attachmentCounter + "-" + attachment.getName(), new ByteArrayResource(attachment.getData()));
         }
         
-        List<Map<String, String>> paidItemsFields = filterPaidItemsFields(order.getPaidItems());
+        List<Map<String, String>> paidItemsFields = toFieldMaps(order.getPaidItems());
         additionalMailContentService.append(message, helper, customerEmail, paidItemsFields);
         mailSender.send(message);
     }
 
-    private List<Map<String, String>> filterPaidItemsFields(List<Item> items) {
+    private List<Map<String, String>> toFieldMaps(List<Item> items) {
     	List<Map<String, String>> paid = new ArrayList<>();
     	for (Item item : items) {
 			paid.add(item.getFieldsMap());

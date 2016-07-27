@@ -48,6 +48,9 @@ public class NoticeToPayServiceTest {
     private static final String FAILED_QUERY_RESPONSE = "<status>FAILED</status>";
     private static final String PAID_QUERY_RESPONSE = "<status>PAID</status><receiptNumber>" + RECEIPT_NUMBER + "</receiptNumber>";
     private static final String NTP_QUERY = "some ntp query";
+	private static final long AMOUNT = 123;
+	private static final long AMOUNT_GST = 456;
+	private static final String DESCRIPTION = "some desc";
     
     NoticeToPayService service;
 
@@ -58,6 +61,7 @@ public class NoticeToPayServiceTest {
     @Mock PaymentInformation paymentInformation;
     @Mock ConfigurationService config;
     @Mock NoticeToPay noticeToPay;
+	@Mock AdditionalNotificationService additionalNotificationService;
     
     @Before
     public void setUp() throws Exception {
@@ -74,7 +78,7 @@ public class NoticeToPayServiceTest {
         when(paymentInformationService.fetch(SOURCE_ID)).thenReturn(paymentInformation);
         when(noticeToPayDAO.findOne(NOTICE_TO_PAY_ID)).thenReturn(noticeToPay);
         
-        service = new NoticeToPayService(config, paymentInformationService, noticeToPayDAO, requestBuilder) {
+        service = new NoticeToPayService(config, paymentInformationService, noticeToPayDAO, requestBuilder, additionalNotificationService) {
             protected SOAPClient getSOAPClient(String endpoint) {
                 return ENDPOINT.equals(endpoint) ? soapClient : null;
             }
@@ -94,7 +98,7 @@ public class NoticeToPayServiceTest {
     }
     
     @Test
-    public void returnNullWHenIfNoOwingAmount() throws Exception {
+    public void returnNullWhenIfNoOwingAmount() throws Exception {
         when(paymentInformation.getAmountOwingInCents()).thenReturn(0l);
         assertThat(service.create(SOURCE_ID, SOURCE_URL), nullValue());
         verifyZeroInteractions(soapClient);
@@ -121,11 +125,17 @@ public class NoticeToPayServiceTest {
     
     @Test
     public void setNoticeToPayWithPaymentDetailsOnNotifyAfterCheckingStatus() throws Exception {
+    	when(noticeToPay.getAmount()).thenReturn(AMOUNT);
+    	when(noticeToPay.getAmountGst()).thenReturn(AMOUNT_GST);
+    	when(noticeToPay.getDescription()).thenReturn(DESCRIPTION);
+    	when(noticeToPay.getPaymentInformationId()).thenReturn(SOURCE_ID);
         service.notifyPayment(NOTICE_TO_PAY_ID);
         
         verify(noticeToPay).setReceiptNumber(RECEIPT_NUMBER);
         verify(noticeToPay).setNotifiedAt(argThat(isA(Date.class)));
         verify(noticeToPayDAO).save(noticeToPay);
+        verify(additionalNotificationService).notifedPaidNoticeToPay(eq(NOTICE_TO_PAY_ID), argThat(isA(Date.class)), eq(RECEIPT_NUMBER), 
+        		eq(AMOUNT), eq(AMOUNT_GST), eq(DESCRIPTION), eq(SOURCE_ID));
     }
     
     @Test
@@ -135,6 +145,7 @@ public class NoticeToPayServiceTest {
         
         verifyZeroInteractions(requestBuilder);
         verifyZeroInteractions(soapClient);
+        verifyZeroInteractions(additionalNotificationService);
         verify(noticeToPayDAO, never()).save(argThat(isA(NoticeToPay.class)));
     }
     
@@ -147,6 +158,7 @@ public class NoticeToPayServiceTest {
             verifyZeroInteractions(noticeToPay);
             verifyZeroInteractions(requestBuilder);
             verifyZeroInteractions(soapClient);
+            verifyZeroInteractions(additionalNotificationService);
         }
     }
     
@@ -158,6 +170,7 @@ public class NoticeToPayServiceTest {
             fail();
         } catch (ServiceException e) {
             verify(noticeToPayDAO, never()).save(argThat(isA(NoticeToPay.class)));
+            verifyZeroInteractions(additionalNotificationService);
         }
     }
     
@@ -166,6 +179,7 @@ public class NoticeToPayServiceTest {
         when(soapClient.sendRequest(USERNAME, PASSWORD.getBytes("UTF-8"), NoticeToPayService.NS, NTP_QUERY)).thenReturn(FAILED_QUERY_RESPONSE);
         service.notifyPayment(NOTICE_TO_PAY_ID);
         verify(noticeToPayDAO, never()).save(argThat(isA(NoticeToPay.class)));
+        verifyZeroInteractions(additionalNotificationService);
     }
     
 }

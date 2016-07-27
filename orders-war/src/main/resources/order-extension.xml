@@ -16,4 +16,7 @@
     <!-- Extend with your own additional mail content service by overwriting this file in your overlay project -->
     <bean id="additionalMailContentService" class="au.gov.qld.pub.orders.service.StubAdditionalMailContentService" />
     
+    <!-- Extend with your own additional notification service by overwriting this file in your overlay project -->
+    <bean id="additionalNotificationService" class="au.gov.qld.pub.orders.service.StubAdditionalNotificationService" />
+    
 </beans>

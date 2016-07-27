@@ -71,6 +71,7 @@ public class NotifyServiceTest {
     @Mock AttachmentService attachmentService;
     @Mock InputStream attachmentStream;
     @Mock AdditionalMailContentService additionalMailContentService;
+    @Mock AdditionalNotificationService additionalNotificationService;
     
     NotifyService service;
 
@@ -103,7 +104,8 @@ public class NotifyServiceTest {
         when(configuration.getTemplate(PRODUCT_ID + ".customer.email.ftl")).thenReturn(customerTemplate);
         when(configuration.getTemplate(PRODUCT_ID + ".business.email.ftl")).thenReturn(businessTemplate);
         when(orderDAO.findOne(order.getId())).thenReturn(order);
-        service = new NotifyService(configurationService, orderDAO, mailSender, orderGrouper, inlineTemplateService, attachmentService, additionalMailContentService) {
+        service = new NotifyService(configurationService, orderDAO, mailSender, orderGrouper, inlineTemplateService, attachmentService, 
+        		additionalMailContentService, additionalNotificationService) {
             @Override
             protected Configuration getTemplateConfiguration() {
                 return configuration;
@@ -120,6 +122,7 @@ public class NotifyServiceTest {
         verify(order, never()).setNotified(anyString());
         verify(orderDAO, never()).save(order);
         verifyZeroInteractions(additionalMailContentService);
+        verifyZeroInteractions(additionalNotificationService);
     }
     
     @Test
@@ -143,6 +146,8 @@ public class NotifyServiceTest {
         verify(order).setNotified(anyString());
         verify(orderDAO).save(order);
 		verify(additionalMailContentService).append(eq(message), isA(MimeMessageHelper.class), eq(false), eq(asList((Map<String, String>)of("field", "value"))));
+		verify(additionalNotificationService).notifedPaidOrder(order.getId(), order.getCreated(), order.getPaid(), order.getReceipt(), order.getCartId(),
+				order.getCustomerDetailsMap(), order.getDeliveryDetailsMap(), asList((Map<String, String>)of("field", "value")));
     }
     
     @Test
@@ -155,6 +160,7 @@ public class NotifyServiceTest {
         verifyZeroInteractions(additionalMailContentService);
         verify(order, never()).setNotified(anyString());
         verify(orderDAO, never()).save(order);
+        verifyZeroInteractions(additionalNotificationService);
     }
 
     @SuppressWarnings("unchecked")
