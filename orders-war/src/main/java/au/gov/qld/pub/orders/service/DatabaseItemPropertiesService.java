@@ -2,6 +2,7 @@ package au.gov.qld.pub.orders.service;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -29,10 +30,14 @@ public class DatabaseItemPropertiesService implements ItemPropertiesService, App
     
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        loadFileProperties();
+        try {
+			loadFileProperties();
+		} catch (IOException e) {
+			LOG.error(e.getMessage(), e);
+		}
     }
     
-    private void loadFileProperties() {
+    private void loadFileProperties() throws IOException {
         Map<String, Properties> fileProducts = fileItemPropertiesDAO.findProductProperties();
         for (Map.Entry<String, Properties> fileProduct : fileProducts.entrySet()) {
             if (!dao.exists(fileProduct.getKey())) {

@@ -38,19 +38,15 @@ public class FileItemPropertiesDAO {
         }
     }
     
-    public Map<String, Properties> findProductProperties() {
+    public Map<String, Properties> findProductProperties() throws IOException {
         Map<String, Properties> found = new HashMap<>();
         
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(getClass().getClassLoader());
-        try {
-            Resource[] resources = resolver.getResources("classpath:/products/properties/*.product.properties");
-            for (Resource resource : resources) {
-                Matcher matcher = PRODUCT_FILE_PATTERN.matcher(resource.getFilename());
-                matcher.find();
-                found.put(matcher.group(1), find(matcher.group(1)));
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+        Resource[] resources = resolver.getResources("classpath:/products/properties/*.product.properties");
+        for (Resource resource : resources) {
+            Matcher matcher = PRODUCT_FILE_PATTERN.matcher(resource.getFilename());
+            matcher.find();
+            found.put(matcher.group(1), find(matcher.group(1)));
         }
         
         return found;
