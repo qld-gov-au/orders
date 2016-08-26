@@ -40,7 +40,7 @@ public class DatabaseItemPropertiesServiceTest {
     Properties properties2;
     
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         properties1 = new Properties();
         properties1.setProperty("productId", PRODUCT_ID_1);
         
