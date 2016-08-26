@@ -73,6 +73,7 @@ public class SOAPClient {
                 return extractBody(EntityUtils.toString(response.getEntity()));
             } finally {
                 response.close();
+                httpclient.close();
             }
             
         } catch (NoSuchAlgorithmException | IOException e) {
