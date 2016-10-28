@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -125,7 +126,7 @@ public class OrderController {
         LOG.info("Adding to cart with cartId: " + effectiveCartId);
         Order order = orderService.add(items, effectiveCartId);
         Cookie cookie = new Cookie(Constants.CART_ID, order.getCartId());
-        cookie.setSecure(true);
+        cookie.setSecure(configurationService.getServiceFullUrl().toLowerCase(Locale.getDefault()).startsWith("https://"));
         response.addCookie(cookie);
         return WebUtils.redirect(configurationService.getServiceFullUrl() + "/added");
     }

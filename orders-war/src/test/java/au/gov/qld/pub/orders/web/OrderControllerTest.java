@@ -90,7 +90,7 @@ public class OrderControllerTest {
         RedirectView result = controller.add(COOKIE_CART_ID, REQ_CART_ID, command, request, response);
         assertThat(result.getUrl(), is(FULL_URL + "/added"));
         verify(orderService).add(asList(item), COOKIE_CART_ID);
-        verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, COOKIE_CART_ID, true)));
+        verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, COOKIE_CART_ID, false)));
     }
     
     @SuppressWarnings("unchecked")
@@ -103,19 +103,20 @@ public class OrderControllerTest {
         RedirectView result = controller.add(null, REQ_CART_ID, command, request, response);
         assertThat(result.getUrl(), is(FULL_URL + "/added"));
         verify(orderService).add(asList(item), REQ_CART_ID);
-        verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, REQ_CART_ID, true)));
+        verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, REQ_CART_ID, false)));
         verify(item).setFields((Map<String, String>) argThat(allOf(hasEntry("allowedfield", "allowedvalue"), not(hasEntry("badfield", "badvalue")))));
     }
     
     @SuppressWarnings("unchecked")
     @Test
-    public void addWithTruncatedFields() throws ServiceException {
+    public void addWithTruncatedFieldsAndSecuredWhenUrlIsSecure() throws ServiceException {
+    	when(configurationService.getServiceFullUrl()).thenReturn("https://" + FULL_URL);
         request.setParameters(ImmutableMap.of("allowedfield", repeat("a", OrderController.MAX_FIELD_LENGTH + 1)));
         when(orderService.add(asList(item), REQ_CART_ID)).thenReturn(order);
         when(order.getCartId()).thenReturn(REQ_CART_ID);
         
         RedirectView result = controller.add(null, REQ_CART_ID, command, request, response);
-        assertThat(result.getUrl(), is(FULL_URL + "/added"));
+        assertThat(result.getUrl(), is("https://" + FULL_URL + "/added"));
         verify(orderService).add(asList(item), REQ_CART_ID);
         verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, REQ_CART_ID, true)));
         verify(item).setFields((Map<String, String>) argThat(allOf(hasEntry("allowedfield", repeat("a", OrderController.MAX_FIELD_LENGTH)))));
