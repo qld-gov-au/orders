@@ -29,7 +29,6 @@ import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.ConfigurationService;
 import au.gov.qld.pub.orders.service.OrderService;
-import au.gov.qld.pub.orders.service.ServiceException;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -75,7 +74,7 @@ public class OrderControllerTest {
     }
     
     @Test
-    public void redirectToErrorOnAddWithInvalidItem() throws ServiceException {
+    public void redirectToErrorOnAddWithInvalidItem() throws Exception {
         when(command.getProductId()).thenReturn(null);
         RedirectView result = controller.add(null, null, command, request, response);
         assertThat(result.getUrl(), is(ERROR_REDIRECT));
@@ -83,7 +82,7 @@ public class OrderControllerTest {
     }
     
     @Test
-    public void addWithCartIdFromCookie() throws ServiceException {
+    public void addWithCartIdFromCookie() throws Exception {
         when(orderService.add(asList(item), COOKIE_CART_ID)).thenReturn(order);
         when(order.getCartId()).thenReturn(COOKIE_CART_ID);
         
@@ -95,7 +94,7 @@ public class OrderControllerTest {
     
     @SuppressWarnings("unchecked")
     @Test
-    public void addWithCartIdFromRequestWhenCookieNull() throws ServiceException {
+    public void addWithCartIdFromRequestWhenCookieNull() throws Exception {
         request.setParameters(ImmutableMap.of("badfield", "badvalue", "allowedfield", "allowedvalue"));
         when(orderService.add(asList(item), REQ_CART_ID)).thenReturn(order);
         when(order.getCartId()).thenReturn(REQ_CART_ID);
@@ -109,7 +108,7 @@ public class OrderControllerTest {
     
     @SuppressWarnings("unchecked")
     @Test
-    public void addWithTruncatedFieldsAndSecuredWhenUrlIsSecure() throws ServiceException {
+    public void addWithTruncatedFieldsAndSecuredWhenUrlIsSecure() throws Exception {
     	when(configurationService.getServiceFullUrl()).thenReturn("https://" + FULL_URL);
         request.setParameters(ImmutableMap.of("allowedfield", repeat("a", OrderController.MAX_FIELD_LENGTH + 1)));
         when(orderService.add(asList(item), REQ_CART_ID)).thenReturn(order);

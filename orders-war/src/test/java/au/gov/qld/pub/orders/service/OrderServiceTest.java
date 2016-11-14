@@ -101,7 +101,7 @@ public class OrderServiceTest {
     }
     
     @Test
-    public void addToNewOrder() throws ServiceException {
+    public void addToNewOrder() throws Exception {
         Matcher<Order> orderWithCartId = allOf(hasProperty("cartId", nullValue()),
                 hasProperty("items", is(asList(item))));
         
@@ -115,7 +115,7 @@ public class OrderServiceTest {
     
     @SuppressWarnings("unchecked")
 	@Test
-    public void throwExceptionIfItemMissingFields() throws ServiceException {
+    public void throwExceptionIfItemMissingFields() throws Exception {
     	when(item.getFieldsMap()).thenReturn(Collections.EMPTY_MAP);
         try {
         	orderService.add(asList(item), null);
@@ -127,7 +127,7 @@ public class OrderServiceTest {
     }
     
     @Test
-    public void addToNewOrderWithOptionalNamespaceInResponse() throws ServiceException {
+    public void addToNewOrderWithOptionalNamespaceInResponse() throws Exception {
         when(cartService.addToCart(ADD_REQUEST)).thenReturn("<ns1:cartId>" + CART_ID + "</ns1:cartId>"
                 + "<ns1:generatedOrderId>" + GENERATED_ID + "</ns1:generatedOrderId>");
         Matcher<Order> orderWithCartId = allOf(hasProperty("cartId", nullValue()),
@@ -143,7 +143,7 @@ public class OrderServiceTest {
     
     @SuppressWarnings("rawtypes")
 	@Test
-    public void addToNewOrderAfterMultipleAttemptsWithNewCartIdAfterFailure() throws ServiceException {
+    public void addToNewOrderAfterMultipleAttemptsWithNewCartIdAfterFailure() throws Exception {
     	doAnswer(new Answer() {
 			@Override
 			public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -167,7 +167,7 @@ public class OrderServiceTest {
     }
     
     @Test
-    public void throwExceptionWhenCannotAddToCartAfterMultipleAttempts() throws ServiceException {
+    public void throwExceptionWhenCannotAddToCartAfterMultipleAttempts() throws Exception {
         doThrow(new ServiceException("expected")).when(cartService).addToCart(ADD_REQUEST);
         Matcher<Order> orderWithCartId = allOf(hasProperty("cartId", nullValue()),
                 hasProperty("items", is(asList(item))));
@@ -184,7 +184,7 @@ public class OrderServiceTest {
     }
     
     @Test
-    public void createNewOrderWhenCartPaid() throws ServiceException {
+    public void createNewOrderWhenCartPaid() throws Exception {
         order.setPaid("something", new OrderDetails());
         Matcher<Order> orderWithCartId = allOf(hasProperty("cartId", nullValue()),
                 hasProperty("items", is(asList(item))));
@@ -198,7 +198,7 @@ public class OrderServiceTest {
     }
     
     @Test
-    public void addToExistingOrder() throws ServiceException {
+    public void addToExistingOrder() throws Exception {
         Matcher<Order> orderWithCartId = allOf(hasProperty("cartId", is(CART_ID)),
                 hasProperty("items", is(asList(item))));
         

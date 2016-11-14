@@ -209,12 +209,12 @@ public class Item {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return new HashCodeBuilder().append(id).build();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         return obj instanceof Item && id.equals(((Item)obj).id);
     }
 

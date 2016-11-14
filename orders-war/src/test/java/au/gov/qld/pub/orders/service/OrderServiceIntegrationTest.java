@@ -29,7 +29,7 @@ public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
     @Autowired ItemDAO itemDAO;
     
     @Test
-    public void addToNewCart() throws ServiceException {
+    public void addToNewCart() throws Exception {
         Item item = createItem();
         item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
         

@@ -60,7 +60,7 @@ public class OrderService {
     }
     
     @Transactional(rollbackFor = ServiceException.class)
-    public Order add(List<Item> items, String cartId) throws ServiceException {
+    public Order add(List<Item> items, String cartId) throws ServiceException, InterruptedException {
         Order order = findByCartId(cartId);
         if (order == null) {
             LOG.info("Creating new order for cartId: {}", cartId);
@@ -86,14 +86,11 @@ public class OrderService {
 	        try {
 	        	response = cartService.addToCart(requestBuilder.addRequest(order));
 	        } catch (Exception e) {
+	        	LOG.error(e.getMessage(), e);
 	        	LOG.warn("Failed to add to cart. Resetting cart ID to null to force a new cart on order: {} which previously had cartId: {}",
 	        			order.getId(), order.getCartId());
 	        	order.setCartId(null);
-	        	try {
-					TimeUnit.SECONDS.sleep(ADD_TO_CART_RETRY_DELAY_SECONDS);
-				} catch (InterruptedException interrupt) {
-					throw new ServiceException(interrupt);
-				}
+				TimeUnit.SECONDS.sleep(ADD_TO_CART_RETRY_DELAY_SECONDS);
 	        }
         }
         

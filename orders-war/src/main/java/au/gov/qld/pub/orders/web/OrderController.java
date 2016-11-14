@@ -110,7 +110,7 @@ public class OrderController {
     
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public RedirectView add(@CookieValue(value=Constants.CART_ID, required=false) String cookieCartId, @RequestParam(required=false) String ssqCartId, 
-            @ModelAttribute("command") ItemCommand command, HttpServletRequest request, HttpServletResponse response) throws ServiceException {
+            @ModelAttribute("command") ItemCommand command, HttpServletRequest request, HttpServletResponse response) throws ServiceException, InterruptedException {
         String effectiveCartId = isBlank(cookieCartId) ? ssqCartId : cookieCartId;
         
         List<Item> items = validateAndCreate(command);
