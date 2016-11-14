@@ -111,6 +111,7 @@ public class OrderServiceTest {
         assertThat(addedOrder.getGeneratedId(), is(GENERATED_ID));
         verify(orderDAO, times(2)).save(addedOrder);
         assertThat(addedOrder.getItems(), is(asList(item)));
+        verify(cartService, times(1)).addToCart(ADD_REQUEST);
     }
     
     @SuppressWarnings("unchecked")
@@ -139,6 +140,7 @@ public class OrderServiceTest {
         assertThat(addedOrder.getGeneratedId(), is(GENERATED_ID));
         verify(orderDAO, times(2)).save(addedOrder);
         assertThat(addedOrder.getItems(), is(asList(item)));
+        verify(cartService, times(1)).addToCart(ADD_REQUEST);
     }
     
     @SuppressWarnings("rawtypes")
@@ -163,7 +165,7 @@ public class OrderServiceTest {
         assertThat(addedOrder.getGeneratedId(), is(GENERATED_ID));
         verify(orderDAO, times(2)).save(addedOrder);
         assertThat(addedOrder.getItems(), is(asList(item)));
-        verify(cartService, times(3)).addToCart(anyString());
+        verify(cartService, times(2)).addToCart(anyString());
     }
     
     @Test
