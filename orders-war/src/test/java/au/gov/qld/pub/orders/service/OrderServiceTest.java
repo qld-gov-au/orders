@@ -3,6 +3,7 @@ package au.gov.qld.pub.orders.service;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
@@ -12,6 +13,8 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -30,7 +33,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import au.gov.qld.pub.orders.dao.ItemDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
@@ -57,6 +62,7 @@ public class OrderServiceTest {
     
     OrderService orderService;
     Order order;
+    boolean failedOnce = false;
     
     @Mock CartService cartService;
     @Mock OrderDAO orderDAO;
@@ -74,6 +80,7 @@ public class OrderServiceTest {
     
     @Before
     public void setUp() throws ServiceException {
+    	failedOnce = false;
         order = new Order(CART_ID);
         deliveryDetails = ImmutableMap.of("delivery type", "value");
         customerDetails = ImmutableMap.of("customer type", "value");
@@ -132,6 +139,48 @@ public class OrderServiceTest {
         assertThat(addedOrder.getGeneratedId(), is(GENERATED_ID));
         verify(orderDAO, times(2)).save(addedOrder);
         assertThat(addedOrder.getItems(), is(asList(item)));
+    }
+    
+    @SuppressWarnings("rawtypes")
+	@Test
+    public void addToNewOrderAfterMultipleAttemptsWithNewCartIdAfterFailure() throws ServiceException {
+    	doAnswer(new Answer() {
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				if (failedOnce) {
+					return "<ns1:cartId>new cart</ns1:cartId><ns1:generatedOrderId>" + GENERATED_ID + "</ns1:generatedOrderId>";
+				}
+				failedOnce = true;
+				throw new ServiceException("expected");
+			}
+    	}).when(cartService).addToCart(ADD_REQUEST);
+        Matcher<Order> orderWithCartId = allOf(hasProperty("cartId", nullValue()),
+                hasProperty("items", is(asList(item))));
+        
+        when(requestBuilder.addRequest(argThat(orderWithCartId))).thenReturn(ADD_REQUEST);
+        Order addedOrder = orderService.add(asList(item), CART_ID);
+        assertThat(addedOrder.getCartId(), is("new cart"));
+        assertThat(addedOrder.getGeneratedId(), is(GENERATED_ID));
+        verify(orderDAO, times(2)).save(addedOrder);
+        assertThat(addedOrder.getItems(), is(asList(item)));
+        verify(cartService, times(3)).addToCart(anyString());
+    }
+    
+    @Test
+    public void throwExceptionWhenCannotAddToCartAfterMultipleAttempts() throws ServiceException {
+        doThrow(new ServiceException("expected")).when(cartService).addToCart(ADD_REQUEST);
+        Matcher<Order> orderWithCartId = allOf(hasProperty("cartId", nullValue()),
+                hasProperty("items", is(asList(item))));
+        
+        when(requestBuilder.addRequest(argThat(orderWithCartId))).thenReturn(ADD_REQUEST);
+        try {
+        	orderService.add(asList(item), CART_ID);
+        } catch (ServiceException e) {
+        	assertThat(e.getMessage(), containsString("Could not add to cart after multiple attempts"));
+        }
+        
+        verify(orderDAO, times(1)).save(order);
+        assertThat(order.getCartId(), nullValue());
     }
     
     @Test
