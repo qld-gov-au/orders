@@ -2,13 +2,18 @@ package au.gov.qld.pub.orders.service;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -205,6 +210,26 @@ public class AttachmentServiceTest {
         verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))));
     }
     
+    @Test
+    public void retryWhenCannotDownloadWithIOException() throws Exception {
+        when(config.getNotifyFormRetryCount()).thenReturn(2);
+        service = new AttachmentService(config) {
+            @Override
+            protected HttpClient createClient() {
+                return client;
+            }
+        };
+        
+        doThrow(new SocketTimeoutException("expected")).when(client).execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA)));
+        try {
+        	service.retrieve(order, NotifyType.CUSTOMER);
+        	fail("Should have ran out of attempts");
+        } catch (IOException e) {
+        	assertThat(e.getMessage(), containsString("Retries exhausted"));
+        }
+        verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))));
+    }
+    
     @Test(expected = IOException.class)
     public void throwExceptionWhencannotConnect() throws Exception {
         when(config.getNotifyFormRetryCount()).thenReturn(2);
@@ -249,7 +274,7 @@ public class AttachmentServiceTest {
                 
                 UrlEncodedFormEntity entity = (UrlEncodedFormEntity) post.getEntity();
                 try {
-                    String content = IOUtils.toString(entity.getContent());
+                    String content = IOUtils.toString(entity.getContent(), Charset.defaultCharset());
                     System.out.println("Got content: " + content);
                     return data.equals(content);
                 } catch (IOException e) {

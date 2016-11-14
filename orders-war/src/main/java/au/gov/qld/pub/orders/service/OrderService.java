@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +33,9 @@ import au.gov.qld.pub.orders.service.ws.RequestBuilder;
 
 @Service
 public class OrderService {
-    private static final Logger LOG = LoggerFactory.getLogger(OrderService.class);
+    private static final int ADD_TO_CART_RETRY_DELAY_SECONDS = 3;
+	private static final int ADD_TO_CART_RETRY_LIMIT = 3;
+	private static final Logger LOG = LoggerFactory.getLogger(OrderService.class);
     private static final Pattern CART_ID_PATTERN = Pattern.compile("<.*[:]?cartId>(.+)</.*[:]?cartId>");
     private static final Pattern GENERATED_ORDER_ID_PATTERN = Pattern.compile("<.*[:]?generatedOrderId>(.+)</.*[:]?generatedOrderId>");
     
@@ -76,9 +79,28 @@ public class OrderService {
         itemDAO.save(order.getItems());
         orderDAO.save(order);
         
-        String addRequest = requestBuilder.addRequest(order);
         LOG.info("Sending cart add request for order: {} with cartId: {}", order.getId(), order.getCartId());
-        String response = cartService.addToCart(addRequest);
+        String response = "";
+        
+        for (int i=0; i < ADD_TO_CART_RETRY_LIMIT; i++) {
+	        try {
+	        	response = cartService.addToCart(requestBuilder.addRequest(order));
+	        } catch (Exception e) {
+	        	LOG.info("Failed to add to cart. Resetting cart ID to null to force a new cart on order: {} which previously had cartId: {}",
+	        			order.getId(), order.getCartId());
+	        	order.setCartId(null);
+	        	try {
+					TimeUnit.SECONDS.sleep(ADD_TO_CART_RETRY_DELAY_SECONDS);
+				} catch (InterruptedException interrupt) {
+					throw new ServiceException(interrupt);
+				}
+	        }
+        }
+        
+        if (isBlank(response)) {
+        	throw new ServiceException("Could not add to cart after multiple attempts for order: " + order.getId());
+        }
+        
         LOG.debug("Cart add response: {}", response);
         for (Item item : order.getItems()) {
             item.setCartState(CartState.ADDED);

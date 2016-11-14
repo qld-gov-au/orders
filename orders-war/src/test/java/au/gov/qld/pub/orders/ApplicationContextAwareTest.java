@@ -3,6 +3,7 @@ package au.gov.qld.pub.orders;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -29,7 +30,7 @@ public abstract class ApplicationContextAwareTest {
         if (!keyFile.exists()) {
             System.err.println("Creating test key");
             try {
-                FileUtils.write(keyFile, "testkey");
+                FileUtils.write(keyFile, "testkey", Charset.defaultCharset());
             } catch (IOException e) {
                 throw new IllegalStateException("Could not create test key");
             }
