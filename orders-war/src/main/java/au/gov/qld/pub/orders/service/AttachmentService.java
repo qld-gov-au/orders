@@ -55,7 +55,7 @@ public class AttachmentService {
         	String uri = inBundle.getNotifyFormUri(type);
         	if (isNotBlank(uri)) {
 		        LOG.info("Downloading attachments for bundled items in order {} and type {}", groupedOrder.getId(), type);
-		        return downloadRetrying(createClient(), uri, groupedOrder, bundled, NotifyType.CUSTOMER).getData();
+		        return downloadRetrying(createClient(), uri, groupedOrder, bundled, NotifyType.CUSTOMER).getData().getInputStream();
         	}
         }
 
@@ -65,7 +65,7 @@ public class AttachmentService {
 		    String uri = inUnbundled.getNotifyFormUri(type);
 		    if (isNotBlank(uri)) {
 		        LOG.info("Downloading attachments for item {} and type {}", inUnbundled.getId(), type);
-		        return downloadRetrying(createClient(), uri, groupedOrder, asList(inUnbundled), NotifyType.CUSTOMER).getData();
+		        return downloadRetrying(createClient(), uri, groupedOrder, asList(inUnbundled), NotifyType.CUSTOMER).getData().getInputStream();
 		    }
         }
 
