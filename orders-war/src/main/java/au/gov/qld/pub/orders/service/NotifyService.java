@@ -19,7 +19,7 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -154,7 +154,7 @@ public class NotifyService {
         int attachmentCounter = 0;
         for (EmailAttachment attachment : attachments) {
             attachmentCounter++;
-            helper.addAttachment(attachmentCounter + "-" + attachment.getName(), new ByteArrayResource(attachment.getData()));
+            helper.addAttachment(attachmentCounter + "-" + attachment.getName(), new InputStreamResource(attachment.getData()));
         }
         
         List<Map<String, String>> paidItemsFields = toFieldMaps(order.getPaidItems());

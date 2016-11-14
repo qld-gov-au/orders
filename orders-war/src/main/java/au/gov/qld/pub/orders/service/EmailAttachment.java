@@ -1,29 +1,27 @@
 package au.gov.qld.pub.orders.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 
 public class EmailAttachment {
 	private final String name;
-	private final byte[] data;
+	private final InputStream data;
 
-	public EmailAttachment(String name, byte[] data) {
+	public EmailAttachment(String name, ByteArrayOutputStream data) throws IOException {
 		this.name = name;
-		this.data = data;
+		this.data = new ByteArrayInputStream(data.toByteArray());
+		data.flush();
+		data.close();
 	}
 
-	public byte[] getData() {
-		return clone(data);
+	public InputStream getData() {
+		return data;
 	}
 	
 	public String getName() {
 		return name;
 	}
-	
-    private static byte[] clone(byte[] data) {
-        if (data == null) {
-            return null;
-        }
-        byte[] copy = new byte[data.length];
-        System.arraycopy(data, 0, copy, 0, data.length);
-        return copy;
-    }
 }

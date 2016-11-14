@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class AttachmentService {
         this.timeout = config.getNotifyFormTimeout();
     }
     
-    public byte[] retrieve(Order groupedOrder, NotifyType type, String itemId) throws IOException, InterruptedException {
+    public InputStream retrieve(Order groupedOrder, NotifyType type, String itemId) throws IOException, InterruptedException {
         LOG.info("Starting downloading attachments for order {} and type {} for item {}", groupedOrder.getId(), type, itemId);
         List<Item> bundled = groupedOrder.getBundledPaidItems();
         Item inBundle = findItemInList(bundled, itemId);
@@ -69,7 +70,7 @@ public class AttachmentService {
         }
 
         LOG.warn("Could not download attachments for item because it was not paid or does not exist in order {}", groupedOrder.getId());
-		return new byte[0];
+		throw new IllegalStateException();
     }
 
     public List<EmailAttachment> retrieve(Order groupedOrder, NotifyType type) throws IOException, InterruptedException {
@@ -130,7 +131,7 @@ public class AttachmentService {
 		throw new IllegalStateException("Could not get a filename for any items which have attachments");
 	}
 
-	private byte[] download(HttpClient client, HttpPost httpPost) throws IOException {
+	private ByteArrayOutputStream download(HttpClient client, HttpPost httpPost) throws IOException {
         CloseableHttpResponse response = (CloseableHttpResponse) client.execute(httpPost);
         
         if (response.getStatusLine().getStatusCode() != OKAY_STATUS_CODE) {
@@ -141,7 +142,7 @@ public class AttachmentService {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         IOUtils.copy(entity.getContent(), output);
         EntityUtils.consume(entity);
-        return output.toByteArray();
+        return output;
     }
 
     private HttpPost createRequest(String uri, Order order, List<Item> items) throws UnsupportedEncodingException {

@@ -1,6 +1,7 @@
 package au.gov.qld.pub.orders.web;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -64,11 +65,11 @@ public class DownloadItemController {
 
         Order order = orderDao.findOne(orderId);
 		Map<String, Order> groupedOrders = orderGrouper.paidByProductGroup(order);
-        byte[] data = attachmentService.retrieve(groupedOrders.get(item.getProductGroup()), NotifyType.CUSTOMER, itemId);
+		InputStream data = attachmentService.retrieve(groupedOrders.get(item.getProductGroup()), NotifyType.CUSTOMER, itemId);
         
         response.setContentType(CONTENT_TYPE);
         response.setHeader(ATTACHMENT_HEADER, String.format(ATTACHMENT_FILENAME_FMT, item.getNotifyCustomerFormFilename()));
-        IOUtils.write(data, response.getOutputStream());
+        IOUtils.copy(data, response.getOutputStream());
         response.getOutputStream().flush();   
         response.getOutputStream().close();
     }

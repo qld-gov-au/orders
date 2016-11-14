@@ -134,7 +134,7 @@ public class AttachmentServiceTest {
         List<EmailAttachment> result = service.retrieve(order, NotifyType.BUSINESS);
         assertThat(result.size(), is(1));
         assertThat(new String(result.get(0).getName()), is(BUSINESS_FORM_FILE_NAME));
-        assertThat(new String(result.get(0).getData()), is(BUSINESS_CONTENT));
+        assertThat(IOUtils.toString(result.get(0).getData(), Charset.defaultCharset()), is(BUSINESS_CONTENT));
     }
     
     @Test
@@ -142,17 +142,16 @@ public class AttachmentServiceTest {
         when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(businessResponse);
         
-        byte[] result = service.retrieve(order, NotifyType.BUSINESS, ITEM_ID);
-        assertThat(new String(result), is(BUSINESS_CONTENT));
+        String result = IOUtils.toString(service.retrieve(order, NotifyType.BUSINESS, ITEM_ID), Charset.defaultCharset());
+        assertThat(result, is(BUSINESS_CONTENT));
     }
     
-    @Test
-    public void returnEmptyDataWhenAttemptingToDownloadItemThatDoesNotExist() throws Exception {
+    @Test(expected = IllegalStateException.class)
+    public void throwExceptionWhenAttemptingToDownloadItemThatDoesNotExist() throws Exception {
         when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(businessResponse);
         
-        byte[] result = service.retrieve(order, NotifyType.BUSINESS, "bogus");
-        assertThat(result.length, is(0));
+        service.retrieve(order, NotifyType.BUSINESS, "bogus");
     }
     
     @Test
@@ -163,7 +162,7 @@ public class AttachmentServiceTest {
         List<EmailAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
         assertThat(result.size(), is(1));
         assertThat(new String(result.get(0).getName()), is(CUSTOMER_FORM_FILE_NAME));
-        assertThat(new String(result.get(0).getData()), is(CUSTOMER_CONTENT));
+        assertThat(IOUtils.toString(result.get(0).getData(), Charset.defaultCharset()), is(CUSTOMER_CONTENT));
     }
     
     @Test
@@ -177,15 +176,15 @@ public class AttachmentServiceTest {
     	
     	List<EmailAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
     	assertThat(result.size(), is(2));
-    	assertThat(new String(result.get(0).getData()), is(BUNDLED_CUSTOMER_CONTENT));
-    	assertThat(new String(result.get(1).getData()), is(CUSTOMER_CONTENT));
+    	assertThat(IOUtils.toString(result.get(0).getData(), Charset.defaultCharset()), is(BUNDLED_CUSTOMER_CONTENT));
+    	assertThat(IOUtils.toString(result.get(1).getData(), Charset.defaultCharset()), is(CUSTOMER_CONTENT));
     	
-    	String itemResult = new String(service.retrieve(order, NotifyType.CUSTOMER, item2.getId()));
+    	String itemResult = IOUtils.toString(service.retrieve(order, NotifyType.CUSTOMER, item2.getId()), Charset.defaultCharset());
     	assertThat(itemResult, is(BUNDLED_CUSTOMER_CONTENT));
-    	itemResult = new String(service.retrieve(order, NotifyType.CUSTOMER, item3.getId()));
+    	itemResult = IOUtils.toString(service.retrieve(order, NotifyType.CUSTOMER, item3.getId()), Charset.defaultCharset());
     	assertThat(itemResult, is(BUNDLED_CUSTOMER_CONTENT));
     	
-    	itemResult = new String(service.retrieve(order, NotifyType.CUSTOMER, item.getId()));
+    	itemResult = IOUtils.toString(service.retrieve(order, NotifyType.CUSTOMER, item.getId()), Charset.defaultCharset());
     	assertThat(itemResult, is(CUSTOMER_CONTENT));
     }
     
@@ -205,7 +204,7 @@ public class AttachmentServiceTest {
         
         List<EmailAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
         assertThat(result.size(), is(1));
-        assertThat(new String(result.get(0).getData()), is(CUSTOMER_CONTENT));
+        assertThat(IOUtils.toString(result.get(0).getData(), Charset.defaultCharset()), is(CUSTOMER_CONTENT));
         
         verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))));
     }
