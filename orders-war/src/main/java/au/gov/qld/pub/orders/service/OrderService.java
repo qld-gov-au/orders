@@ -86,7 +86,7 @@ public class OrderService {
 	        try {
 	        	response = cartService.addToCart(requestBuilder.addRequest(order));
 	        } catch (Exception e) {
-	        	LOG.info("Failed to add to cart. Resetting cart ID to null to force a new cart on order: {} which previously had cartId: {}",
+	        	LOG.warn("Failed to add to cart. Resetting cart ID to null to force a new cart on order: {} which previously had cartId: {}",
 	        			order.getId(), order.getCartId());
 	        	order.setCartId(null);
 	        	try {
