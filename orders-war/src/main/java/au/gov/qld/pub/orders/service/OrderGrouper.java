@@ -21,11 +21,13 @@ public class OrderGrouper {
             orderForGroup.setId(order.getId());
             orderForGroup.setReceipt(order.getReceipt());
             orderForGroup.setPaid(order.getPaid());
+            orderForGroup.setPaidAt(order.getPaidAt());
             orderForGroup.setDeliveryDetailsMap(order.getDeliveryDetailsMap());
             orderForGroup.setCustomerDetailsMap(order.getCustomerDetailsMap());
             orderForGroup.setCreatedAt(new Date(order.getCreated().getTime()));
             orderForGroup.setGeneratedId(order.getGeneratedId());
             orderForGroup.setNotified(order.getNotified());
+            orderForGroup.setNotifiedAt(order.getNotifiedAt());
             
             orderForGroup.add(item);
             grouped.put(group, orderForGroup);

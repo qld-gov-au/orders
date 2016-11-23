@@ -48,7 +48,11 @@ public class Order {
     @Column
     private String paid;
     @Column
+    private Date paidAt;
+    @Column
     private String notified;
+    @Column
+    private Date notifiedAt;
     
     private Order() {
         this.id = UUID.randomUUID().toString();
@@ -103,14 +107,31 @@ public class Order {
     public void setPaid(String paid) {
         this.paid = paid;
     }
+    
+    public Date getPaidAt() {
+		return paidAt != null ? new Date(paidAt.getTime()) : null;
+	}
 
-    public void setPaid(String receipt, OrderDetails orderDetails) {
+	public void setPaidAt(Date paidAt) {
+		this.paidAt = paidAt != null ? new Date(paidAt.getTime()) : null;
+	}
+
+	public Date getNotifiedAt() {
+		return notifiedAt != null ? new Date(notifiedAt.getTime()) : null;
+	}
+
+	public void setNotifiedAt(Date notifiedAt) {
+		this.notifiedAt = notifiedAt != null ? new Date(notifiedAt.getTime()) : null;
+	}
+
+	public void setPaid(String receipt, OrderDetails orderDetails) {
         if (isBlank(receipt)) {
             throw new IllegalStateException();
         }
         
         this.receipt = receipt;
-        this.paid = new LocalDateTime().toString();
+        this.paidAt = new Date();
+        this.paid = new LocalDateTime(this.paidAt).toString();
         this.deliveryDetails = JsonHelper.serialise(orderDetails.getDeliveryDetails());
         this.customerDetails = JsonHelper.serialise(orderDetails.getCustomerDetails());
         for (Item item : items) {

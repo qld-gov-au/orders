@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.junit.Before;
@@ -33,7 +34,9 @@ public class OrderGrouperTest {
         Item itemBUnpaid = new ItemBuilder().withGroup("b").withPaid("0").build();
         Item itemC = new ItemBuilder().withGroup("c").withPaid("0").build();
         
+        Date paidAt = new Date();
         Order order = new Order("cart id");
+        order.setPaidAt(paidAt);
         order.setPaid("paid");
         order.setReceipt("receipt");
         order.add(itemA);
@@ -58,7 +61,9 @@ public class OrderGrouperTest {
         assertThat(productA.getItems(), is(asList(itemA)));
         assertThat(productB.getItems(), is(asList(itemB)));
         assertThat(productA.getPaid(), is("paid"));
+        assertThat(productA.getPaidAt(), is(paidAt));
         assertThat(productB.getPaid(), is("paid"));
+        assertThat(productB.getPaidAt(), is(paidAt));
         assertThat(productA.getReceipt(), is("receipt"));
         assertThat(productB.getReceipt(), is("receipt"));
         

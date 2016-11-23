@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Date;
 import java.util.Map;
 
 import javax.mail.Address;
@@ -180,6 +181,7 @@ public class NotifyServiceTest {
         verify(message).setFrom(argThat(addressOf(FROM)));
         verify(attachmentService).retrieve(groupedOrder, NotifyType.CUSTOMER);
         verify(order).setNotified(anyString());
+        verify(order).setNotifiedAt(isA(Date.class));
         verify(orderDAO).save(order);
         verify(additionalMailContentService).append(eq(message), isA(MimeMessageHelper.class), eq(true), anyList());
     }

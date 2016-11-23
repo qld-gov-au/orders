@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -92,7 +93,9 @@ public class NotifyService {
         
         additionalNotificationService.notifedPaidOrder(order.getId(), order.getCreated(), order.getPaid(), order.getReceipt(), order.getCartId(),
         		order.getCustomerDetailsMap(), order.getDeliveryDetailsMap(), toFieldMaps(order.getPaidItems()));
-        order.setNotified(new LocalDateTime().toString());
+        Date notifiedAt = new Date();
+        order.setNotified(new LocalDateTime(notifiedAt).toString());
+        order.setNotifiedAt(notifiedAt);
         orderDAO.save(order);
         LOG.info("Notified order: {}", order.getId());
     }
