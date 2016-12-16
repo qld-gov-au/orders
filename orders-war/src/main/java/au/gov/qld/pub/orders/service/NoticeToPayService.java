@@ -56,7 +56,7 @@ public class NoticeToPayService {
     public String create(String sourceId, String sourceUrl) throws ServiceException {
         PaymentInformation paymentInformation = paymentInformationService.fetch(sourceId);
         if (paymentInformation.getAmountOwingInCents() <= 0l) {
-        	LOG.warn("No amount owing for %s", sourceId);
+        	LOG.warn("No amount owing for {}", sourceId);
             return null;
         }
         
