@@ -39,7 +39,7 @@ import au.gov.qld.pub.orders.service.ServiceException;
 @Controller
 public class OrderController {
     private static final Logger LOG = LoggerFactory.getLogger(OrderController.class);
-    private static final int MAX_FIELDS = 100;
+    private static final int MAX_FIELDS = 1000;
     static final int MAX_FIELD_LENGTH = 2000;
 
     private final OrderService orderService;
