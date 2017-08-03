@@ -62,7 +62,7 @@ public class NoticeToPayService {
         
         boolean recentlyPaid = noticeToPayDAO.existsByPaymentInformationIdAndNotifiedAtAfter(sourceId, new DateTime().minusHours(1).toDate());
         if (recentlyPaid) {
-        	LOG.warn("This source ID was recently paid for and could be a duplicate: %s", sourceId);
+        	LOG.warn("This source ID was recently paid for and could be a duplicate: {}", sourceId);
         	return null;
         }
 
