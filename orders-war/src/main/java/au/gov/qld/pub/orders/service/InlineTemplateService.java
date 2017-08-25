@@ -14,7 +14,7 @@ public class InlineTemplateService {
     private final Configuration configuration;
     
     public InlineTemplateService() {
-        this.configuration = new Configuration();
+        this.configuration = new Configuration(Configuration.VERSION_2_3_23);
     }
 
     public String template(String nameOfTemplate, String template, Object templateData) {

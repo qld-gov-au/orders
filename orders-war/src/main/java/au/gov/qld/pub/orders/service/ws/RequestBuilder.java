@@ -31,7 +31,7 @@ public class RequestBuilder {
     @Autowired
     public RequestBuilder(ConfigurationService configurationService, TemplateItemBuilder templateItemBuilder) throws IOException {
         this.templateItemBuilder = templateItemBuilder;
-        Configuration configuration = new Configuration();
+        Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
         configuration.setClassForTemplateLoading(getClass(), "/templates");
         this.shoppingCartRequestTemplate = configuration.getTemplate("sc-request.xml");
         this.noticeToPayRequestTemplate = configuration.getTemplate("ntp-request.xml");

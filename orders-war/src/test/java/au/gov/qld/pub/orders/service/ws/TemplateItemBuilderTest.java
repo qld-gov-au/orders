@@ -9,12 +9,11 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.collect.ImmutableMap;
+
 import au.gov.qld.pub.orders.ApplicationContextAwareTest;
 import au.gov.qld.pub.orders.dao.ItemPropertiesDAO;
 import au.gov.qld.pub.orders.entity.Item;
-import au.gov.qld.pub.orders.service.ws.TemplateItemBuilder.TemplateItem;
-
-import com.google.common.collect.ImmutableMap;
 
 
 public class TemplateItemBuilderTest extends ApplicationContextAwareTest {
@@ -38,4 +37,5 @@ public class TemplateItemBuilderTest extends ApplicationContextAwareTest {
         assertThat(templateItem.getTitle(), is("test title value1"));
         assertThat(templateItem.getDescription(), is("test description value2"));
     }
+    
 }

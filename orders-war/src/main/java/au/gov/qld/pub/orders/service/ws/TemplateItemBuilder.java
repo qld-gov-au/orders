@@ -20,33 +20,13 @@ public class TemplateItemBuilder {
     }
     
     public List<TemplateItem> build(List<Item> items) {
-        List<TemplateItem> templated = new ArrayList<TemplateItem>();
+        List<TemplateItem> templated = new ArrayList<>();
         for (Item item : items) {
             TemplateItem templateItem = new TemplateItem(inlineTemplateService);
             ReflectionUtils.shallowCopyFieldState(item, templateItem);
             templated.add(templateItem);
         }
         return templated;
-    }
-
-    static class TemplateItem extends Item {
-
-        private final InlineTemplateService inlineTemplateService;
-
-        public TemplateItem(InlineTemplateService inlineTemplateService) {
-            super();
-            this.inlineTemplateService = inlineTemplateService;
-        }
-        
-        @Override
-        public String getTitle() {
-            return inlineTemplateService.template("title", super.getTitle(), this);
-        }
-        
-        @Override
-        public String getDescription() {
-            return inlineTemplateService.template("description", super.getDescription(), this);
-        }
     }
 
 }
