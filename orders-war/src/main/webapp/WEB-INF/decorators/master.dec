@@ -176,7 +176,7 @@
         </div>
         
         <div id="page-feedback">
-        <form method="post" action="https://www.qld.gov.au/assets/apps/feedback/feedback.jsp" class="form">
+        <form method="post" action="https://www.smartservice.qld.gov.au/services/submissions/email/feedback/feedback" class="form">
         <h2>Page feedback</h2>
         
         <div id="page-feedback-privacy" class="preamble">
