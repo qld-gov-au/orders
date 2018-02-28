@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 
 import org.junit.Before;
@@ -17,17 +16,18 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import com.google.common.collect.ImmutableMap;
+
 import au.gov.qld.pub.orders.dao.ItemDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.AttachmentService;
+import au.gov.qld.pub.orders.service.FileAttachment;
 import au.gov.qld.pub.orders.service.NotifyService;
 import au.gov.qld.pub.orders.service.NotifyType;
 import au.gov.qld.pub.orders.service.OrderGrouper;
 import au.gov.qld.pub.orders.service.OrderService;
-
-import com.google.common.collect.ImmutableMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DownloadItemControllerTest {
@@ -50,9 +50,11 @@ public class DownloadItemControllerTest {
     @Mock Order order;
     @Mock Order groupedOrder;
     @Mock OrderGrouper orderGrouper;
+    @Mock FileAttachment attachment;
     
     @Before
     public void setUp() throws Exception {
+    	when(attachment.getData()).thenReturn("test".getBytes(Charset.defaultCharset()));
     	response = new MockHttpServletResponse();
         when(unpaidItem.getId()).thenReturn(ITEM_ID);
         when(paidItem.getId()).thenReturn(ITEM_ID);
@@ -71,7 +73,7 @@ public class DownloadItemControllerTest {
 
     @Test
     public void outputAttachmentForUnpaidItemToResponseAfterCheckingPaid() throws Exception {
-        when(attachmentService.retrieve(groupedOrder, NotifyType.CUSTOMER, ITEM_ID)).thenReturn(new ByteArrayInputStream("test".getBytes()));
+        when(attachmentService.retrieve(groupedOrder, NotifyType.CUSTOMER, ITEM_ID)).thenReturn(attachment);
         controller.download(ORDER_ID, ITEM_ID, response);
         
         verify(orderService).notifyPayment(ORDER_ID);
@@ -82,7 +84,7 @@ public class DownloadItemControllerTest {
     
     @Test
     public void immediatelyOutputAttachmentForItemWhenAlreadyPaid() throws Exception {
-        when(attachmentService.retrieve(groupedOrder, NotifyType.CUSTOMER, ITEM_ID)).thenReturn(new ByteArrayInputStream("test".getBytes(Charset.defaultCharset())));
+        when(attachmentService.retrieve(groupedOrder, NotifyType.CUSTOMER, ITEM_ID)).thenReturn(attachment);
         when(itemDao.findOne(ITEM_ID)).thenReturn(paidItem);
         controller.download(ORDER_ID, ITEM_ID, response);
         

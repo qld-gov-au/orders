@@ -4,9 +4,7 @@ import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +45,7 @@ public class AttachmentService {
         this.timeout = config.getNotifyFormTimeout();
     }
     
-    public InputStream retrieve(Order groupedOrder, NotifyType type, String itemId) throws IOException, InterruptedException {
+    public FileAttachment retrieve(Order groupedOrder, NotifyType type, String itemId) throws IOException, InterruptedException {
         LOG.info("Starting downloading attachments for order {} and type {} for item {}", groupedOrder.getId(), type, itemId);
         List<Item> bundled = groupedOrder.getBundledPaidItems();
         Item inBundle = findItemInList(bundled, itemId);
@@ -55,7 +53,7 @@ public class AttachmentService {
         	String uri = inBundle.getNotifyFormUri(type);
         	if (isNotBlank(uri)) {
 		        LOG.info("Downloading attachments for bundled items in order {} and type {}", groupedOrder.getId(), type);
-		        return downloadRetrying(createClient(), uri, groupedOrder, bundled, NotifyType.CUSTOMER).getData().getInputStream();
+		        return downloadRetrying(createClient(), uri, groupedOrder, bundled, NotifyType.CUSTOMER);
         	}
         }
 
@@ -65,7 +63,7 @@ public class AttachmentService {
 		    String uri = inUnbundled.getNotifyFormUri(type);
 		    if (isNotBlank(uri)) {
 		        LOG.info("Downloading attachments for item {} and type {}", inUnbundled.getId(), type);
-		        return downloadRetrying(createClient(), uri, groupedOrder, asList(inUnbundled), NotifyType.CUSTOMER).getData().getInputStream();
+		        return downloadRetrying(createClient(), uri, groupedOrder, asList(inUnbundled), NotifyType.CUSTOMER);
 		    }
         }
 
@@ -73,9 +71,9 @@ public class AttachmentService {
 		throw new IllegalStateException();
     }
 
-    public List<EmailAttachment> retrieve(Order groupedOrder, NotifyType type) throws IOException, InterruptedException {
+    public List<FileAttachment> retrieve(Order groupedOrder, NotifyType type) throws IOException, InterruptedException {
         LOG.info("Starting downloading attachments for order {} and type {}", groupedOrder.getId(), type);
-        List<EmailAttachment> attachments = new ArrayList<>();
+        List<FileAttachment> attachments = new ArrayList<>();
         
 		List<Item> bundled = groupedOrder.getBundledPaidItems();
         if (bundled.size() > 0) {
@@ -107,11 +105,11 @@ public class AttachmentService {
         return null;
     }
 
-	private EmailAttachment downloadRetrying(HttpClient client, String uri, Order order, List<Item> items, NotifyType type) throws IOException, InterruptedException {
+	private FileAttachment downloadRetrying(HttpClient client, String uri, Order order, List<Item> items, NotifyType type) throws IOException, InterruptedException {
         HttpPost httpPost = createRequest(uri, order, items);
         for (int attempt=0; attempt < retryCount; attempt++) {
             try {
-                return new EmailAttachment(firstFilename(items, type), download(client, httpPost));
+                return new FileAttachment(firstFilename(items, type), download(client, httpPost));
             } catch(IOException e) {
                 LOG.error(e.getMessage(), e);
                 Thread.sleep(retryWait);
@@ -131,18 +129,19 @@ public class AttachmentService {
 		throw new IllegalStateException("Could not get a filename for any items which have attachments");
 	}
 
-	private ByteArrayOutputStream download(HttpClient client, HttpPost httpPost) throws IOException {
+	private byte[] download(HttpClient client, HttpPost httpPost) throws IOException {
         CloseableHttpResponse response = (CloseableHttpResponse) client.execute(httpPost);
         
         if (response.getStatusLine().getStatusCode() != OKAY_STATUS_CODE) {
+        	response.close();
             throw new IOException("Could not download attachment: " + response.getStatusLine().getStatusCode() + ", " + response.getStatusLine().getReasonPhrase());
         }
         
         HttpEntity entity = response.getEntity();
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        IOUtils.copy(entity.getContent(), output);
+        byte[] data = IOUtils.toByteArray(entity.getContent());
         EntityUtils.consume(entity);
-        return output;
+        response.close();
+        return data;
     }
 
     private HttpPost createRequest(String uri, Order order, List<Item> items) throws UnsupportedEncodingException {

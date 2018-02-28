@@ -33,10 +33,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.google.common.collect.ImmutableMap;
+
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
-
-import com.google.common.collect.ImmutableMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AttachmentServiceTest {
@@ -131,10 +131,10 @@ public class AttachmentServiceTest {
         when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(businessResponse);
         
-        List<EmailAttachment> result = service.retrieve(order, NotifyType.BUSINESS);
+        List<FileAttachment> result = service.retrieve(order, NotifyType.BUSINESS);
         assertThat(result.size(), is(1));
         assertThat(new String(result.get(0).getName()), is(BUSINESS_FORM_FILE_NAME));
-        assertThat(IOUtils.toString(result.get(0).getData().getInputStream(), Charset.defaultCharset()), is(BUSINESS_CONTENT));
+        assertThat(new String(result.get(0).getData()), is(BUSINESS_CONTENT));
     }
     
     @Test
@@ -142,7 +142,7 @@ public class AttachmentServiceTest {
         when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(businessResponse);
         
-        String result = IOUtils.toString(service.retrieve(order, NotifyType.BUSINESS, ITEM_ID), Charset.defaultCharset());
+        String result = new String(service.retrieve(order, NotifyType.BUSINESS, ITEM_ID).getData());
         assertThat(result, is(BUSINESS_CONTENT));
     }
     
@@ -159,10 +159,10 @@ public class AttachmentServiceTest {
         when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(customerResponse);
         
-        List<EmailAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
+        List<FileAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
         assertThat(result.size(), is(1));
         assertThat(new String(result.get(0).getName()), is(CUSTOMER_FORM_FILE_NAME));
-        assertThat(IOUtils.toString(result.get(0).getData().getInputStream(), Charset.defaultCharset()), is(CUSTOMER_CONTENT));
+        assertThat(new String(result.get(0).getData()), is(CUSTOMER_CONTENT));
     }
     
     @Test
@@ -174,17 +174,17 @@ public class AttachmentServiceTest {
     	when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA_BUNDLED))))
     		.thenReturn(bundledCustomerResponse);
     	
-    	List<EmailAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
+    	List<FileAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
     	assertThat(result.size(), is(2));
-    	assertThat(IOUtils.toString(result.get(0).getData().getInputStream(), Charset.defaultCharset()), is(BUNDLED_CUSTOMER_CONTENT));
-    	assertThat(IOUtils.toString(result.get(1).getData().getInputStream(), Charset.defaultCharset()), is(CUSTOMER_CONTENT));
+    	assertThat(new String(result.get(0).getData()), is(BUNDLED_CUSTOMER_CONTENT));
+    	assertThat(new String(result.get(1).getData()), is(CUSTOMER_CONTENT));
     	
-    	String itemResult = IOUtils.toString(service.retrieve(order, NotifyType.CUSTOMER, item2.getId()), Charset.defaultCharset());
+    	String itemResult = new String(service.retrieve(order, NotifyType.CUSTOMER, item2.getId()).getData());
     	assertThat(itemResult, is(BUNDLED_CUSTOMER_CONTENT));
-    	itemResult = IOUtils.toString(service.retrieve(order, NotifyType.CUSTOMER, item3.getId()), Charset.defaultCharset());
+    	itemResult = new String(service.retrieve(order, NotifyType.CUSTOMER, item3.getId()).getData());
     	assertThat(itemResult, is(BUNDLED_CUSTOMER_CONTENT));
     	
-    	itemResult = IOUtils.toString(service.retrieve(order, NotifyType.CUSTOMER, item.getId()), Charset.defaultCharset());
+    	itemResult = new String(service.retrieve(order, NotifyType.CUSTOMER, item.getId()).getData());
     	assertThat(itemResult, is(CUSTOMER_CONTENT));
     }
     
@@ -202,9 +202,9 @@ public class AttachmentServiceTest {
         when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(customerResponse);
         
-        List<EmailAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
+        List<FileAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
         assertThat(result.size(), is(1));
-        assertThat(IOUtils.toString(result.get(0).getData().getInputStream(), Charset.defaultCharset()), is(CUSTOMER_CONTENT));
+        assertThat(new String(result.get(0).getData()), is(CUSTOMER_CONTENT));
         
         verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))));
     }

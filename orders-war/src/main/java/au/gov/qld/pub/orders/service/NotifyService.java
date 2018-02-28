@@ -20,6 +20,7 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -137,14 +138,14 @@ public class NotifyService {
             return;
         }
         
-        List<EmailAttachment> attachments = attachmentService.retrieve(groupedOrder, notifyType);
+        List<FileAttachment> attachments = attachmentService.retrieve(groupedOrder, notifyType);
         
         String emailBody = prepareTemplate(productId, groupedOrder, notifyType.name().toLowerCase(Locale.ENGLISH));
         LOG.info("Sending {} email to: {} for order receipt: {}", notifyType, to, groupedOrder.getReceipt());
         sendEmail(groupedOrder, to, subject, emailBody, attachments, NotifyType.CUSTOMER.equals(notifyType));
     }
     
-    private void sendEmail(Order order, String to, String subject, String emailBody, List<EmailAttachment> attachments, boolean customerEmail) throws MessagingException {
+    private void sendEmail(Order order, String to, String subject, String emailBody, List<FileAttachment> attachments, boolean customerEmail) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, !attachments.isEmpty());
     
@@ -154,9 +155,9 @@ public class NotifyService {
         helper.setFrom(configurationService.getMailFrom());
         
         int attachmentCounter = 0;
-        for (EmailAttachment attachment : attachments) {
+        for (FileAttachment attachment : attachments) {
             attachmentCounter++;
-            helper.addAttachment(attachmentCounter + "-" + attachment.getName(), attachment.getData());
+            helper.addAttachment(attachmentCounter + "-" + attachment.getName(), new ByteArrayResource(attachment.getData()));
         }
         
         List<Map<String, String>> paidItemsFields = toFieldMaps(order.getPaidItems());
