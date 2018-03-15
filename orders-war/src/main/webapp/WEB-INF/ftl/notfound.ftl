@@ -63,7 +63,7 @@
         <ul id="tools">
             <li class="nav-contact"><a accesskey="4" href="https://www.qld.gov.au/contact-us/">Contact us</a></li>
             <li class="last-child" id="header-search">
-                <form action="http://pan.search.qld.gov.au/search/search.cgi" id="search-form">
+                <form action="https://find.search.qld.gov.au/s/search.html" id="search-form">
                     <div>
                         <label for="search-query">Search website</label>
                         <input accesskey="5" type="search" name="query" id="search-query" size="27" value="" />
