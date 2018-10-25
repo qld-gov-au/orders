@@ -14,14 +14,14 @@ import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.collect.ImmutableMap;
+
 import au.gov.qld.pub.orders.ApplicationContextAwareTest;
 import au.gov.qld.pub.orders.dao.ItemDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
 import au.gov.qld.pub.orders.entity.CartState;
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
-
-import com.google.common.collect.ImmutableMap;
 
 public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
     @Autowired OrderService service;
@@ -35,6 +35,24 @@ public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
         
         Order order = service.add(asList(item), null);
         assertThat(order.getCartId(), not(nullValue()));
+        assertThat(order.getGeneratedId(), not(nullValue()));
+        
+        Order saved = orderDAO.findOne(order.getId());
+        assertThat(saved.getCartId(), not(nullValue()));
+        assertThat(saved.getGeneratedId(), not(nullValue()));
+        
+        Matcher<Item> itemWith = allOf(hasProperty("productId", is("test")), hasProperty("cartState", is(CartState.ADDED)));
+        assertThat(saved.getItems(), hasItem(itemWith));
+    }
+    
+    @Test
+    public void addToNewCartWhenCartIdNotValidFromPAPI() throws Exception {
+        Item item = createItem();
+        item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
+        
+        Order order = service.add(asList(item), "bogus");
+        assertThat(order.getCartId(), not(nullValue()));
+        assertThat(order.getCartId(), not(is("bogus")));
         assertThat(order.getGeneratedId(), not(nullValue()));
         
         Order saved = orderDAO.findOne(order.getId());

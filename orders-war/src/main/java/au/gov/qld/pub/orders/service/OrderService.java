@@ -81,10 +81,11 @@ public class OrderService {
         
         LOG.info("Sending cart add request for order: {} with cartId: {}", order.getId(), order.getCartId());
         String response = "";
-        
+        String responseCartId = "";
         for (int i=0; i < ADD_TO_CART_RETRY_LIMIT; i++) {
 	        try {
 	        	response = cartService.addToCart(requestBuilder.addRequest(order));
+	        	responseCartId = getValueFrom(CART_ID_PATTERN, response);
 	        	break;
 	        } catch (Exception e) {
 	        	LOG.error(e.getMessage(), e);
@@ -95,7 +96,7 @@ public class OrderService {
 	        }
         }
         
-        if (isBlank(response)) {
+        if (isBlank(response) || isBlank(responseCartId)) {
         	throw new ServiceException("Could not add to cart after multiple attempts for order: " + order.getId());
         }
         
@@ -104,7 +105,6 @@ public class OrderService {
             item.setCartState(CartState.ADDED);
         }
         
-        String responseCartId = getValueFrom(CART_ID_PATTERN, response);
         String responseGeneratedId = getValueFrom(GENERATED_ORDER_ID_PATTERN, response);
         order.setCartId(responseCartId);
         order.setGeneratedId(responseGeneratedId);
