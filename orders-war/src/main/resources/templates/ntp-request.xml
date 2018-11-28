@@ -6,14 +6,16 @@
 		<paymentOptions>
 			<creditCard />
 		</paymentOptions>
+		<#list paymentInformation.orderInformation as order>
 		<item>
 			<agency>${config.serviceFranchise}</agency>
-			<description>${paymentInformation.description}</description>
-			<cost>${paymentInformation.amountOwingInCents?c}</cost>
-			<gst>${paymentInformation.amountOwingGstInCents?c}</gst>
+			<description>${paymentInformation.description} - ${order.product}</description>
+			<cost>${order.total?c}</cost>
+			<gst>${order.gst?c}</gst>
 			<reference>${paymentInformation.reference}</reference>
 			<disbursementId>${config.noticeToPayDisbursementId}</disbursementId>
 		</item>
+		</#list>
 		<returnUrl>${sourceUrl}</returnUrl>
 		<notificationUrl>${config.noticeToPayServiceWsNotify}/ntp-notify/${noticeToPayId}</notificationUrl>
 	</paymentRequest>

@@ -1,5 +1,6 @@
 package au.gov.qld.pub.orders.service;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -29,7 +30,8 @@ public class NoticeToPayServiceIntegrationTest extends ApplicationContextAwareTe
     
     @Before
     public void setUp() throws Exception {
-        paymentInformation = new PaymentInformation(SOURCE_ID, DESCRIPTION, AMOUNT, AMOUNT_GST);
+    	OrderInformation order = new OrderInformation("product", 1, 1, 1);
+        paymentInformation = new PaymentInformation(SOURCE_ID, DESCRIPTION, AMOUNT, AMOUNT_GST, asList(order));
         dao.deleteAll();
     }
     
