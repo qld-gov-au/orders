@@ -27,8 +27,9 @@ public class PaymentInformation {
     		totalOrdersOwning += order.getTotal();    		
     	}
     	
-    	if (totalOrdersOwning != (amountOwingGstInCents + amountOwingInCents)) {
-    		throw new IllegalStateException("Amounts do not add up for " + reference);
+    	long baseAmountOwning = amountOwingGstInCents + amountOwingInCents;
+		if (totalOrdersOwning != baseAmountOwning) {
+    		throw new IllegalStateException("Amounts do not add up for " + reference + " Base amount " + baseAmountOwning + " vs " + totalOrdersOwning);
     	}
 	}
 
