@@ -65,7 +65,7 @@ public class NotifyService {
     }
 
     protected Configuration getTemplateConfiguration() {
-        return new Configuration();
+        return new Configuration(Configuration.VERSION_2_3_23);
     }
 
     @Transactional(rollbackFor = ServiceException.class)

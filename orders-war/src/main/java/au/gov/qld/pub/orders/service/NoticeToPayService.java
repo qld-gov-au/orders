@@ -111,7 +111,7 @@ public class NoticeToPayService {
         LOG.info("Received payment notification for: {} with receipt: {}", noticeToPayId, receiptNumber);
         noticeToPay.setNotifiedAt(now);
         noticeToPay.setReceiptNumber(receiptNumber);
-        additionalNotificationService.notifedPaidNoticeToPay(noticeToPayId, now, receiptNumber, noticeToPay.getAmount(), noticeToPay.getAmountGst(),
+        additionalNotificationService.notifedPaidNoticeToPay(noticeToPayId, now, receiptNumber, 
         		noticeToPay.getDescription(), noticeToPay.getPaymentInformationId());
         noticeToPayDAO.save(noticeToPay);
     }

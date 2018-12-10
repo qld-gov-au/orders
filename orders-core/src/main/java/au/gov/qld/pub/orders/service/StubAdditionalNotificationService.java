@@ -17,8 +17,7 @@ public class StubAdditionalNotificationService implements AdditionalNotification
 
 	@Override
 	public void notifedPaidNoticeToPay(String id, Date notifiedAt,
-			String receiptNumber, long amount, long amountGst,
-			String description, String paymentInformationId) {
+			String receiptNumber, String description, String paymentInformationId) {
 	}
 
 }

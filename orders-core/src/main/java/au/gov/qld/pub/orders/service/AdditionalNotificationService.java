@@ -10,6 +10,6 @@ public interface AdditionalNotificationService {
 	void notifedPaidOrder(String id, Date created, String paid, String receipt, String cartId,
 			Map<String, String> customerDetailsMap, Map<String, String> deliveryDetailsMap, List<Map<String, String>> fieldMaps);
 
-	void notifedPaidNoticeToPay(String id, Date notifiedAt, String receiptNumber, long amount, long amountGst, String description, String paymentInformationId);
+	void notifedPaidNoticeToPay(String id, Date notifiedAt, String receiptNumber, String description, String paymentInformationId);
 
 }

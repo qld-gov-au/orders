@@ -40,7 +40,6 @@ public class NoticeToPayServiceTest {
     private static final String USERNAME = "some username";
     private static final String PASSWORD = "some password";
     private static final String ENDPOINT = "some endpoint";
-    private static final long OWING = 123l;
     private static final String SOURCE_URL = "some source";
     private static final String NOTICE_TO_PAY_ID = "some notice to pay id";
     private static final String RECEIPT_NUMBER = "some receipt number";
@@ -48,8 +47,6 @@ public class NoticeToPayServiceTest {
     private static final String FAILED_QUERY_RESPONSE = "<status>FAILED</status>";
     private static final String PAID_QUERY_RESPONSE = "<status>PAID</status><receiptNumber>" + RECEIPT_NUMBER + "</receiptNumber>";
     private static final String NTP_QUERY = "some ntp query";
-	private static final long AMOUNT = 123;
-	private static final long AMOUNT_GST = 456;
 	private static final String DESCRIPTION = "some desc";
     
     NoticeToPayService service;
@@ -73,8 +70,8 @@ public class NoticeToPayServiceTest {
         when(requestBuilder.noticeToPayQuery(NOTICE_TO_PAY_ID)).thenReturn(NTP_QUERY);
         when(soapClient.sendRequest(USERNAME, PASSWORD.getBytes("UTF-8"), NoticeToPayService.NS, REQUEST)).thenReturn(RESPONSE);
         when(soapClient.sendRequest(USERNAME, PASSWORD.getBytes("UTF-8"), NoticeToPayService.NS, NTP_QUERY)).thenReturn(PAID_QUERY_RESPONSE);
-        when(paymentInformation.getAmountOwingInCents()).thenReturn(OWING);
         when(paymentInformation.getReference()).thenReturn(SOURCE_ID);
+        when(paymentInformation.getAmountOwingInCents()).thenReturn(123l);
         when(paymentInformationService.fetch(SOURCE_ID)).thenReturn(paymentInformation);
         when(noticeToPayDAO.findOne(NOTICE_TO_PAY_ID)).thenReturn(noticeToPay);
         
@@ -125,8 +122,6 @@ public class NoticeToPayServiceTest {
     
     @Test
     public void setNoticeToPayWithPaymentDetailsOnNotifyAfterCheckingStatus() throws Exception {
-    	when(noticeToPay.getAmount()).thenReturn(AMOUNT);
-    	when(noticeToPay.getAmountGst()).thenReturn(AMOUNT_GST);
     	when(noticeToPay.getDescription()).thenReturn(DESCRIPTION);
     	when(noticeToPay.getPaymentInformationId()).thenReturn(SOURCE_ID);
         service.notifyPayment(NOTICE_TO_PAY_ID);
@@ -135,7 +130,7 @@ public class NoticeToPayServiceTest {
         verify(noticeToPay).setNotifiedAt(argThat(isA(Date.class)));
         verify(noticeToPayDAO).save(noticeToPay);
         verify(additionalNotificationService).notifedPaidNoticeToPay(eq(NOTICE_TO_PAY_ID), argThat(isA(Date.class)), eq(RECEIPT_NUMBER), 
-        		eq(AMOUNT), eq(AMOUNT_GST), eq(DESCRIPTION), eq(SOURCE_ID));
+        		eq(DESCRIPTION), eq(SOURCE_ID));
     }
     
     @Test
