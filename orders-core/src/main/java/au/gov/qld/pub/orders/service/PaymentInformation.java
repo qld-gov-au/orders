@@ -16,21 +16,7 @@ public class PaymentInformation {
         this.amountOwingInCents = amountOwingInCents;
         this.amountOwingGstInCents = amountOwingGstInCents;
 		this.orderInformation = orderInformation;
-		
-		validateAmounts();
     }
-
-    private void validateAmounts() {
-    	long totalOrdersOwning = 0;
-    	for (OrderInformation order : orderInformation) {
-    		totalOrdersOwning += order.getGst();
-    		totalOrdersOwning += order.getTotal();    		
-    	}
-    	
-    	if (totalOrdersOwning != amountOwingInCents) {
-    		throw new IllegalStateException("Amounts do not add up for " + reference + " Base amount " + amountOwingInCents + " vs " + totalOrdersOwning);
-    	}
-	}
 
 	public long getAmountOwingInCents() {
         return amountOwingInCents;
