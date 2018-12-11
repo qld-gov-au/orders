@@ -9,7 +9,7 @@
 		<#list paymentInformation.orderInformation as order>
 		<item>
 			<agency>${config.serviceFranchise}</agency>
-			<description>${paymentInformation.description} - ${order.product}</description>
+			<description>${paymentInformation.description}<#if order.product?has_content> - ${order.product}</#if></description>
 			<cost>${order.total?c}</cost>
 			<gst>${order.gst?c}</gst>
 			<reference>${paymentInformation.reference}</reference>
