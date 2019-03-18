@@ -47,7 +47,7 @@ public class NoticeToPayServiceTest {
     private static final String FAILED_QUERY_RESPONSE = "<status>FAILED</status>";
     private static final String PAID_QUERY_RESPONSE = "<status>PAID</status><receiptNumber>" + RECEIPT_NUMBER + "</receiptNumber>";
     private static final String NTP_QUERY = "some ntp query";
-	private static final String DESCRIPTION = "some desc";
+    private static final String DESCRIPTION = "some desc";
     
     NoticeToPayService service;
 
@@ -58,7 +58,7 @@ public class NoticeToPayServiceTest {
     @Mock PaymentInformation paymentInformation;
     @Mock ConfigurationService config;
     @Mock NoticeToPay noticeToPay;
-	@Mock AdditionalNotificationService additionalNotificationService;
+    @Mock AdditionalNotificationService additionalNotificationService;
     
     @Before
     public void setUp() throws Exception {
@@ -99,7 +99,6 @@ public class NoticeToPayServiceTest {
         when(paymentInformation.getAmountOwingInCents()).thenReturn(0l);
         assertThat(service.create(SOURCE_ID, SOURCE_URL), nullValue());
         verifyZeroInteractions(soapClient);
-        verifyZeroInteractions(noticeToPayDAO);
     }
     
     @Test
@@ -122,15 +121,15 @@ public class NoticeToPayServiceTest {
     
     @Test
     public void setNoticeToPayWithPaymentDetailsOnNotifyAfterCheckingStatus() throws Exception {
-    	when(noticeToPay.getDescription()).thenReturn(DESCRIPTION);
-    	when(noticeToPay.getPaymentInformationId()).thenReturn(SOURCE_ID);
+        when(noticeToPay.getDescription()).thenReturn(DESCRIPTION);
+        when(noticeToPay.getPaymentInformationId()).thenReturn(SOURCE_ID);
         service.notifyPayment(NOTICE_TO_PAY_ID);
         
         verify(noticeToPay).setReceiptNumber(RECEIPT_NUMBER);
         verify(noticeToPay).setNotifiedAt(argThat(isA(Date.class)));
         verify(noticeToPayDAO).save(noticeToPay);
         verify(additionalNotificationService).notifedPaidNoticeToPay(eq(NOTICE_TO_PAY_ID), argThat(isA(Date.class)), eq(RECEIPT_NUMBER), 
-        		eq(DESCRIPTION), eq(SOURCE_ID));
+        eq(DESCRIPTION), eq(SOURCE_ID));
     }
     
     @Test

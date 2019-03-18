@@ -38,13 +38,13 @@ public class NoticeToPayService {
     private final String username;
     private final byte[] password;
     private final PaymentInformationService paymentInformationService;
-	private final AdditionalNotificationService additionalNotificationService;
+    private final AdditionalNotificationService additionalNotificationService;
 
     @Autowired
     public NoticeToPayService(ConfigurationService config, PaymentInformationService paymentInformationService, 
             NoticeToPayDAO noticeToPayDAO, RequestBuilder requestBuilder, AdditionalNotificationService additionalNotificationService) throws UnsupportedEncodingException {
         this.paymentInformationService = paymentInformationService;
-		this.additionalNotificationService = additionalNotificationService;
+        this.additionalNotificationService = additionalNotificationService;
         this.username = config.getNoticeToPayServiceWsUsername();
         this.password = config.getNoticeToPayServiceWsPassword().getBytes("UTF-8");
         this.soapClient = getSOAPClient(config.getServiceWsEndpoint());
@@ -54,16 +54,16 @@ public class NoticeToPayService {
 
     @Transactional
     public String create(String sourceId, String sourceUrl) throws ServiceException {
-        PaymentInformation paymentInformation = paymentInformationService.fetch(sourceId);
-        if (paymentInformation.getAmountOwingInCents() <= 0l) {
-        	LOG.warn("No amount owing for {}", sourceId);
-            return null;
-        }
-        
         boolean recentlyPaid = noticeToPayDAO.existsByPaymentInformationIdAndNotifiedAtAfter(sourceId, new DateTime().minusHours(1).toDate());
         if (recentlyPaid) {
-        	LOG.warn("This source ID was recently paid for and could be a duplicate: {}", sourceId);
-        	return null;
+            LOG.warn("This source ID was recently paid for and could be a duplicate: {}", sourceId);
+            return null;
+        }
+
+        PaymentInformation paymentInformation = paymentInformationService.fetch(sourceId);
+        if (paymentInformation.getAmountOwingInCents() <= 0l) {
+            LOG.warn("No amount owing for {}", sourceId);
+            return null;
         }
 
         NoticeToPay noticeToPay = new NoticeToPay(paymentInformation);
@@ -112,7 +112,7 @@ public class NoticeToPayService {
         noticeToPay.setNotifiedAt(now);
         noticeToPay.setReceiptNumber(receiptNumber);
         additionalNotificationService.notifedPaidNoticeToPay(noticeToPayId, now, receiptNumber, 
-        		noticeToPay.getDescription(), noticeToPay.getPaymentInformationId());
+        noticeToPay.getDescription(), noticeToPay.getPaymentInformationId());
         noticeToPayDAO.save(noticeToPay);
     }
 
