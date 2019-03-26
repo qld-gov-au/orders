@@ -59,7 +59,7 @@ public class OrderService {
         this.notifyService = notifyService;
     }
     
-    @Transactional(rollbackFor = ServiceException.class)
+    @Transactional(noRollbackFor = ServiceException.class)
     public Order add(List<Item> items, String cartId) throws ServiceException, InterruptedException {
         Order order = findByCartId(cartId);
         if (order == null) {
