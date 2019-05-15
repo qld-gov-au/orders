@@ -5,7 +5,7 @@ import au.gov.qld.pub.orders.service.InlineTemplateService;
 
 public class TemplateItem extends Item {
 
-    static final int MAX_DESCRIPTION_LENGTH = 500;
+    static final int MAX_DESCRIPTION_LENGTH = 300;
 	static final int MAX_TITLE_LENGTH = 100;
     static final String TAIL = "...";
     private final InlineTemplateService inlineTemplateService;
