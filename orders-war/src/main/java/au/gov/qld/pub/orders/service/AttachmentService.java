@@ -146,7 +146,7 @@ public class AttachmentService {
 
     private HttpPost createRequest(String uri, Order order, List<Item> items) throws UnsupportedEncodingException {
         HttpPost httpPost = new HttpPost(uri);
-        
+        httpPost.addHeader("Content-Type", "text/html; charset=utf-8");
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.addAll(createItemPostData(items.get(0), ""));
         if (items.size() > 1) {
