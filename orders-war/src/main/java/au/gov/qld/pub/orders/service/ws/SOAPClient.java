@@ -2,6 +2,7 @@ package au.gov.qld.pub.orders.service.ws;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
@@ -61,7 +62,7 @@ public class SOAPClient {
             CloseableHttpClient httpclient = HttpClients.createDefault();
             HttpPost httpPost = new HttpPost(endpoint);
             httpPost.setHeader("Content-Type", "text/xml");
-            httpPost.setEntity(new StringEntity(payload));
+            httpPost.setEntity(new StringEntity(payload, StandardCharsets.UTF_8));
             CloseableHttpResponse response = httpclient.execute(httpPost);
             
             try {
