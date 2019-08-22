@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -146,7 +147,6 @@ public class AttachmentService {
 
     private HttpPost createRequest(String uri, Order order, List<Item> items) throws UnsupportedEncodingException {
         HttpPost httpPost = new HttpPost(uri);
-        httpPost.addHeader("Content-Type", "text/html; charset=utf-8");
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.addAll(createItemPostData(items.get(0), ""));
         if (items.size() > 1) {
@@ -158,7 +158,7 @@ public class AttachmentService {
         nvps.add(createField("paid", order.getPaid()));
         nvps.add(createField("receipt", order.getReceipt()));
 
-        httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+        httpPost.setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
         return httpPost;
     }
 
