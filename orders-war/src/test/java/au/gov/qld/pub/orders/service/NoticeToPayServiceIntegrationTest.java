@@ -32,7 +32,8 @@ public class NoticeToPayServiceIntegrationTest extends ApplicationContextAwareTe
     public void setUp() throws Exception {
     	OrderInformation order1 = new OrderInformation("product", AMOUNT, AMOUNT_GST, 1);
     	OrderInformation order2 = new OrderInformation("product", 1, 2, 1);
-        paymentInformation = new PaymentInformation(SOURCE_ID, DESCRIPTION, asList(order1, order2));
+        Applicant applicant = new Applicant("reg name", "addr1", "suburb", "state", "postcode", "country");
+		paymentInformation = new PaymentInformation(SOURCE_ID, DESCRIPTION, asList(order1, order2), applicant);
         dao.deleteAll();
     }
     
