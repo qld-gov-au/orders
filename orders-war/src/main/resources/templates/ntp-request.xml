@@ -6,6 +6,18 @@
 		<paymentOptions>
 			<creditCard />
 		</paymentOptions>
+		<#if paymentInformation.includeTaxDetails>
+		<taxDetails>
+           <registeredName>${paymentInformation.applicant.name!""}</registeredName>
+           <address>
+              <line1>${paymentInformation.applicant.addressLine1!""}</line1>
+              <suburb>${paymentInformation.applicant.suburb!""}</suburb>
+              <state>${paymentInformation.applicant.state!""}</state>
+              <postcode>${paymentInformation.applicant.postcode!""}</postcode>
+              <country>${paymentInformation.applicant.country!""}</country>
+           </address>
+        </taxDetails>
+        </#if>
 		<#list paymentInformation.orderInformation as order>
 		<item>
 			<agency>${config.serviceFranchise}</agency>
