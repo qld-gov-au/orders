@@ -1,0 +1,10 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header/>
+   <SOAP-ENV:Body>
+      <RefundResponse ref:xmlns="http://smartservice.qld.gov.au/payment/schemas/refund_request_1_0">
+         <ref:papiRefundRequestVersion>1.0</ref:papiRefundRequestVersion>
+         <ref:retrievedAt>2019-11-20T10:22:48.077</ref:retrievedAt>
+         <ref:errorMessage>Transaction not found</ref:errorMessage>
+      </RefundResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

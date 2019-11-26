@@ -1,0 +1,35 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header/>
+   <SOAP-ENV:Body>
+      <RefundQueryResponse xmlns="http://smartservice.qld.gov.au/payment/schemas/refund_query_1_0">
+         <papiRefundQueryVersion>1.0</papiRefundQueryVersion>
+         <retrievedAt>2019-11-20T10:21:55.628</retrievedAt>
+         <paymentAndRefundDetails>
+            <timeOfIssue>2019-06-24T14:52:42.833</timeOfIssue>
+            <papiReferenceNumber>1004345318</papiReferenceNumber>
+            <serviceName>BDM Birth certificate products</serviceName>
+            <totalPaymentAmount>54.70</totalPaymentAmount>
+            <lineItem>
+               <papiLineItemId>258093</papiLineItemId>
+               <orderLineId>order line 1</orderLineId>
+               <lineItemDescription>Standard Birth Certificate</lineItemDescription>
+               <agency>Registry of Births, Deaths and Marriages</agency>
+               <agencyReference>ccpb</agencyReference>
+               <quantity>1</quantity>
+               <totalLineItemAmount>49.50</totalLineItemAmount>
+               <totalLineItemAdjustments>0.00</totalLineItemAdjustments>
+            </lineItem>
+            <lineItem>
+               <papiLineItemId>258092</papiLineItemId>
+               <orderLineId>order line 2</orderLineId>
+               <lineItemDescription>Australian Registered Post</lineItemDescription>
+               <agency>Registry of Births, Deaths and Marriages</agency>
+               <agencyReference>aure</agencyReference>
+               <quantity>1</quantity>
+               <totalLineItemAmount>5.20</totalLineItemAmount>
+               <totalLineItemAdjustments>0.00</totalLineItemAdjustments>
+            </lineItem>
+         </paymentAndRefundDetails>
+      </RefundQueryResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
