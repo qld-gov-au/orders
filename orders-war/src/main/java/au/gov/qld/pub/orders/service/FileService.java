@@ -1,12 +1,9 @@
 package au.gov.qld.pub.orders.service;
 
-import static java.util.Arrays.asList;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -24,17 +21,19 @@ import au.gov.qld.pub.orders.entity.FormFile;
 public class FileService {
 	private static final Logger LOG = LoggerFactory.getLogger(FileService.class);
 	private final FormFileDAO dao;
-	private final List<String> supportedTypes;
-	private final long maxUploadSize;
 	private final int deleteUploadDays;
+	private final List<FileValidator> fileValidators;
 
 	@Autowired
-	public FileService(FormFileDAO dao, @Value("${upload.supported}") String supportedTypes, @Value("${upload.max}") long maxUploadSize,
-			@Value("${scheduler.cleanup.deleteUploadsDays}") int deleteUploadDays) {
+	public FileService(FormFileDAO dao, 
+			@Value("${scheduler.cleanup.deleteUploadsDays}") int deleteUploadDays, List<FileValidator> fileValidators) {
 		this.dao = dao;
 		this.deleteUploadDays = deleteUploadDays;
-		this.supportedTypes = asList(supportedTypes.split(";"));
-		this.maxUploadSize = maxUploadSize;
+		this.fileValidators = fileValidators;
+		LOG.info("Loaded file validators: " + fileValidators);
+		if (fileValidators.size() < 2) {
+			throw new IllegalStateException("Need at least the built in validators");
+		}
 	}
 	
 	@Scheduled(fixedDelay = 60 * 60 * 1000)
@@ -60,23 +59,13 @@ public class FileService {
     private List<MultipartFile> getVerifiedUploads(List<MultipartFile> uploads) throws ValidationException {
         
         List<MultipartFile> verified = new ArrayList<MultipartFile>();
-        
-        long totalUploadSize = 0;
-        
         for (MultipartFile upload : uploads) {
             if (upload == null || upload.isEmpty()) {
                 continue;
             }
             
-            totalUploadSize += upload.getSize();
-            if (totalUploadSize  > maxUploadSize) {
-                throw new ValidationException("File upload too big");
-            }
-            String filename = upload.getOriginalFilename();
-            String ext = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase(Locale.getDefault()).trim();
-            if (!supportedTypes.contains(ext)) {
-            	LOG.info("Rejected filetype was: {}", ext);
-            	throw new ValidationException("File upload was an invalid type: " + ext);
+            for (FileValidator fileValidator : fileValidators) {
+            	fileValidator.validate(upload.getOriginalFilename(), upload.getSize());
             }
             
             verified.add(upload);

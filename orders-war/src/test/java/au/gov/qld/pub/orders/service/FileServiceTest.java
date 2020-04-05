@@ -2,13 +2,16 @@ package au.gov.qld.pub.orders.service;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -31,8 +34,6 @@ import au.gov.qld.pub.orders.entity.FormFile;
 @RunWith(MockitoJUnitRunner.class)
 public class FileServiceTest {
 	private static final String SAVED_FORM_FILE_ID = "some form file id";
-	private static final String SUPPORTED_TYPES = "supported;another supported";
-	private static final long MAX_UPLOAD_SIZE = 123;
 	private static final String SUPPORTED_FILENAME = "some file.another supported";
 	private static final int DELETE_UPLOAD_AGE = 10;
 	private byte[] DATA = "some data".getBytes();
@@ -41,6 +42,7 @@ public class FileServiceTest {
 	FileService service;
 	@Mock FormFileDAO dao;
 	@Mock FormFile savedFormFile;
+	@Mock FileValidator validator;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -48,12 +50,23 @@ public class FileServiceTest {
 		when(upload.getSize()).thenReturn((long)DATA.length);
 		when(upload.getBytes()).thenReturn(DATA);
 		when(upload.getOriginalFilename()).thenReturn(SUPPORTED_FILENAME);
-		service = new FileService(dao, SUPPORTED_TYPES, MAX_UPLOAD_SIZE, DELETE_UPLOAD_AGE);
+		service = new FileService(dao, DELETE_UPLOAD_AGE, asList(validator, validator));
 	}
 	
 	@After
 	public void tearDown() {
 		DateTimeUtils.setCurrentMillisSystem();
+	}
+	
+	@Test
+	public void notSaveWhenValidationError() throws IOException, ValidationException {
+		doThrow(new ValidationException("bogus")).when(validator).validate(anyString(), anyLong());
+		try {
+			service.save(asList(upload));
+			fail();
+		} catch (ValidationException e) {
+		}
+		verifyZeroInteractions(dao);
 	}
 	
 	@Test
@@ -73,25 +86,5 @@ public class FileServiceTest {
 		assertThat(service.save(asList(upload)), is(asList(SAVED_FORM_FILE_ID)));
 	}
 	
-	@Test
-	public void throwExceptionWhenFileTooBig() throws IOException {
-		try {
-			when(upload.getSize()).thenReturn(MAX_UPLOAD_SIZE + 1);
-			service.save(asList(upload));
-			fail();
-		} catch (ValidationException e) {
-			assertThat(e.getMessage(), containsString("too big"));
-		}
-	}
 	
-	@Test
-	public void throwExceptionWhenFileTypeInvalid() throws IOException {
-		try {
-			when(upload.getOriginalFilename()).thenReturn("bogus file.bogus extension");
-			service.save(asList(upload));
-			fail();
-		} catch (ValidationException e) {
-			assertThat(e.getMessage(), containsString("invalid type"));
-		}
-	}
 }
