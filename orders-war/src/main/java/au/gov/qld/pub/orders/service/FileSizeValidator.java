@@ -1,5 +1,7 @@
 package au.gov.qld.pub.orders.service;
 
+import java.io.InputStream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -14,7 +16,7 @@ public class FileSizeValidator implements FileValidator {
 	}
 	
 	@Override
-	public void validate(String filename, long filesize) throws ValidationException {
+	public void validate(String filename, long filesize, InputStream is) throws ValidationException {
 		if (filesize  > maxUploadSize) {
             throw new ValidationException("File upload too big");
         }

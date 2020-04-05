@@ -56,7 +56,7 @@ public class FileService {
 	    return ids;
 	}
 
-    private List<MultipartFile> getVerifiedUploads(List<MultipartFile> uploads) throws ValidationException {
+    private List<MultipartFile> getVerifiedUploads(List<MultipartFile> uploads) throws ValidationException, IOException {
         
         List<MultipartFile> verified = new ArrayList<MultipartFile>();
         for (MultipartFile upload : uploads) {
@@ -65,7 +65,7 @@ public class FileService {
             }
             
             for (FileValidator fileValidator : fileValidators) {
-            	fileValidator.validate(upload.getOriginalFilename(), upload.getSize());
+            	fileValidator.validate(upload.getOriginalFilename(), upload.getSize(), upload.getInputStream());
             }
             
             verified.add(upload);

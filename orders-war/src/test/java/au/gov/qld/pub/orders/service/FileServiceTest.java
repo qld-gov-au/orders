@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.doThrow;
@@ -60,7 +61,7 @@ public class FileServiceTest {
 	
 	@Test
 	public void notSaveWhenValidationError() throws IOException, ValidationException {
-		doThrow(new ValidationException("bogus")).when(validator).validate(anyString(), anyLong());
+		doThrow(new ValidationException("bogus")).when(validator).validate(anyString(), anyLong(), anyObject());
 		try {
 			service.save(asList(upload));
 			fail();

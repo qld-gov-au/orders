@@ -12,10 +12,10 @@ public class FileExtensionValidatorTest {
 	@Test
 	public void throwExceptionWhenFileTypeInvalid() throws IOException, ValidationException {
 		FileExtensionValidator validator = new FileExtensionValidator("a");
-		validator.validate("test.a", 123);
+		validator.validate("test.a", 123, null);
 		
 		try {
-			validator.validate("test.b", 123);
+			validator.validate("test.b", 123, null);
 			fail();
 		} catch (ValidationException e) {
 			assertThat(e.getMessage(), containsString("invalid type"));

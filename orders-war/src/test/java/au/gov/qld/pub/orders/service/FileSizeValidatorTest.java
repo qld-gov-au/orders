@@ -12,10 +12,10 @@ public class FileSizeValidatorTest {
 	@Test
 	public void throwExceptionWhenFileTooBig() throws IOException, ValidationException {
 		FileSizeValidator validator = new FileSizeValidator(123);
-		validator.validate("anything", 123);
+		validator.validate("anything", 123, null);
 		try {
 			
-			validator.validate("anything", 124);
+			validator.validate("anything", 124, null);
 			fail();
 		} catch (ValidationException e) {
 			assertThat(e.getMessage(), containsString("too big"));
