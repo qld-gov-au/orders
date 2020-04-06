@@ -11,6 +11,11 @@
         </li>
     </ul>
     
+    <#if fileIds?has_content>
+        <#list fileIds as fileId>
+            <input type="text" id="fileId-${fileId}" name="fileId${fileId_index}" value="${fileId}" />
+        </#list>
+    </#if>    
     <input type="hidden" name="productId" value="${fields['some-field-for-product1']!""}"/>
     <input type="hidden" name="productId" value="${fields['some-field-for-product2']!""}"/>
     
