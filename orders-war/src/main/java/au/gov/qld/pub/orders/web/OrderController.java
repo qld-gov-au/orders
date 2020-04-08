@@ -36,6 +36,7 @@ import au.gov.qld.pub.orders.service.ConfigurationService;
 import au.gov.qld.pub.orders.service.OrderService;
 import au.gov.qld.pub.orders.service.PreCartValidator;
 import au.gov.qld.pub.orders.service.ServiceException;
+import au.gov.qld.pub.orders.service.ValidationException;
 
 @Controller
 public class OrderController {
@@ -74,7 +75,7 @@ public class OrderController {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, String> validateAndGetFields(HttpServletRequest request, Collection<String> allowedFields, String productGroup, String productId) {
+    private Map<String, String> validateAndGetFields(HttpServletRequest request, Collection<String> allowedFields, String productGroup, String productId) throws ValidationException {
         Map<String, String> fields = new HashMap<>();
         Enumeration<String> parameterNames = (Enumeration<String>)request.getParameterNames();
         for (int i=0; i < MAX_FIELDS && parameterNames.hasMoreElements(); i++) {
@@ -118,7 +119,7 @@ public class OrderController {
     
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public RedirectView add(@CookieValue(value=Constants.CART_ID, required=false) String cookieCartId, @RequestParam(required=false) String ssqCartId, 
-            @ModelAttribute("command") ItemCommand command, HttpServletRequest request, HttpServletResponse response) throws ServiceException, InterruptedException {
+            @ModelAttribute("command") ItemCommand command, HttpServletRequest request, HttpServletResponse response) throws ServiceException, InterruptedException, ValidationException {
         String effectiveCartId = isBlank(cookieCartId) ? ssqCartId : cookieCartId;
         
         List<Item> items = validateAndCreate(command);
