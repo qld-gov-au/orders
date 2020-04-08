@@ -34,6 +34,7 @@ import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.ConfigurationService;
 import au.gov.qld.pub.orders.service.OrderService;
+import au.gov.qld.pub.orders.service.PreCartValidator;
 import au.gov.qld.pub.orders.service.ServiceException;
 
 @Controller
@@ -45,12 +46,15 @@ public class OrderController {
     private final OrderService orderService;
     private final String errorRedirect;
     private final ConfigurationService configurationService;
+    private final Collection<PreCartValidator> preCartValidators;
 
     @Autowired
-    public OrderController(OrderService orderService, ConfigurationService configurationService) {
+    public OrderController(OrderService orderService, ConfigurationService configurationService, Collection<PreCartValidator> preCartValidators) {
         this.orderService = orderService;
         this.configurationService = configurationService;
+		this.preCartValidators = preCartValidators;
         this.errorRedirect = configurationService.getErrorRedirect();
+        LOG.info("Loaded precart validators: {}", preCartValidators);
     }
     
     @SuppressWarnings("unchecked")
@@ -70,7 +74,7 @@ public class OrderController {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, String> validateAndGetFields(HttpServletRequest request, Collection<String> allowedFields) {
+    private Map<String, String> validateAndGetFields(HttpServletRequest request, Collection<String> allowedFields, String productGroup, String productId) {
         Map<String, String> fields = new HashMap<>();
         Enumeration<String> parameterNames = (Enumeration<String>)request.getParameterNames();
         for (int i=0; i < MAX_FIELDS && parameterNames.hasMoreElements(); i++) {
@@ -89,6 +93,10 @@ public class OrderController {
         
         fields.remove("ssqCartId");
         fields.remove("productId");
+        
+        for (PreCartValidator preCartValidator : preCartValidators) {
+        	preCartValidator.validate(productGroup, productId, fields);
+        }
         return fields;
     }
 
@@ -120,7 +128,7 @@ public class OrderController {
         
         for (Item item : items) {
             Collection<String> allowedFields = orderService.getAllowedFields(item.getProductId());
-            item.setFields(validateAndGetFields(request, allowedFields));
+            item.setFields(validateAndGetFields(request, allowedFields, item.getProductGroup(), item.getProductId()));
         }
         
         LOG.info("Adding to cart with cartId: " + effectiveCartId);

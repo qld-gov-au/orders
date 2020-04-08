@@ -76,6 +76,7 @@ public class OrderService {
         	}
             order.add(item);
         }
+        
         itemDAO.save(order.getItems());
         orderDAO.save(order);
         

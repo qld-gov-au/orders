@@ -7,7 +7,10 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -25,12 +28,13 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.google.common.collect.ImmutableMap;
+
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
 import au.gov.qld.pub.orders.service.ConfigurationService;
 import au.gov.qld.pub.orders.service.OrderService;
-
-import com.google.common.collect.ImmutableMap;
+import au.gov.qld.pub.orders.service.PreCartValidator;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderControllerTest {
@@ -39,6 +43,7 @@ public class OrderControllerTest {
     static final String COOKIE_CART_ID = "some cookie cart id";
     static final String REQ_CART_ID = "some request cart id";
     private static final String ERROR_REDIRECT = "some error redirect";
+	private static final String PRODUCT_GROUP = "some group";
     
     @Mock OrderService orderService;
     @Mock HttpServletResponse response;
@@ -46,6 +51,7 @@ public class OrderControllerTest {
     @Mock ItemCommand command;
     @Mock Item item;
     @Mock ConfigurationService configurationService;
+    @Mock PreCartValidator preCartValidator;
     
     MockHttpServletRequest request = new MockHttpServletRequest();
     OrderController controller;
@@ -58,7 +64,8 @@ public class OrderControllerTest {
         when(configurationService.getServiceFullUrl()).thenReturn(FULL_URL);
         when(orderService.getAllowedFields(PRODUCT_ID)).thenReturn(asList("allowedfield"));
         when(item.getProductId()).thenReturn(PRODUCT_ID);
-        controller = new OrderController(orderService, configurationService);
+        when(item.getProductGroup()).thenReturn(PRODUCT_GROUP);
+        controller = new OrderController(orderService, configurationService, asList(preCartValidator));
     }
     
     @SuppressWarnings("unchecked")
@@ -81,7 +88,8 @@ public class OrderControllerTest {
         verifyZeroInteractions(orderService);
     }
     
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void addWithCartIdFromCookie() throws Exception {
         when(orderService.add(asList(item), COOKIE_CART_ID)).thenReturn(order);
         when(order.getCartId()).thenReturn(COOKIE_CART_ID);
@@ -90,6 +98,7 @@ public class OrderControllerTest {
         assertThat(result.getUrl(), is(FULL_URL + "/added"));
         verify(orderService).add(asList(item), COOKIE_CART_ID);
         verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, COOKIE_CART_ID, false)));
+        verify(preCartValidator).validate(anyString(), anyString(), anyMap());
     }
     
     @SuppressWarnings("unchecked")
@@ -104,6 +113,7 @@ public class OrderControllerTest {
         verify(orderService).add(asList(item), REQ_CART_ID);
         verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, REQ_CART_ID, false)));
         verify(item).setFields((Map<String, String>) argThat(allOf(hasEntry("allowedfield", "allowedvalue"), not(hasEntry("badfield", "badvalue")))));
+        verify(preCartValidator).validate(eq(PRODUCT_GROUP), eq(PRODUCT_ID), (Map<String, String>) argThat(allOf(hasEntry("allowedfield", "allowedvalue"), not(hasEntry("badfield", "badvalue")))));
     }
     
     @SuppressWarnings("unchecked")
