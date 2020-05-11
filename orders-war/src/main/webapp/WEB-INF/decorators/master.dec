@@ -365,7 +365,12 @@
             </script>
         </div>
         <script src="${papiBase}/ui/minicart_1.0.js" type="text/javascript"></script>
-    
+    	<script lang="javascript">
+    		// Safari no longer supports 3rd party cookies
+    		if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
+    			document.getElementById("minicart").style.display = 'none';	
+    		}
+    	</script>
     </body>
 </html>
 </#escape>
