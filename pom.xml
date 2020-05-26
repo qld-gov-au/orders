@@ -11,9 +11,10 @@
 
     <properties>
         <maven.build.timestamp.format>h:mm a, d MMMM yyyy</maven.build.timestamp.format>
-        <maven-compiler-plugin.version>2.3.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>4.1.9.RELEASE</spring.version>
+        <!--https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-Versions 4.3.x eol 31/12/2020 -->
+        <spring.version>4.3.14.RELEASE</spring.version>
     </properties>
 
     <modules>   
