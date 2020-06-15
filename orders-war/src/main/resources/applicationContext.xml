@@ -8,19 +8,21 @@
        xmlns:cache="http://www.springframework.org/schema/cache"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-       xmlns:encryption="http://www.jasypt.org/schema/encryption"
        xsi:schemaLocation="http://www.springframework.org/schema/beans 
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
-       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-       http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
-       http://www.jasypt.org/schema/encryption http://www.jasypt.org/schema/encryption/jasypt-spring4-encryption-1.xsd">
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd ">
 
     <context:annotation-config/>
     <context:component-scan base-package="au.gov.qld.pub.orders"/>
+    <bean id="propertyConfigurer" class="org.jasypt.spring4.properties.EncryptablePropertyPlaceholderConfigurer">
+        <constructor-arg ref="configurationEncryptor" />
+        <property name="location" value="classpath:application.properties" />
+    </bean>
     
     <import resource="classpath:order-extension.xml" />
     
@@ -49,8 +51,7 @@
             </list>
         </property>
     </bean>
-
-
+    
     <bean id="encryptionConfig" class="au.gov.qld.pub.orders.service.EncryptionConfiguration" />
     <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
           <property name="config" ref="encryptionConfig" />
