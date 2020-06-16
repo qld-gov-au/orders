@@ -20,7 +20,7 @@ jobs:
             - circleci-orders-{{ checksum "pom.xml" }}
             - circleci-orders-
       
-      - run: mvn dependency:go-offline # gets the project dependencies
+      #- run: mvn dependency:go-offline # gets the project dependencies ##can't do this as we have subprojects that depend on itself
       
       - run:
          name: Java version
