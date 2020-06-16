@@ -1,0 +1,62 @@
+version: 2
+jobs:
+  build:
+    
+    working_directory: ~/circleci-orders # directory where steps will run
+
+    environment:
+      MAVEN_OPTS: -Xmx3200m
+
+    docker: #https://github.com/CircleCI-Public/circleci-dockerfiles
+      - image: circleci/openjdk:8-jdk-stretch-browsers # ...with this image as the primary container; this is where all `steps` will run
+
+    steps:
+
+      - checkout
+
+      - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
+          # Read about caching dependencies: https://circleci.
+          keys: 
+            - circleci-orders-{{ checksum "pom.xml" }}
+            - circleci-orders-
+      
+      - run: mvn dependency:go-offline # gets the project dependencies
+      
+      - run:
+         name: Java version
+         command: java -version
+      - run:
+          name: mvn version
+          command: mvn -v
+      - run:
+          name: mvn verify
+          command: mvn verify # run the actual tests
+
+      - save_cache: # saves the project dependencies
+          paths:
+            - ~/.m2
+          key: circleci-orders-{{ checksum "pom.xml" }}
+
+      - run:
+          name: make name easier
+          command: cp target/orders-*.jar orders.jar # run the actual tests
+
+      - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard. 
+      # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          path: orders-war/target/surefire-reports
+      - store_test_results:
+          path: orders-core/target/surefire-reports
+      #- store_test_results:
+          #path: target/screenprints/current
+      - store_test_results:
+          path: orders-war/target/failsafe-reports
+      - store_test_results:
+          path: orders-core/target/failsafe-reports
+          #path: target/failsafe-reports
+      #- store_test_results:
+          #path: target/dependency-check-report.html
+      
+      #- store_artifacts: # store the uberjar as an artifact
+      ## Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
+           #path: target/orders.jar
+      ## See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples 

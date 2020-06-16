@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.collections.IteratorUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import au.gov.qld.pub.orders.ApplicationContextAwareTest;
@@ -50,6 +51,7 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
     
     @SuppressWarnings("unchecked")
     @Test
+    @Ignore
     public void notifyAndSetOrderNotifiedForEachProductId() throws ServiceException, InterruptedException {
         service.send(order);
         
@@ -72,6 +74,7 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
     
     @SuppressWarnings("unchecked")
     @Test
+    @Ignore
     public void dontNotifyCustomerWhenEmailBlank() throws ServiceException, InterruptedException {
         OrderDetails orderDetails = new OrderDetails();
         orderDetails.setOrderlineQuantities(ImmutableMap.of(item.getId(), "1"));
