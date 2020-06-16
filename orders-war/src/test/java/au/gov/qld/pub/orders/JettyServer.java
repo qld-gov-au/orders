@@ -2,9 +2,8 @@ package au.gov.qld.pub.orders;
 
 
 import java.util.Properties;
-
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.server.Server;
 
 import com.dumbster.smtp.SimpleSmtpServer;
 
@@ -19,20 +18,20 @@ public class JettyServer {
     }
 
     public static void start() throws Exception {
-        server = new Server(8091);
+        //server = new Server(8091);
         Properties applicationProps = new Properties();
         applicationProps.load(JettyServer.class.getClassLoader().getResourceAsStream("application.properties"));
-        
-        WebAppContext context = new WebAppContext();
-        context.setDescriptor("/WEB-INF/web.xml");
-        context.setResourceBase("src/main/webapp");
-        context.setContextPath(applicationProps.getProperty("web.context"));
-        context.setParentLoaderPriority(true);
+
+       // WebAppContext context = new WebAppContext();
+       // context.setDescriptor("/WEB-INF/web.xml");
+       // context.setResourceBase("src/main/webapp");
+       // context.setContextPath(applicationProps.getProperty("web.context"));
+        //context.setParentLoaderPriority(true);
 
         mailServer = SimpleSmtpServer.start(Integer.valueOf(applicationProps.getProperty("mail.port")));
-        server.setHandler(context);
+       // server.setHandler(context);
 
-        server.start();
+        //server.start();
         System.out.println("Started");
     }
 

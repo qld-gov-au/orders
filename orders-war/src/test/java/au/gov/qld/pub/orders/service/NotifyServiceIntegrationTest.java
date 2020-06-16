@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import java.util.List;
 
-import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.collections4.IteratorUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
