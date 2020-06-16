@@ -15,7 +15,7 @@
 
     <properties>
         <maven.build.timestamp.format>h:mm a, d MMMM yyyy</maven.build.timestamp.format>
-        <jetty.version>9.4.29.v20200521</jetty.version>
+        <jetty.version>9.4.30.v20200611</jetty.version>
         <hibernate.version>4.2.5.Final</hibernate.version>
         <maven-compiler-plugin.version>2.3.1</maven-compiler-plugin.version>
         <maven-jetty-plugin.version>9.4.29.v20200521</maven-jetty-plugin.version>
