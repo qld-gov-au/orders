@@ -33,7 +33,7 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
         Order order = new Order(cartId);
         Item item = Item.createItem(itemPropertiesDAO.findById("test").get());
         Map<String, String> fields = ImmutableMap.of("field1", "value1", "field2", "value2");
-        item.setFields(fields);
+        item.setFieldsFromMap(fields);
         itemDAO.save(item);
         order.add(item);
         

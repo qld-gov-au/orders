@@ -129,7 +129,7 @@ public class OrderController {
         
         for (Item item : items) {
             Collection<String> allowedFields = orderService.getAllowedFields(item.getProductId());
-            item.setFields(validateAndGetFields(request, allowedFields, item.getProductGroup(), item.getProductId()));
+            item.setFieldsFromMap(validateAndGetFields(request, allowedFields, item.getProductGroup(), item.getProductId()));
         }
         
         LOG.info("Adding to cart with cartId: " + effectiveCartId);

@@ -33,7 +33,7 @@ public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
     @Test
     public void addToNewCart() throws Exception {
         Item item = createItem();
-        item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
+        item.setFieldsFromMap(ImmutableMap.of("field1", "value1", "field2", "value2"));
         
         Order order = service.add(asList(item), null);
         assertThat(order.getCartId(), not(nullValue()));
@@ -50,7 +50,7 @@ public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
     @Test
     public void addToNewCartWhenCartIdNotValidFromPAPI() throws Exception {
         Item item = createItem();
-        item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
+        item.setFieldsFromMap(ImmutableMap.of("field1", "value1", "field2", "value2"));
         
         Order order = service.add(asList(item), "bogus");
         assertThat(order.getCartId(), not(nullValue()));

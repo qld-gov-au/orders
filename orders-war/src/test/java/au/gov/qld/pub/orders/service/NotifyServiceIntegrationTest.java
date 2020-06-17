@@ -38,7 +38,7 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
     public void setUp() {
         order = new Order(null);
         item = Item.createItem(itemPropertiesDAO.findById("test").get());
-        item.setFields(ImmutableMap.of("field1", "value1"));
+        item.setFieldsFromMap(ImmutableMap.of("field1", "value1"));
         order.add(item);
         OrderDetails orderDetails = new OrderDetails();
         orderDetails.setCustomerDetails(ImmutableMap.of("email", "test@example.com"));

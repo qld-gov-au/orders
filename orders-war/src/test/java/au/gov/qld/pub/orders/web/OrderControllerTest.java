@@ -112,7 +112,7 @@ public class OrderControllerTest {
         assertThat(result.getUrl(), is(FULL_URL + "/added"));
         verify(orderService).add(asList(item), REQ_CART_ID);
         verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, REQ_CART_ID, false)));
-        verify(item).setFields((Map<String, String>) argThat(allOf(hasEntry("allowedfield", "allowedvalue"), not(hasEntry("badfield", "badvalue")))));
+        verify(item).setFieldsFromMap((Map<String, String>) argThat(allOf(hasEntry("allowedfield", "allowedvalue"), not(hasEntry("badfield", "badvalue")))));
         verify(preCartValidator).validate(eq(PRODUCT_GROUP), eq(PRODUCT_ID), (Map<String, String>) argThat(allOf(hasEntry("allowedfield", "allowedvalue"), not(hasEntry("badfield", "badvalue")))));
     }
     
@@ -128,7 +128,7 @@ public class OrderControllerTest {
         assertThat(result.getUrl(), is("https://" + FULL_URL + "/added"));
         verify(orderService).add(asList(item), REQ_CART_ID);
         verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, REQ_CART_ID, true)));
-        verify(item).setFields((Map<String, String>) argThat(allOf(hasEntry("allowedfield", repeat("a", OrderController.MAX_FIELD_LENGTH)))));
+        verify(item).setFieldsFromMap((Map<String, String>) argThat(allOf(hasEntry("allowedfield", repeat("a", OrderController.MAX_FIELD_LENGTH)))));
     }
     
 }

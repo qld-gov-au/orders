@@ -71,7 +71,7 @@ public class Item {
         try {
             BeanUtils.copyProperties(item, dto);
         } catch (InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return item;
     }
@@ -168,8 +168,12 @@ public class Item {
         Map<String, String> map = JsonHelper.deserialise(Map.class, fields);
         return map != null ? map : new TreeMap<String, String>();
     }
-        
-    public void setFields(Map<String, String> fields) {
+
+    public void setFields(String fields) {
+        this.fields = fields;
+    }
+
+    public void setFieldsFromMap(Map<String, String> fields) {
         this.fields = JsonHelper.serialise(fields);
     }
 
@@ -329,10 +333,6 @@ public class Item {
 
     public void setNotifyBusinessEmailSubject(String notifyBusinessEmailSubject) {
         this.notifyBusinessEmailSubject = notifyBusinessEmailSubject;
-    }
-
-    public void setFields(String fields) {
-        this.fields = fields;
     }
 
     public void setNotifyBusinessFormUri(String notifyBusinessFormUri) {
