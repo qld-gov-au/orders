@@ -40,7 +40,7 @@ public class DatabaseItemPropertiesService implements ItemPropertiesService, App
     private void loadFileProperties() throws IOException {
         Map<String, Properties> fileProducts = fileItemPropertiesDAO.findProductProperties();
         for (Map.Entry<String, Properties> fileProduct : fileProducts.entrySet()) {
-            if (!dao.exists(fileProduct.getKey())) {
+            if (!dao.existsById(fileProduct.getKey())) {
                 LOG.info("Adding product: {} from properties", fileProduct.getKey());
                 dao.save(create(fileProduct.getValue()));
             }
@@ -49,7 +49,7 @@ public class DatabaseItemPropertiesService implements ItemPropertiesService, App
     
     @Override
     public ItemProperties find(String productId) {
-        return dao.findOne(productId);
+        return dao.findById(productId).orElse(null);
     }
     
     private static ItemProperties create(Properties properties) {

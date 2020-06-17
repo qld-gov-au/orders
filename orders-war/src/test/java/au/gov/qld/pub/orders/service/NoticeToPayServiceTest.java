@@ -16,6 +16,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -73,7 +74,8 @@ public class NoticeToPayServiceTest {
         when(paymentInformation.getReference()).thenReturn(SOURCE_ID);
         when(paymentInformation.getAmountOwingInCents()).thenReturn(123l);
         when(paymentInformationService.fetch(SOURCE_ID)).thenReturn(paymentInformation);
-        when(noticeToPayDAO.findOne(NOTICE_TO_PAY_ID)).thenReturn(noticeToPay);
+        when(noticeToPayDAO.findById(NOTICE_TO_PAY_ID)).thenReturn(Optional.of(noticeToPay));
+        when(noticeToPayDAO.findById("bogus")).thenReturn(Optional.empty());
         
         service = new NoticeToPayService(config, paymentInformationService, noticeToPayDAO, requestBuilder, additionalNotificationService) {
             protected SOAPClient getSOAPClient(String endpoint) {

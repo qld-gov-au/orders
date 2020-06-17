@@ -22,10 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matcher;
@@ -226,14 +223,14 @@ public class OrderServiceTest {
     
     @Test(expected = IllegalArgumentException.class)
     public void throwExceptionWhenUnknownOrderOnNotify() throws ServiceException {
-        when(orderDAO.findOne(anyString())).thenReturn(null);
+        when(orderDAO.findById(anyString())).thenReturn(Optional.empty());
         orderService.notifyPayment("anything");
     }
 
     @Test
     public void doNothingWhenCartNotPaidOnNotify() throws ServiceException {
         String id = order.getId();
-        when(orderDAO.findOne(id)).thenReturn(order);
+        when(orderDAO.findById(id)).thenReturn(Optional.of(order));
         
         assertThat(orderService.notifyPayment(id), is(false));
         assertThat(order.getPaid(), nullValue());
@@ -245,7 +242,7 @@ public class OrderServiceTest {
     public void doNothingWhenAlreadyPaidOnNotify() throws ServiceException {
         String id = order.getId();
         order.setPaid("receipt", orderDetails);
-        when(orderDAO.findOne(id)).thenReturn(order);
+        when(orderDAO.findById(id)).thenReturn(Optional.of(order));
         
         assertThat(orderService.notifyPayment(id), is(false));
         verify(orderDAO, never()).save(order);
@@ -262,7 +259,7 @@ public class OrderServiceTest {
         
         String id = order.getId();
         when(responseParser.getPaidOrderDetails(ORDER_DETAILS)).thenReturn(orderDetails);
-        when(orderDAO.findOne(id)).thenReturn(order);
+        when(orderDAO.findById(id)).thenReturn(Optional.of(order));
         
         assertThat(orderService.notifyPayment(id), is(true));
         assertThat(order.getPaid(), notNullValue());

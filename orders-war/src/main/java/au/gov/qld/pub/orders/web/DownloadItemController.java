@@ -50,20 +50,20 @@ public class DownloadItemController {
     public void download(@PathVariable String orderId, @PathVariable String itemId, HttpServletResponse response) throws IOException, ServiceException, InterruptedException {
         LOG.info("Downloading item: {}", itemId);
         
-        Item item = itemDao.findOne(itemId);
+        Item item = itemDao.findById(itemId).orElse(null);
         if (item == null) {
             throw new IllegalArgumentException("Unknown item id: " + itemId);
         }
         
         if (!item.isPaid()) {
             orderService.notifyPayment(orderId);
-            item = itemDao.findOne(itemId);
+            item = itemDao.findById(itemId).orElse(null);
             if (!item.isPaid()) {
                 throw new IllegalArgumentException("Attempted to download unpaid item id: " + itemId + " with order id" + orderId);
             }
         }
 
-        Order order = orderDao.findOne(orderId);
+        Order order = orderDao.findById(orderId).orElse(null);
 		Map<String, Order> groupedOrders = orderGrouper.paidByProductGroup(order);
 		FileAttachment attachment = attachmentService.retrieve(groupedOrders.get(item.getProductGroup()), NotifyType.CUSTOMER, itemId);
         

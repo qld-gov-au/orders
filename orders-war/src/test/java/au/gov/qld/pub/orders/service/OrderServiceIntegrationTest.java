@@ -23,6 +23,8 @@ import au.gov.qld.pub.orders.entity.CartState;
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
 
+import java.util.Optional;
+
 public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
     @Autowired OrderService service;
     @Autowired OrderDAO orderDAO;
@@ -37,7 +39,7 @@ public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
         assertThat(order.getCartId(), not(nullValue()));
         assertThat(order.getGeneratedId(), not(nullValue()));
         
-        Order saved = orderDAO.findOne(order.getId());
+        Order saved = orderDAO.findById(order.getId()).get();
         assertThat(saved.getCartId(), not(nullValue()));
         assertThat(saved.getGeneratedId(), not(nullValue()));
         
@@ -55,7 +57,7 @@ public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
         assertThat(order.getCartId(), not(is("bogus")));
         assertThat(order.getGeneratedId(), not(nullValue()));
         
-        Order saved = orderDAO.findOne(order.getId());
+        Order saved = orderDAO.findById(order.getId()).get();
         assertThat(saved.getCartId(), not(nullValue()));
         assertThat(saved.getGeneratedId(), not(nullValue()));
         
@@ -85,15 +87,15 @@ public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
         Order youngUnpaid = createOrder(maxCreatedAt.plusDays(1), false, createItem());
         
         service.deleteOlderThan(maxCreatedAt, true);
-        assertThat(orderDAO.findOne(oldPaid.getId()), nullValue());
-        assertThat(orderDAO.findOne(oldUnpaid.getId()), is(oldUnpaid));
-        assertThat(orderDAO.findOne(youngPaid.getId()), is(youngPaid));
-        assertThat(orderDAO.findOne(youngUnpaid.getId()), is(youngUnpaid));
+        assertThat(orderDAO.findById(oldPaid.getId()), is(Optional.empty()));
+        assertThat(orderDAO.findById(oldUnpaid.getId()).get(), is(oldUnpaid));
+        assertThat(orderDAO.findById(youngPaid.getId()).get(), is(youngPaid));
+        assertThat(orderDAO.findById(youngUnpaid.getId()).get(), is(youngUnpaid));
         
         service.deleteOlderThan(maxCreatedAt, false);
-        assertThat(orderDAO.findOne(oldUnpaid.getId()), nullValue());
-        assertThat(orderDAO.findOne(youngPaid.getId()), is(youngPaid));
-        assertThat(orderDAO.findOne(youngUnpaid.getId()), is(youngUnpaid));
+        assertThat(orderDAO.findById(oldUnpaid.getId()), is(Optional.empty()));
+        assertThat(orderDAO.findById(youngPaid.getId()).get(), is(youngPaid));
+        assertThat(orderDAO.findById(youngUnpaid.getId()).get(), is(youngUnpaid));
     }
     
     private Order createOrder(LocalDateTime created, boolean paid, Item item) {

@@ -19,6 +19,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.mail.Address;
 import javax.mail.Message.RecipientType;
@@ -104,7 +105,7 @@ public class NotifyServiceTest {
         when(configurationService.getMailFrom()).thenReturn(FROM);
         when(configuration.getTemplate(PRODUCT_ID + ".customer.email.ftl")).thenReturn(customerTemplate);
         when(configuration.getTemplate(PRODUCT_ID + ".business.email.ftl")).thenReturn(businessTemplate);
-        when(orderDAO.findOne(order.getId())).thenReturn(order);
+        when(orderDAO.findById(order.getId())).thenReturn(Optional.of(order));
         service = new NotifyService(configurationService, orderDAO, mailSender, orderGrouper, inlineTemplateService, attachmentService, 
         		additionalMailContentService, additionalNotificationService) {
             @Override

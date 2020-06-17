@@ -31,7 +31,7 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
         String cartId = UUID.randomUUID().toString();
         
         Order order = new Order(cartId);
-        Item item = Item.createItem(itemPropertiesDAO.findOne("test"));
+        Item item = Item.createItem(itemPropertiesDAO.findById("test").get());
         Map<String, String> fields = ImmutableMap.of("field1", "value1", "field2", "value2");
         item.setFields(fields);
         itemDAO.save(item);
@@ -48,7 +48,7 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
         assertThat(findByCartId.getItems().get(0).getId(), is(item.getId()));
         assertThat(findByCartId.getItems().get(0).getFieldsMap(), is(fields));
         
-        Order findByOrderId = dao.findOne(id);
+        Order findByOrderId = dao.findById(id).get();
         assertThat(findByOrderId, notNullValue());
         assertThat(findByOrderId.getId(), is(id));
         assertThat(findByOrderId.getCartId(), is(cartId));
@@ -63,7 +63,7 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
         findByOrderId.setPaid("some receipt", orderDetails);
         
         dao.save(findByOrderId);
-        findByOrderId = dao.findOne(id);
+        findByOrderId = dao.findById(id).get();
         assertThat(findByOrderId, notNullValue());
         assertThat(findByOrderId.getReceipt(), is("some receipt"));
         assertThat(findByOrderId.getCustomerDetailsMap().get("customer type"), is("customer detail"));
@@ -76,14 +76,14 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
     public void dontSaveCartIdWhenNull() {
         Order order = new Order(null);
         String id = order.getId();
-        order.add(Item.createItem(itemPropertiesDAO.findOne("test")));
-        itemDAO.save(order.getItems());
+        order.add(Item.createItem(itemPropertiesDAO.findById("test").get()));
+        itemDAO.saveAll(order.getItems());
         dao.save(order);
         
         Order findByCartId = dao.findByCartId("null");
         assertThat(findByCartId, nullValue());
         
-        Order findByOrderId = dao.findOne(id);
+        Order findByOrderId = dao.findById(id).get();
         assertThat(findByOrderId, notNullValue());
         assertThat(findByOrderId.getId(), is(id));
     }

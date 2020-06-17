@@ -75,7 +75,7 @@ public class FileServiceTest {
 		Date createdAt = new LocalDate().minusDays(DELETE_UPLOAD_AGE).toDate();
 		when(dao.findIdByCreatedAtBefore(createdAt)).thenReturn(asList(SAVED_FORM_FILE_ID));
 		service.cleanUp();
-		verify(dao).delete(SAVED_FORM_FILE_ID);
+		verify(dao).deleteById(SAVED_FORM_FILE_ID);
 	}
 	
 	@Test

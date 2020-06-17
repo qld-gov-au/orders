@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -16,9 +17,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.boon.core.reflection.BeanUtils;
 
 import au.gov.qld.pub.orders.dao.JsonHelper;
 import au.gov.qld.pub.orders.service.ItemPropertiesDTO;
@@ -67,14 +68,18 @@ public class Item {
     
     public static Item createItem(ItemPropertiesDTO dto) {
         Item item = new Item();
-        BeanUtils.copyProperties(dto, item);
+        try {
+            BeanUtils.copyProperties(item, dto);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
         return item;
     }
 
     public String getId() {
         return id;
     }
-    
+
     public String getProductId() {
         return productId;
     }
@@ -257,4 +262,96 @@ public class Item {
 	public void setBundledDownload(boolean bundledDownload) {
 		this.bundledDownload = bundledDownload;
 	}
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public void setAgency(String agency) {
+        this.agency = agency;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setDisbursementId(String disbursementId) {
+        this.disbursementId = disbursementId;
+    }
+
+    public void setPriceGst(String priceGst) {
+        this.priceGst = priceGst;
+    }
+
+    public void setPriceExGst(String priceExGst) {
+        this.priceExGst = priceExGst;
+    }
+
+    public void setCostCenter(String costCenter) {
+        this.costCenter = costCenter;
+    }
+
+    public void setGlCode(String glCode) {
+        this.glCode = glCode;
+    }
+
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+
+    public void setNarrative(String narrative) {
+        this.narrative = narrative;
+    }
+
+    public void setNotifyCustomerEmailField(String notifyCustomerEmailField) {
+        this.notifyCustomerEmailField = notifyCustomerEmailField;
+    }
+
+    public void setNotifyBusinessEmail(String notifyBusinessEmail) {
+        this.notifyBusinessEmail = notifyBusinessEmail;
+    }
+
+    public void setNotifyCustomerEmailSubject(String notifyCustomerEmailSubject) {
+        this.notifyCustomerEmailSubject = notifyCustomerEmailSubject;
+    }
+
+    public void setNotifyBusinessEmailSubject(String notifyBusinessEmailSubject) {
+        this.notifyBusinessEmailSubject = notifyBusinessEmailSubject;
+    }
+
+    public void setFields(String fields) {
+        this.fields = fields;
+    }
+
+    public void setNotifyBusinessFormUri(String notifyBusinessFormUri) {
+        this.notifyBusinessFormUri = notifyBusinessFormUri;
+    }
+
+    public void setNotifyBusinessFormFilename(String notifyBusinessFormFilename) {
+        this.notifyBusinessFormFilename = notifyBusinessFormFilename;
+    }
+
+    public void setNotifyCustomerFormUri(String notifyCustomerFormUri) {
+        this.notifyCustomerFormUri = notifyCustomerFormUri;
+    }
+
+    public void setNotifyCustomerFormFilename(String notifyCustomerFormFilename) {
+        this.notifyCustomerFormFilename = notifyCustomerFormFilename;
+    }
+
+    public void setNotifyCustomerFormDownloadTitle(String notifyCustomerFormDownloadTitle) {
+        this.notifyCustomerFormDownloadTitle = notifyCustomerFormDownloadTitle;
+    }
 }

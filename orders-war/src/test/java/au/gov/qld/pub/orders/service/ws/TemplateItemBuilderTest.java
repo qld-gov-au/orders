@@ -22,7 +22,7 @@ public class TemplateItemBuilderTest extends ApplicationContextAwareTest {
 
     @Test
     public void freemarkerTemplatedTitleAndDescription() {
-        Item item = Item.createItem(itemPropertiesDAO.findOne("test"));
+        Item item = Item.createItem(itemPropertiesDAO.findById("test").get());
         item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
         
         List<TemplateItem> templated = builder.build(asList(item));
