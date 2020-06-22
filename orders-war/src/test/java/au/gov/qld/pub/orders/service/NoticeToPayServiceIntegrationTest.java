@@ -46,12 +46,12 @@ public class NoticeToPayServiceIntegrationTest extends ApplicationContextAwareTe
     @Test
     public void setPaymentOnNoticeToPay() throws ServiceException {
         dao.save(new NoticeToPay(PAID_NTP_ID, paymentInformation));
-        NoticeToPay unpaid = dao.findOne(PAID_NTP_ID);
+        NoticeToPay unpaid = dao.findById(PAID_NTP_ID).get();
         assertThat(unpaid.getReceiptNumber(), nullValue());
         assertThat(unpaid.getNotifiedAt(), nullValue());
         
         service.notifyPayment(PAID_NTP_ID);
-        NoticeToPay paid = dao.findOne(PAID_NTP_ID);
+        NoticeToPay paid = dao.findById(PAID_NTP_ID).get();
         assertThat(paid.getReceiptNumber(), is(RECEIPT_NUMBER));
         assertThat(paid.getNotifiedAt(), notNullValue());
     }

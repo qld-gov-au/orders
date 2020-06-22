@@ -25,7 +25,7 @@ public class NoticeToPayDAOTest extends ApplicationContextAwareTest {
         ntpOld.setNotifiedAt(new DateTime().minusDays(1).toDate());
         
         NoticeToPay ntpOther = new NoticeToPay(paymentInformationService.fetch("3"));
-        noticeToPayDao.save(asList(ntpNew, ntpOld, ntpOther));
+        noticeToPayDao.saveAll(asList(ntpNew, ntpOld, ntpOther));
         
         
         assertThat(noticeToPayDao.existsByPaymentInformationIdAndNotifiedAtAfter("1", new DateTime().minusMinutes(5).toDate()), is(true));

@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,11 +91,11 @@ public class NoticeToPayService {
     public void notifyPayment(String noticeToPayId) throws ServiceException {
         final Date now = new Date();
         
-        NoticeToPay noticeToPay = noticeToPayDAO.findOne(noticeToPayId);
-        if (noticeToPay == null) {
+        Optional<NoticeToPay> noticeToPayOptional = noticeToPayDAO.findById(noticeToPayId);
+        if (!noticeToPayOptional.isPresent()) {
             throw new ServiceException("Unknown notice to pay");
         }
-        
+        NoticeToPay noticeToPay = noticeToPayOptional.get();
         if (noticeToPay.getNotifiedAt() != null) {
             LOG.info("Already received notification for: {}", noticeToPayId);
             return;

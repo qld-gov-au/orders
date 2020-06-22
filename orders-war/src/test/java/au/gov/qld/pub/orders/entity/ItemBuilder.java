@@ -2,8 +2,6 @@ package au.gov.qld.pub.orders.entity;
 
 import au.gov.qld.pub.orders.service.ItemPropertiesDTO;
 
-
-
 public class ItemBuilder {
     private String productId = "test";
     private String group;

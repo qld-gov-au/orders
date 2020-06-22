@@ -37,7 +37,7 @@ public class RequestBuilderIntegrationTest extends ApplicationContextAwareTest {
     public void setUp() {
         order = new Order(CART_ID);
         item = Item.createItem(itemPropertiesService.find("test"));
-        item.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
+        item.setFieldsFromMap(ImmutableMap.of("field1", "value1", "field2", "value2"));
         order.add(item);
     }
     
@@ -59,7 +59,7 @@ public class RequestBuilderIntegrationTest extends ApplicationContextAwareTest {
     public void createAddRequestWithoutItemsNotNew() throws ServiceException {
         Item paidItem = Item.createItem(itemPropertiesService.find("test"));
         paidItem.setCartState(CartState.PAID);
-        paidItem.setFields(ImmutableMap.of("field1", "value1", "field2", "value2"));
+        paidItem.setFieldsFromMap(ImmutableMap.of("field1", "value1", "field2", "value2"));
         order.add(paidItem);
         
         String request = builder.addRequest(order);

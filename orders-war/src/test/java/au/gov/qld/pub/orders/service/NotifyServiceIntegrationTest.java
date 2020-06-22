@@ -37,15 +37,15 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
     @Before
     public void setUp() {
         order = new Order(null);
-        item = Item.createItem(itemPropertiesDAO.findOne("test"));
-        item.setFields(ImmutableMap.of("field1", "value1"));
+        item = Item.createItem(itemPropertiesDAO.findById("test").get());
+        item.setFieldsFromMap(ImmutableMap.of("field1", "value1"));
         order.add(item);
         OrderDetails orderDetails = new OrderDetails();
         orderDetails.setCustomerDetails(ImmutableMap.of("email", "test@example.com"));
         orderDetails.setDeliveryDetails(ImmutableMap.of("deliverydetails1", "deliverydetailsvalue1"));
         orderDetails.setOrderlineQuantities(ImmutableMap.of(item.getId(), "1"));
         order.setPaid(RECEIPT, orderDetails);
-        itemDAO.save(order.getItems());
+        itemDAO.saveAll(order.getItems());
         orderDAO.save(order);
     }
     
@@ -55,7 +55,7 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
     public void notifyAndSetOrderNotifiedForEachProductId() throws ServiceException, InterruptedException {
         service.send(order);
         
-        Order saved = orderDAO.findOne(order.getId());
+        Order saved = orderDAO.findById(order.getId()).get();
         assertThat(saved.getNotified(), notNullValue());
         
         List<SmtpMessage> messages = IteratorUtils.toList(mailServer.getReceivedEmail());
@@ -79,12 +79,12 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
         OrderDetails orderDetails = new OrderDetails();
         orderDetails.setOrderlineQuantities(ImmutableMap.of(item.getId(), "1"));
         order.setPaid(RECEIPT, orderDetails);
-        itemDAO.save(order.getItems());
+        itemDAO.saveAll(order.getItems());
         orderDAO.save(order);
         
         service.send(order);
         
-        Order saved = orderDAO.findOne(order.getId());
+        Order saved = orderDAO.findById(order.getId()).get();
         assertThat(saved.getNotified(), notNullValue());
         
         List<SmtpMessage> messages = IteratorUtils.toList(mailServer.getReceivedEmail());

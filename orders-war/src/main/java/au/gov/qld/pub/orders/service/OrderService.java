@@ -77,7 +77,7 @@ public class OrderService {
             order.add(item);
         }
         
-        itemDAO.save(order.getItems());
+        itemDAO.saveAll(order.getItems());
         orderDAO.save(order);
         
         LOG.info("Sending cart add request for order: {} with cartId: {}", order.getId(), order.getCartId());
@@ -110,7 +110,7 @@ public class OrderService {
         order.setCartId(responseCartId);
         order.setGeneratedId(responseGeneratedId);
         
-        itemDAO.save(order.getItems());
+        itemDAO.saveAll(order.getItems());
         orderDAO.save(order);
         return order;
     }
@@ -138,7 +138,7 @@ public class OrderService {
     }
     
     private Order findByOrderId(String orderId) {
-        return orderDAO.findOne(orderId);
+        return orderDAO.findById(orderId).orElse(null);
     }
 
     @Transactional(rollbackFor = ServiceException.class)
@@ -207,9 +207,9 @@ public class OrderService {
         
         for (Order toDelete : toDeletes) {
             LOG.info("Deleting items and order: {} created at: {}", toDelete.getId(), toDelete.getCreated());
-            itemDAO.delete(toDelete.getItems());
+            itemDAO.deleteAll(toDelete.getItems());
             toDelete.getItems().clear();
-            orderDAO.delete(toDelete.getId());
+            orderDAO.deleteById(toDelete.getId());
         }
     }
     

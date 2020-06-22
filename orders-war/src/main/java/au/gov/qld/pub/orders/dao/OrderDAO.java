@@ -16,9 +16,9 @@ public interface OrderDAO extends CrudRepository<Order, String> {
     @Query("select o.id from Order o where o.created >= :created and o.paid is null")
     Iterable<String> findUnpaidOrdersCreatedAfter(@Param("created") Date created);
 
-    @Query("from Order o where o.created <= :created and (paid <> '' and paid is not null)")
+    @Query("from Order o where o.created <= :created and (o.paid <> '' and o.paid is not null)")
     Iterable<Order> findOlderThanCreatedAndPaid(@Param("created") Date created);
     
-    @Query("from Order o where o.created <= :created and (paid = '' or paid is null)")
+    @Query("from Order o where o.created <= :created and (o.paid = '' or o.paid is null)")
     Iterable<Order> findOlderThanCreatedAndNotPaid(@Param("created") Date created);
 }

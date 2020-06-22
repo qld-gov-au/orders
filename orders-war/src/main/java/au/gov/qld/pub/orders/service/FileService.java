@@ -42,7 +42,7 @@ public class FileService {
 		Collection<String> ids = dao.findIdByCreatedAtBefore(new LocalDate().minusDays(deleteUploadDays).toDate());
 		for (String id : ids) {
 			LOG.info("Cleaning up form file with id: {}", id);
-			dao.delete(id);
+			dao.deleteById(id);
 		}
 	}
 
@@ -74,7 +74,7 @@ public class FileService {
     }
 
 	public FormFile find(String fileId) {
-		return dao.findOne(fileId);
+		return dao.findById(fileId).orElse(null);
 	}
 	
 }

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.nio.charset.Charset;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -64,8 +65,8 @@ public class DownloadItemControllerTest {
         when(paidItem.getNotifyCustomerFormFilename()).thenReturn(FILENAME);
         when(unpaidItem.isPaid()).thenReturn(false);
         when(paidItem.isPaid()).thenReturn(true);
-        when(itemDao.findOne(ITEM_ID)).thenReturn(unpaidItem, paidItem);
-        when(orderDao.findOne(ORDER_ID)).thenReturn(order);
+        when(itemDao.findById(ITEM_ID)).thenReturn(Optional.of(unpaidItem), Optional.of(paidItem));
+        when(orderDao.findById(ORDER_ID)).thenReturn(Optional.of(order));
         when(orderGrouper.paidByProductGroup(order)).thenReturn(ImmutableMap.of(PRODUCT_GROUP, groupedOrder));
         
         controller = new DownloadItemController(orderService, attachmentService, itemDao, orderDao, orderGrouper);
@@ -85,7 +86,7 @@ public class DownloadItemControllerTest {
     @Test
     public void immediatelyOutputAttachmentForItemWhenAlreadyPaid() throws Exception {
         when(attachmentService.retrieve(groupedOrder, NotifyType.CUSTOMER, ITEM_ID)).thenReturn(attachment);
-        when(itemDao.findOne(ITEM_ID)).thenReturn(paidItem);
+        when(itemDao.findById(ITEM_ID)).thenReturn(Optional.of(paidItem));
         controller.download(ORDER_ID, ITEM_ID, response);
         
         verifyZeroInteractions(orderService);
@@ -98,7 +99,7 @@ public class DownloadItemControllerTest {
     
     @Test
     public void throwExceptionWhenItemNotPaid() throws Exception {
-        when(itemDao.findOne(ITEM_ID)).thenReturn(unpaidItem, unpaidItem);
+        when(itemDao.findById(ITEM_ID)).thenReturn(Optional.of(unpaidItem), Optional.of(unpaidItem));
         try {
             controller.download(ORDER_ID, ITEM_ID, response);
         } catch (IllegalArgumentException e) {
@@ -111,7 +112,7 @@ public class DownloadItemControllerTest {
     
     @Test
     public void throwExceptionWhenItemNotExists() throws Exception {
-        when(itemDao.findOne(ITEM_ID)).thenReturn(null);
+        when(itemDao.findById(ITEM_ID)).thenReturn(Optional.empty());
         try {
             controller.download(ORDER_ID, ITEM_ID, response);
         } catch (IllegalArgumentException e) {

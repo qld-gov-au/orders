@@ -3,9 +3,9 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
     version="2.5">
 
-    <listener> 
-        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class> 
-    </listener>
+<!--    <listener> -->
+<!--        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class> -->
+<!--    </listener>-->
     <context-param> 
         <param-name>log4jExposeWebAppRoot</param-name> 
         <param-value>false</param-value>

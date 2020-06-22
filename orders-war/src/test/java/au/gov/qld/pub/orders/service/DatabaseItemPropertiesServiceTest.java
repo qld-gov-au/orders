@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -48,8 +49,8 @@ public class DatabaseItemPropertiesServiceTest {
         properties2.setProperty("productId", PRODUCT_ID_2);
         
         when(fileDao.findProductProperties()).thenReturn(ImmutableMap.of(PRODUCT_ID_1, properties1, PRODUCT_ID_2, properties2));
-        when(dao.findOne(PRODUCT_ID_1)).thenReturn(null);
-        when(dao.findOne(PRODUCT_ID_2)).thenReturn(null);
+        when(dao.findById(PRODUCT_ID_1)).thenReturn(Optional.empty());
+        when(dao.findById(PRODUCT_ID_2)).thenReturn(Optional.empty());
         
         service = new DatabaseItemPropertiesService(dao, fileDao);
     }
@@ -63,8 +64,8 @@ public class DatabaseItemPropertiesServiceTest {
     
     @Test
     public void doNotLoadFileProductWhenExists() throws IOException {
-        when(dao.exists(PRODUCT_ID_1)).thenReturn(true);
-        when(dao.exists(PRODUCT_ID_2)).thenReturn(true);
+        when(dao.existsById(PRODUCT_ID_1)).thenReturn(true);
+        when(dao.existsById(PRODUCT_ID_2)).thenReturn(true);
         service.onApplicationEvent(null);
         verify(dao, never()).save(argThat(isA(ItemProperties.class)));
     }
