@@ -25,6 +25,10 @@ public class ErrorHandlerFilter implements Filter {
             FilterChain filterChain) throws IOException, ServletException {
         try {
             filterChain.doFilter(request, response);
+        } catch (IllegalArgumentException e) {
+        	LOG.warn(e.getMessage(), e);
+            HttpServletResponse httpResponse = (HttpServletResponse) response;
+            httpResponse.sendRedirect(config.getErrorRedirect());
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             

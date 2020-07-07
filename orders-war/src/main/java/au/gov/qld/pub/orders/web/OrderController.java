@@ -58,7 +58,6 @@ public class OrderController {
         LOG.info("Loaded precart validators: {}", preCartValidators);
     }
     
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/confirm", method = RequestMethod.POST)
     public ModelAndView confirm(@RequestParam String group, HttpServletRequest request) {
         Map<String, Object> fields = new HashMap<String, Object>();
@@ -74,7 +73,6 @@ public class OrderController {
         return mav;
     }
 
-    @SuppressWarnings("unchecked")
     private Map<String, String> validateAndGetFields(HttpServletRequest request, Collection<String> allowedFields, String productGroup, String productId) throws ValidationException {
         Map<String, String> fields = new HashMap<>();
         Enumeration<String> parameterNames = (Enumeration<String>)request.getParameterNames();

@@ -60,7 +60,7 @@ public class OrderService {
     }
     
     @Transactional(noRollbackFor = ServiceException.class)
-    public Order add(List<Item> items, String cartId) throws ServiceException, InterruptedException {
+    public Order add(List<Item> items, String cartId) throws ServiceException, InterruptedException, IllegalArgumentException {
         Order order = findByCartId(cartId);
         if (order == null) {
             LOG.info("Creating new order for cartId: {}", cartId);
@@ -72,7 +72,7 @@ public class OrderService {
         
         for (Item item : items) {
         	if (item.getFieldsMap().isEmpty()) {
-        		throw new ServiceException("Item missing fields");
+        		throw new IllegalArgumentException("Item missing fields");
         	}
             order.add(item);
         }
