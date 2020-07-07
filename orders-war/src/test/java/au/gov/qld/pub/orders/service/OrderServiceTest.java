@@ -22,7 +22,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matcher;
@@ -34,6 +38,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import com.google.common.collect.ImmutableMap;
+
 import au.gov.qld.pub.orders.dao.ItemDAO;
 import au.gov.qld.pub.orders.dao.OrderDAO;
 import au.gov.qld.pub.orders.entity.Item;
@@ -44,8 +50,6 @@ import au.gov.qld.pub.orders.service.ws.CartService;
 import au.gov.qld.pub.orders.service.ws.OrderDetails;
 import au.gov.qld.pub.orders.service.ws.RequestBuilder;
 import au.gov.qld.pub.orders.web.ItemCommand;
-
-import com.google.common.collect.ImmutableMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderServiceTest {
@@ -118,7 +122,7 @@ public class OrderServiceTest {
         try {
         	orderService.add(asList(item), null);
         	fail("Should have thrown exception");
-        } catch (ServiceException e) {
+        } catch (IllegalArgumentException e) {
         	assertThat(e.getMessage(), is("Item missing fields"));
         	verify(orderDAO, never()).save(isA(Order.class));
         }
