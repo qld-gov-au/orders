@@ -1,28 +1,27 @@
 package au.gov.qld.pub.orders.dao;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+
 public class JsonHelper {
     private static final ObjectMapper objectMapper;
 
     static {
         objectMapper = new ObjectMapper() {
-            {
+			private static final long serialVersionUID = 1L;
+			{
                 this.registerModule(new ParameterNamesModule());
                 this.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
                 this.setSerializationInclusion(JsonInclude.Include.NON_NULL);
