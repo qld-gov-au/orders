@@ -15,6 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -98,6 +99,19 @@ public class OrderControllerTest {
         assertThat(result.getUrl(), is(FULL_URL + "/added"));
         verify(orderService).add(asList(item), COOKIE_CART_ID);
         verify(response).addCookie(argThat(WebUtilsTest.cookieWith(Constants.CART_ID, COOKIE_CART_ID, false)));
+        verify(preCartValidator).validate(anyString(), anyString(), anyMap());
+    }
+    
+    @SuppressWarnings("unchecked")
+	@Test
+    public void redirectToErrorWhenNoOrderReturnedFromAddCausedByMissingFields() throws Exception {
+    	item.setFieldsFromMap(Collections.emptyMap());
+        when(orderService.add(asList(item), COOKIE_CART_ID)).thenReturn(null);
+        
+        RedirectView result = controller.add(COOKIE_CART_ID, REQ_CART_ID, command, request, response);
+        assertThat(result.getUrl(), is(ERROR_REDIRECT));
+        verify(orderService).add(asList(item), COOKIE_CART_ID);
+        verifyZeroInteractions(response);
         verify(preCartValidator).validate(anyString(), anyString(), anyMap());
     }
     

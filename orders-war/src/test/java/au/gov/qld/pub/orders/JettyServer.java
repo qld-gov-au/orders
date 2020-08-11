@@ -2,7 +2,7 @@ package au.gov.qld.pub.orders;
 
 
 import java.util.Properties;
-import org.eclipse.jetty.webapp.WebAppContext;
+
 import org.eclipse.jetty.server.Server;
 
 import com.dumbster.smtp.SimpleSmtpServer;

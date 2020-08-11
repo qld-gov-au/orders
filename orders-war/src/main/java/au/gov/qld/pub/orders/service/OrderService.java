@@ -72,7 +72,8 @@ public class OrderService {
         
         for (Item item : items) {
         	if (item.getFieldsMap().isEmpty()) {
-        		throw new IllegalArgumentException("Item missing fields");
+        		LOG.warn("Item missing fields for order: {}. Got fields: {}", order.getId(), item.getFieldsMap().entrySet());
+        		return null;
         	}
             order.add(item);
         }

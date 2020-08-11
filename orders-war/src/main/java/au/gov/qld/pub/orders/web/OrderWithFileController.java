@@ -93,7 +93,6 @@ public class OrderWithFileController {
         return mav;
     }
 
-	@SuppressWarnings("unchecked")
 	private Map<String, String> getFieldValues(HttpServletRequest request) {
 		Map<String, String> fields = new HashMap<>();
         List<String> fieldNames = EnumerationUtils.toList(request.getParameterNames());

@@ -53,7 +53,8 @@ public class DownloadItemControllerTest {
     @Mock OrderGrouper orderGrouper;
     @Mock FileAttachment attachment;
     
-    @Before
+    @SuppressWarnings("unchecked")
+	@Before
     public void setUp() throws Exception {
     	when(attachment.getData()).thenReturn("test".getBytes(Charset.defaultCharset()));
     	response = new MockHttpServletResponse();
@@ -97,7 +98,8 @@ public class DownloadItemControllerTest {
         assertThat(response.getContentAsString(), is("test"));
     }
     
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void throwExceptionWhenItemNotPaid() throws Exception {
         when(itemDao.findById(ITEM_ID)).thenReturn(Optional.of(unpaidItem), Optional.of(unpaidItem));
         try {

@@ -132,6 +132,10 @@ public class OrderController {
         
         LOG.info("Adding to cart with cartId: " + effectiveCartId);
         Order order = orderService.add(items, effectiveCartId);
+        if (order == null) {
+        	return WebUtils.redirect(errorRedirect);
+        }
+        
         Cookie cookie = new Cookie(Constants.CART_ID, order.getCartId());
         cookie.setSecure(configurationService.getServiceFullUrl().toLowerCase(Locale.getDefault()).startsWith("https://"));
         response.addCookie(cookie);
