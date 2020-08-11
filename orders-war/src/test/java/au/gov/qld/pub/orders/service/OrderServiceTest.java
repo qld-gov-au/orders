@@ -239,6 +239,18 @@ public class OrderServiceTest {
     }
     
     @Test
+    public void doNothingWhenNoGeneratedIdOnNotify() throws ServiceException {
+        String id = order.getId();
+        when(orderDAO.findById(id)).thenReturn(Optional.of(order));
+        
+        assertThat(orderService.notifyPayment(id), is(false));
+        assertThat(order.getPaid(), nullValue());
+        verify(orderDAO, never()).save(order);
+        verifyZeroInteractions(notifyService);
+        verifyZeroInteractions(cartService);
+    }
+    
+    @Test
     public void doNothingWhenAlreadyPaidOnNotify() throws ServiceException {
         String id = order.getId();
         order.setPaid("receipt", orderDetails);

@@ -154,6 +154,11 @@ public class OrderService {
             return false;
         }
         
+        if (isBlank(order.getGeneratedId())) {
+        	LOG.warn("Unable to notify order: {} which does not have a generated id", order.getId());
+            return false;
+        }
+        
         LOG.info("Getting status of order: {}", orderId);
         String statusResponse = defaultString(cartService.orderStatus(order.getGeneratedId()));
         LOG.debug("Status response order: {} is: {}", orderId, statusResponse);
