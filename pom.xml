@@ -13,7 +13,7 @@
         <maven.build.timestamp.format>h:mm a, d MMMM yyyy</maven.build.timestamp.format>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>5.2.9.RELEASE</spring.version>
+        <spring.version>5.3.3</spring.version>
         <jackson.version>2.12.1</jackson.version>
     </properties>
 
