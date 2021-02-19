@@ -6,6 +6,7 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +16,8 @@ public class ScheduleService {
     private final int maxAge;
     private final int cleanupPaidOrderDays;
     private final int cleanupUnpaidOrderDays;
-    
+
+
     @Autowired
     public ScheduleService(ConfigurationService config, OrderService orderService) {
         this.maxAge = config.getMaxAgeForRetry();
@@ -23,11 +25,12 @@ public class ScheduleService {
         this.cleanupUnpaidOrderDays = config.getDeleteUnpaidOrderDays();
         this.orderService = orderService;
     }
-    
+
+    @Scheduled(fixedDelayString = "${scheduler.statusCheck.delay}")
     public void statusCheck() {
         LOG.info("Scheduled task: {} starting", "statusCheck");
         Date minCreated = new LocalDateTime().minusMillis(maxAge).toDate();
-        
+
         for (String orderId : orderService.findUnpaidOrderIds(minCreated)) {
             try {
                 orderService.notifyPayment(orderId);
@@ -35,10 +38,11 @@ public class ScheduleService {
                 LOG.info(e.getMessage(), e);
             }
         }
-        
+
         LOG.info("Scheduled task: {} finished", "statusCheck");
     }
 
+    @Scheduled(fixedDelay = 3600000l)
     public void cleanup() {
         LOG.info("Scheduled task: {} starting", "cleanup");
         if (cleanupPaidOrderDays >= 0) {
@@ -49,5 +53,5 @@ public class ScheduleService {
         }
         LOG.info("Scheduled task: {} finished", "cleanup");
     }
-    
+
 }

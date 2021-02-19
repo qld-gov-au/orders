@@ -1,3 +1,4 @@
+<#ftl strip_whitespace=true>
 <head>
 <title>Added to cart</title>
 </head>

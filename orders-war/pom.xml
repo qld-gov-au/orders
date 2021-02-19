@@ -14,6 +14,7 @@
     </parent>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>h:mm a, d MMMM yyyy</maven.build.timestamp.format>
         <jetty.version>9.4.35.v20201120</jetty.version>
         <hibernate.version>5.4.28.Final</hibernate.version>
@@ -21,7 +22,22 @@
         <maven-jetty-plugin.port>8091</maven-jetty-plugin.port>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.30</slf4j.version>
+<!--        <spring-boot.version>2.4.2</spring-boot.version>-->
+        <git-commit-id-plugin.version>4.0.0</git-commit-id-plugin.version>
     </properties>
+
+    <dependencyManagement>
+        <!-- Inherit defaults from Spring Boot -->
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.4.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -37,27 +53,76 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-oxm</artifactId>
-            <version>${spring.version}</version>
+<!--            <version>${spring.version}</version>-->
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
-            <version>${spring.version}</version>
+<!--            <version>${spring.version}</version>-->
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aspects</artifactId>
-            <version>${spring.version}</version>
+<!--            <version>${spring.version}</version>-->
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>${spring.version}</version>
+<!--            <version>${spring.version}</version>-->
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
-            <version>${spring.version}</version>
+<!--            <version>${spring.version}</version>-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+<!--            <version>${spring-boot.version}</version>-->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.zaxxer</groupId>
+                    <artifactId>HikariCP</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+<!--            <version>${spring-boot.version}</version>-->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+<!--            <version>${spring-boot.version}</version>-->
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+<!--            <version>${spring-boot.version}</version>-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+<!--            <version>${spring-boot.version}</version>-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>   <!--It contains database base related classes-->
+<!--            <version>${spring-boot.version}</version>-->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.tomcat</groupId>
+                    <artifactId>tomcat-jdbc</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>opensymphony</groupId>
@@ -86,16 +151,16 @@
             <version>1.2</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <version>2.3.4.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.data</groupId>-->
+<!--            <artifactId>spring-data-jpa</artifactId>-->
+<!--&lt;!&ndash;            <version>2.3.4.RELEASE</version>&ndash;&gt;-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework</groupId>-->
+<!--            <artifactId>spring-orm</artifactId>-->
+<!--&lt;!&ndash;            <version>${spring.version}</version>&ndash;&gt;-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
@@ -234,14 +299,14 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
+<!--            <version>${spring.version}</version>-->
             <scope>test</scope>
         </dependency>
         <dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<version>1.4.200</version>
-			<scope>test</scope>
+			<scope>runtime</scope>
 		</dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -262,18 +327,18 @@
             <type>jar</type>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>${jetty.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-quickstart</artifactId>
-            <version>${jetty.version}</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.eclipse.jetty</groupId>-->
+<!--            <artifactId>jetty-server</artifactId>-->
+<!--            <version>${jetty.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.eclipse.jetty</groupId>-->
+<!--            <artifactId>jetty-quickstart</artifactId>-->
+<!--            <version>${jetty.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
@@ -310,30 +375,62 @@
             <version>4.3.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency><scope>test</scope><groupId>org.mockito</groupId><artifactId>mockito-core</artifactId></dependency>
+        <dependency><scope>test</scope><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><version>3.10.0</version></dependency>
     </dependencies>
 
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.2.0</version>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>${git-commit-id-plugin.version}</version>
+                <executions><execution><phase>compile</phase><goals><goal>revision</goal></goals></execution></executions>
+                <configuration>
+                    <dotGitDirectory>${project.basedir}/../.git</dotGitDirectory>
+                    <!-- this is false by default, forces the plugin to generate the git.properties file -->
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <!-- The path for the properties file to be generated. See Super Pom for default variable reference https://maven.apache.org/guides/introduction/introduction-to-the-pom.html -->
+                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>reserve-jetty-port</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>reserve-network-port</goal>
-                        </goals>
+                        <id>default-cli</id> <!-- this is spring-boot-run on command line id-->
+                        <phase>none</phase> <!-- spring-boot:run is phase none, also stops it running on validate step -->
+                        <goals><goal>run</goal></goals>
                         <configuration>
-                            <portNames>
-                                <portName>jettyStopPort</portName>
-                            </portNames>
+                            <fork>false</fork><!-- PE was true - changed for IJ debug -->
+                            <arguments>${springBootRunArguments}</arguments>
+                            <useTestClasspath>true</useTestClasspath>
+                            <folders>${project.basedir}/src/test/resources</folders>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>build-helper-maven-plugin</artifactId>-->
+<!--                <version>3.2.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>reserve-jetty-port</id>-->
+<!--                        <phase>pre-integration-test</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>reserve-network-port</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <portNames>-->
+<!--                                <portName>jettyStopPort</portName>-->
+<!--                            </portNames>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>properties-maven-plugin</artifactId>
@@ -346,7 +443,7 @@
                             </goals>
                             <configuration>
                                 <files>
-                                    <file>${basedir}/src/test/resources/application.properties</file>
+                                    <file>${basedir}/src/test/resources/application.yml</file>
                                 </files>
                             </configuration>
                         </execution>
@@ -361,6 +458,7 @@
                     <target>1.8</target>
                     <optimize>true</optimize>
                     <debug>true</debug>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
             <plugin>
@@ -414,47 +512,47 @@
 
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>${maven-jetty-plugin.version}</version>
-                <configuration>
-                    <reload>manual</reload>
-                    <stopKey>foo</stopKey>
-                    <stopPort>${jettyStopPort}</stopPort>
-                    <useTestScope>true</useTestScope>
-                    <httpConnector>
-                        <host>localhost</host>
-                        <port>${maven-jetty-plugin.port}</port>
-                    </httpConnector>
-<!--                    <scanIntervalSeconds>10</scanIntervalSeconds>-->
-                    <webAppSourceDirectory>${webapp.src.directory}</webAppSourceDirectory>
-                    <webApp>
-                        <contextPath>/orders</contextPath>
-                        <baseAppFirst>false</baseAppFirst>
-                        <webInfIncludeJarPattern>.</webInfIncludeJarPattern>
-                    </webApp>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>start-jetty</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                        <configuration>
-                            <daemon>true</daemon>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>stop-jetty</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.eclipse.jetty</groupId>-->
+<!--                <artifactId>jetty-maven-plugin</artifactId>-->
+<!--                <version>${maven-jetty-plugin.version}</version>-->
+<!--                <configuration>-->
+<!--                    <reload>manual</reload>-->
+<!--                    <stopKey>foo</stopKey>-->
+<!--                    <stopPort>${jettyStopPort}</stopPort>-->
+<!--                    <useTestScope>true</useTestScope>-->
+<!--                    <httpConnector>-->
+<!--                        <host>localhost</host>-->
+<!--                        <port>${maven-jetty-plugin.port}</port>-->
+<!--                    </httpConnector>-->
+<!--&lt;!&ndash;                    <scanIntervalSeconds>10</scanIntervalSeconds>&ndash;&gt;-->
+<!--                    <webAppSourceDirectory>${webapp.src.directory}</webAppSourceDirectory>-->
+<!--                    <webApp>-->
+<!--                        <contextPath>/orders</contextPath>-->
+<!--                        <baseAppFirst>false</baseAppFirst>-->
+<!--                        <webInfIncludeJarPattern>.</webInfIncludeJarPattern>-->
+<!--                    </webApp>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>start-jetty</id>-->
+<!--                        <phase>pre-integration-test</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>start</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <daemon>true</daemon>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>stop-jetty</id>-->
+<!--                        <phase>post-integration-test</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>stop</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
@@ -484,7 +582,7 @@
 
         </plugins>
     </build>
-    
+
     <reporting>
         <plugins>
             <plugin>

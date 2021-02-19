@@ -10,12 +10,16 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.core.config.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import au.gov.qld.pub.orders.service.ConfigurationService;
 
+@Component
+@Order(0)
 public class ErrorHandlerFilter implements Filter {
     private static final Logger LOG = LoggerFactory.getLogger(ErrorHandlerFilter.class);
     private ConfigurationService config;
@@ -31,7 +35,7 @@ public class ErrorHandlerFilter implements Filter {
             httpResponse.sendRedirect(config.getErrorRedirect());
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
-            
+
             HttpServletResponse httpResponse = (HttpServletResponse) response;
             httpResponse.sendRedirect(config.getErrorRedirect());
         }
@@ -45,7 +49,7 @@ public class ErrorHandlerFilter implements Filter {
     @Override
     public void destroy() {
     }
-    
+
     protected ConfigurationService getConfigurationService(FilterConfig filterConfig) {
         return WebApplicationContextUtils.getRequiredWebApplicationContext(
                 filterConfig.getServletContext()).getBean(ConfigurationService.class);

@@ -1,0 +1,112 @@
+---
+
+spring.profiles.include: "default"
+
+errorRedirect: "${sourceUrl}"
+
+keyfile: "/tmp/.orders.key"
+keyfilefallbackvalue: "testkey"
+
+mail:
+  from: "noreply@www.qld.gov.au"
+management:
+  endpoints:
+    enabled-by-default: true
+    endpoint:
+      health:
+        enabled: true
+      info:
+        enabled: true
+        git:
+          mode: simple
+    web:
+      base-path: "/manage"
+  server:
+    add-application-context-header: false
+    servlet:
+      context-path: ""
+
+noticeToPay:
+  default:
+    redirect: "${sourceUrl}"
+  disbursementId: 999
+  id:
+    pattern: ".+"
+  serviceWsNotify: "${serviceFullUrl}"
+  serviceWsPassword: "ENC(XLW43w1vH+GlFUViiEBRCn/PvVlwlIT37w6ceV+W+rU=)"
+  serviceWsUsername: "test"
+  source:
+    pattern: "${sourceUrl}"
+notifyFormRetryCount: 3
+notifyFormRetryWait: 3000
+notifyFormTimeout: 3000
+papiBase: "https://test.smartservice.qld.gov.au/payment"
+
+scheduler:
+  cleanup:
+    deletePaidOrderDays: 60
+    deleteUnpaidOrderDays: 30
+    deleteUploadsDays: 60
+  statusCheck:
+    delay: 3600000
+    maxAgeForRetry: 86400000
+
+server:
+  error:
+    path: "/error"
+    whitelabel:
+      enabled: false
+  port: 8091
+  servlet:
+    encoding:
+      charset: "UTF-8"
+      force: true
+
+serviceFranchise: "Agency franchise"
+serviceFullUrl: "http://localhost:8091${web.context}"
+serviceName: "Orders"
+serviceWsEndpoint: "${papiBase}/service/"
+serviceWsNotify: "${serviceFullUrl}/notify"
+serviceWsPassword: "ENC(XLW43w1vH+GlFUViiEBRCn/PvVlwlIT37w6ceV+W+rU=)"
+serviceWsUsername: "test"
+sourceEncoding: "UTF-8"
+sourceUrl: "http://localhost:8091/order/test"
+
+spring:
+  datasource:
+    dbcp2:
+      initial-size: 1
+      test-while-idle: true
+    type: org.apache.commons.dbcp2.BasicDataSource
+  info:
+    build:
+      location: "classpath:META-INF/build-info.properties"
+    git:
+      location: "classpath:git.properties"
+  jpa:
+    hibernate:
+      ddl-auto: create
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        id:
+          new_generator_mappings: false
+    show-sql: false
+  mail:
+    host: "localhost"
+    port: 1325
+  main:
+    web-application-type: servlet
+  mvc:
+    servlet:
+      path: "/order"
+  profiles:
+    include: "default"
+
+
+upload:
+  max: 15728640
+  supported: "doc;docx;pdf;odf;jpg;jpeg;bmp;tif;tiff;png;xls;xlsx"
+web:
+  context: "/order"

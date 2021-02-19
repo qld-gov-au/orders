@@ -1,3 +1,4 @@
+<#ftl strip_whitespace=true>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 
@@ -9,18 +10,18 @@
 
     <link rel="stylesheet" type="text/css" href="https://static.qgov.net.au/assets/v2/style/qgov.css" media="all" />
     <!--[if lt IE 9]><link rel="stylesheet" href="https://static.qgov.net.au/assets/v2/style/qgov-ie.css" type="text/css" media="all" /><![endif]-->
-    
+
     <!-- layout-small is assumed by default (combined with qgov.css) -->
     <link href="https://static.qgov.net.au/assets/v2/style/layout-medium.css" media="only all and (min-width: 640px) and (max-width: 980px)" rel="stylesheet" type="text/css" />
     <link href="https://static.qgov.net.au/assets/v2/style/layout-large.css" media="only all and (min-width: 980px)" rel="stylesheet" type="text/css" />
-    
+
     <meta name="viewport" content="width=device-width" />
-    
-    
+
+
     <link rel="shortcut icon" href="https://static.qgov.net.au/assets/v2/images/skin/favicon.ico" />
 
-    <!-- Grab Google CDN's jQuery. Fall back to local copy if necessary --> 
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script> 
+    <!-- Grab Google CDN's jQuery. Fall back to local copy if necessary -->
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
     <script type="text/javascript"><!-- //
         !window.jQuery && document.write(unescape('%3Cscript src="https://static.qgov.net.au/assets/v2/script/jquery-1.4.4-min.js"%3E%3C/script%3E'));
     // --></script>
@@ -40,7 +41,7 @@
 
 <!-- noindex -->
     <!--[if lt IE 9]><script type="text/javascript">jQuery && jQuery.transformer({addClasses:true});</script><![endif]-->
-    
+
     <div id="access">
         <h2>Skip links and keyboard navigation</h2>
         <ul>
@@ -216,8 +217,8 @@
 <script type="text/javascript" src="https://static.qgov.net.au/assets/v2/script/loader.js"></script>
 <script type="text/javascript" src="https://static.qgov.net.au/assets/v2/script/init.js"></script>
 </div>
-    
 
-  
+
+
 </body>
 </html>
