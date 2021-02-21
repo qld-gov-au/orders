@@ -13,7 +13,7 @@ import au.gov.qld.pub.orders.scenario.selenium.ConfirmPage;
 
 public class ScenarioSetup {
 
-    public static final String BASE_URL = "http://localhost:8091/orders/";
+    public static final String BASE_URL = "http://localhost:8091/";
     private static boolean embedded = false;
 
     public static WebDriver driver;

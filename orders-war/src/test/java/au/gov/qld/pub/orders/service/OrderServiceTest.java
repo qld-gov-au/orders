@@ -3,22 +3,22 @@ package au.gov.qld.pub.orders.service;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -34,7 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.ImmutableMap;
@@ -87,7 +87,7 @@ public class OrderServiceTest {
 
         when(requestBuilder.addRequest(order)).thenReturn(ADD_REQUEST);
         when(orderDAO.findByCartId(CART_ID)).thenReturn(order);
-        when(command.getProductId()).thenReturn(asList(PRODUCT_ID));        
+//        when(command.getProductId()).thenReturn(asList(PRODUCT_ID)); //UnnecessaryStubbingException
         when(cartService.addToCart(ADD_REQUEST)).thenReturn("<cartId>" + CART_ID + "</cartId>"
                 + "<generatedOrderId>" + GENERATED_ID + "</generatedOrderId>");
         when(responseParser.getReceipt(ORDER_STATUS)).thenReturn(RECEIPT);
@@ -120,7 +120,7 @@ public class OrderServiceTest {
     	when(item.getFieldsMap()).thenReturn(Collections.EMPTY_MAP);
     	Order order = orderService.add(asList(item), null);
     	assertThat(order, nullValue());
-    	verifyZeroInteractions(cartService);
+    	verifyNoInteractions(cartService);
     	verify(orderDAO, never()).save(isA(Order.class));
     }
     
@@ -235,7 +235,7 @@ public class OrderServiceTest {
         assertThat(orderService.notifyPayment(id), is(false));
         assertThat(order.getPaid(), nullValue());
         verify(orderDAO, never()).save(order);
-        verifyZeroInteractions(notifyService);
+        verifyNoInteractions(notifyService);
     }
     
     @Test
@@ -246,8 +246,8 @@ public class OrderServiceTest {
         assertThat(orderService.notifyPayment(id), is(false));
         assertThat(order.getPaid(), nullValue());
         verify(orderDAO, never()).save(order);
-        verifyZeroInteractions(notifyService);
-        verifyZeroInteractions(cartService);
+        verifyNoInteractions(notifyService);
+        verifyNoInteractions(cartService);
     }
     
     @Test
@@ -258,7 +258,7 @@ public class OrderServiceTest {
         
         assertThat(orderService.notifyPayment(id), is(false));
         verify(orderDAO, never()).save(order);
-        verifyZeroInteractions(notifyService);
+        verifyNoInteractions(notifyService);
     }
     
     @Test

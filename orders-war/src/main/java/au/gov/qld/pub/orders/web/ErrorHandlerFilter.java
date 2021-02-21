@@ -19,10 +19,11 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import au.gov.qld.pub.orders.service.ConfigurationService;
 
 @Component
-@Order(0)
+@Order(1)
 public class ErrorHandlerFilter implements Filter {
     private static final Logger LOG = LoggerFactory.getLogger(ErrorHandlerFilter.class);
     private ConfigurationService config;
+
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
@@ -43,11 +44,13 @@ public class ErrorHandlerFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        LOG.info("Initializing filter :{}", this);
         config = getConfigurationService(filterConfig);
     }
 
     @Override
     public void destroy() {
+        LOG.warn("Destructing filter :{}", this);
     }
 
     protected ConfigurationService getConfigurationService(FilterConfig filterConfig) {

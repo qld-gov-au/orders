@@ -7,12 +7,12 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isA;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import au.gov.qld.pub.orders.dao.NoticeToPayDAO;
 import au.gov.qld.pub.orders.entity.NoticeToPay;
@@ -100,14 +100,14 @@ public class NoticeToPayServiceTest {
     public void returnNullWhenIfNoOwingAmount() throws Exception {
         when(paymentInformation.getAmountOwingInCents()).thenReturn(0l);
         assertThat(service.create(SOURCE_ID, SOURCE_URL), nullValue());
-        verifyZeroInteractions(soapClient);
+        verifyNoInteractions(soapClient);
     }
     
     @Test
     public void throwExceptionIfRecentlyPaid() throws Exception {
         when(noticeToPayDAO.existsByPaymentInformationIdAndNotifiedAtAfter(SOURCE_ID, new DateTime().minusHours(1).toDate())).thenReturn(true);
         assertThat(service.create(SOURCE_ID, SOURCE_URL), nullValue());
-        verifyZeroInteractions(soapClient);
+        verifyNoInteractions(soapClient);
     }
     
     @Test
@@ -139,9 +139,9 @@ public class NoticeToPayServiceTest {
         when(noticeToPay.getNotifiedAt()).thenReturn(new Date());
         service.notifyPayment(NOTICE_TO_PAY_ID);
         
-        verifyZeroInteractions(requestBuilder);
-        verifyZeroInteractions(soapClient);
-        verifyZeroInteractions(additionalNotificationService);
+        verifyNoInteractions(requestBuilder);
+        verifyNoInteractions(soapClient);
+        verifyNoInteractions(additionalNotificationService);
         verify(noticeToPayDAO, never()).save(argThat(isA(NoticeToPay.class)));
     }
     
@@ -151,10 +151,10 @@ public class NoticeToPayServiceTest {
             service.notifyPayment("bogus");
             fail();
         } catch (ServiceException e) {
-            verifyZeroInteractions(noticeToPay);
-            verifyZeroInteractions(requestBuilder);
-            verifyZeroInteractions(soapClient);
-            verifyZeroInteractions(additionalNotificationService);
+            verifyNoInteractions(noticeToPay);
+            verifyNoInteractions(requestBuilder);
+            verifyNoInteractions(soapClient);
+            verifyNoInteractions(additionalNotificationService);
         }
     }
     
@@ -166,7 +166,7 @@ public class NoticeToPayServiceTest {
             fail();
         } catch (ServiceException e) {
             verify(noticeToPayDAO, never()).save(argThat(isA(NoticeToPay.class)));
-            verifyZeroInteractions(additionalNotificationService);
+            verifyNoInteractions(additionalNotificationService);
         }
     }
     
@@ -175,7 +175,7 @@ public class NoticeToPayServiceTest {
         when(soapClient.sendRequest(USERNAME, PASSWORD.getBytes("UTF-8"), NoticeToPayService.NS, NTP_QUERY)).thenReturn(FAILED_QUERY_RESPONSE);
         service.notifyPayment(NOTICE_TO_PAY_ID);
         verify(noticeToPayDAO, never()).save(argThat(isA(NoticeToPay.class)));
-        verifyZeroInteractions(additionalNotificationService);
+        verifyNoInteractions(additionalNotificationService);
     }
     
 }

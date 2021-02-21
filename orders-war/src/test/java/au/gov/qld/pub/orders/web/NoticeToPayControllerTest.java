@@ -4,16 +4,16 @@ import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.view.RedirectView;
@@ -109,21 +109,21 @@ public class NoticeToPayControllerTest {
             controller.notifyPayment(null);
             fail();
         } catch (ServiceException e) {
-            verifyZeroInteractions(service);
+            verifyNoInteractions(service);
         }
         
         try {
             controller.notifyPayment("");
             fail();
         } catch (ServiceException e) {
-            verifyZeroInteractions(service);
+            verifyNoInteractions(service);
         }
         
         try {
             controller.notifyPayment(repeat("a", 100));
             fail();
         } catch (ServiceException e) {
-            verifyZeroInteractions(service);
+            verifyNoInteractions(service);
         }
     }
 }

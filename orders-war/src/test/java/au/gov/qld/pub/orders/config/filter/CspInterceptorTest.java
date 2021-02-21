@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 public class CspInterceptorTest {
 
@@ -101,7 +101,7 @@ public class CspInterceptorTest {
         verify(mockResponse).setHeader(eq(CSP_REPORT_ONLY_HEADER), anyString());
         verify(mockResponse).setHeader(eq(CSP_REPORT_TO_HEADER), anyString());
         verify(mockResponse).setHeader(eq(CSP_NEL_HEADER), anyString());
-        verifyZeroInteractions(mockHandler);
+        verifyNoInteractions(mockHandler);
     }
 
     @Test

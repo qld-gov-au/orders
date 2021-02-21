@@ -4,7 +4,6 @@
     <head>
 
         <#assign qgov_assets_url="https://static.qgov.net.au/assets/v2" />
-        <#global local_assets_url="${contextPath!'/seniors-concessions'}/static" />
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <!-- Version: ${gitVersion!} - ${gitLastBuiltTime!} -->
@@ -31,15 +30,13 @@
         <meta name="DCTERMS.audience" scheme="AGLSTERMS.agls-audience" content="">
         <meta name="DCTERMS.jurisdiction" scheme="AGLSTERMS.AglsJuri" content="Queensland">
 
-        <#include "../web-template-release/template-cdn-ssi/assets/includes-cdn/head-assets.html"/>
-
-        <link nonce="${__csp_nonce}" rel="stylesheet" href="/style/lato/css/lato.css">
-        <link nonce="${__csp_nonce}" rel="stylesheet" href="/style/seniors-global.css">
-        <link nonce="${__csp_nonce}" rel="stylesheet" href="/style/swe-patch.css">
+        <#include "../web-template-release/head-assets.html"/>
 
         <#noautoesc>
             ${head!}
         </#noautoesc>
+        <script nonce="${__csp_nonce}" src="${papiBase}/minicart/contents_1.0.js" type="text/javascript"></script>
+        <link nonce="${__csp_nonce}" type="text/css" href="${papiBase}/ui/minicart_1.0.css" rel="stylesheet" />
 
         <noscript>
             <style nonce="${__csp_nonce}">
@@ -53,14 +50,17 @@
 
     <body data-qg-accessibility="true">
 
-    <#include "../web-template-release/template-cdn-ssi/assets/includes-cdn/analytics.html">
-    <#include "../web-template-release/template-cdn-ssi/assets/includes-cdn/header/access.html">
+    <#include "../web-template-release/analytics.html">
+    <#include "../web-template-release/header/access.html">
 
-    <#include "../web-template-release/template-cdn-ssi/assets/includes-cdn/header/header-without-location.html">
+    <#include "../web-template-release/header/header-without-location.html">
 
-    <#include "../partials/breadcrumbs.ftlh">
+    <#noautoesc>
+        ${breadcrumb!} <#-- or include default <#include "../partials/breadcrumbs.ftlh"> -->
+    </#noautoesc>
+
     <#--
-    <#include "../web-template-release/template-cdn-ssi/assets/includes-cdn/breadcrumbs/breadcrumb-demo.html">
+    <#include "../web-template-release/breadcrumbs/breadcrumb-demo.html">
     -->
 
     <div class="container-fluid qg-site-width">
@@ -70,16 +70,14 @@
 
             <div id="<#if columns>qg-three-col<#else>qg-two-col-aside</#if>" class="row wide">
 
-                <#if nav_title_key == "title.nav.checkYourEligibility">
-                    <#include "../partials/banner.ftlh">
-                </#if>
-
                 <!-- left-hand column -->
-                <#include "../partials/left-hand-nav.ftlh"/>
+                <#noautoesc>
+                    ${leftHandNav!} <#-- or include default <#include "../partials/left-hand-nav.ftlh"> -->
+                </#noautoesc>
 
                 <div id="qg-primary-content" role="main">
 
-                    <#include "../web-template-release/template-cdn-ssi/assets/includes-cdn/content/alert.html">
+                    <#include "../web-template-release/content/alert.html">
                     <noscript>
                         <div class="alert alert-warning" role="alert">
                             <p><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> It appears that JavaScript is disabled or not supported by your browser. To access this service online, please enable JavaScript in your browser settings and try again. Alternatively, you can contact 13 QGOV (13 74 68) for other options to apply.</p>
@@ -99,18 +97,51 @@
                            </dl>
                         -->
                     </div>
-                    <#include "../web-template-release/template-cdn-ssi/assets/includes-cdn/content/options.html">
+                    <#include "../web-template-release/content/options.html">
                 </div>
 
                 <#if columns>
                     <aside id="qg-secondary-content">
+
+                        <div class="qg-aside" id="minicart" >
+                            <div class="inner">
+                                <div id="ssq-minicart" class="placeholder">
+                                    <h2>Cart</h2>
+                                    <div id="ssq-minicart-view">
+                                        <script nonce="${__csp_nonce}" type="text/javascript"> <!--
+                                            document.write('<div class="ssq-minicart-loading"><p>Loading <a href="${papiBase}/cart/view">cart</a>...</p></div>');
+                                            // --> </script>
+                                        <noscript>
+                                            <p class="ssq-minicart-noscript">Edit cart or checkout to place your order.</p>
+                                            <div class="ssq-minicart-submit">
+                                                <input type="hidden" id="ssq-cart-contents" name="ssq-cart-contents" value="" />
+                                                <a href="${papiBase}/cart/checkout" id="ssq-cart-checkout"><img id="ssq_minicart_checkout" src="${papiBase}/minicart/btn-checkout.png" alt="Checkout" /></a>
+                                                <a href="${papiBase}/cart/view" id="ssq-cart-edit"><img id="ssq_minicart_cart" src="${papiBase}/minicart/btn-cart.png" alt="Edit cart" /></a>
+                                            </div>
+                                        </noscript>
+                                    </div>
+
+                                    <#if cartId?has_content>
+                                        <img src="${papiBase}/minicart/synchronise?cartId=${cartId}" id="ssq-synch-img" height="0" width="0" alt="" />
+                                    </#if>
+                                    <div class="ssq-minicart-cards">
+                                        <h3>Cards accepted</h3>
+                                        <ul>
+                                            <li><img src="${papiBase}/minicart/visa.png" alt="Visa" /></li>
+                                            <li><img src="${papiBase}/minicart/mastercard.png" alt="MasterCard" /></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="qg-aside qg-contact" role="complementary">
                             <h2><span class="fa fa-phone fa-2x" aria-hidden="true"></span>Contact</h2>
                             <ul>
                                 <li class="telephone">General enquiries <span class="tel">13 QGOV (13 74 68)</span></li>
                             </ul>
                         </div>
-                        <#include "../partials/loginLogout.ftlh">
+<#--                        <#include "../partials/loginLogout.ftlh">-->
                     </aside>
                 </#if>
 
@@ -119,7 +150,7 @@
         </div>
     </div>
 
-    <#include "../web-template-release/template-cdn-ssi/assets/includes-cdn/footer/footer-without-location.html">
+    <#include "../web-template-release/footer/footer-without-location.html">
 
     <script nonce="${__csp_nonce}" >
         var qg = qg || {};
@@ -128,17 +159,10 @@
         qg.swe.franchiseTitle = 'Franchise Title';
     </script>
 
-    <#include "../web-template-release/template-cdn-ssi/assets/includes-cdn/footer/footer-scripts.html">
-
-    <script nonce="${__csp_nonce}" src="/scripts/autofocus.js"></script>
-    <script nonce="${__csp_nonce}" src="/scripts/question-collapse.js"></script>
-
+    <#include "../web-template-release/footer/footer-scripts.html">
     <#noautoesc>
         ${footer_script!}
     </#noautoesc>
-    <!-- Mopinion Pastea.se  start -->
-    <script nonce="${__csp_nonce}" type="text/javascript">(function(){var id="${analyticsMopinion}";var js=document.createElement("script");js.setAttribute("type","text/javascript");js.setAttribute("src","//deploy.mopinion.com/js/pastease.js");js.async=true;document.getElementsByTagName("head")[0].appendChild(js);var t=setInterval(function(){try{new Pastease.load(id);clearInterval(t)}catch(e){}},50)})();</script>
-    <!-- Mopinion Pastea.se end -->
     </body>
 
     </html>

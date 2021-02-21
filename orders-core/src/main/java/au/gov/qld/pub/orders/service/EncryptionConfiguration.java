@@ -9,6 +9,19 @@ import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.config.SimplePBEConfig;
 
+/**
+ * @deprecated for use of jasypt-spring-boot-starter springboot wiring
+ *
+ * jasypt:
+ *   encryptor:
+ *     #provider needs to be bouncycastel for this algorithm
+ *     provider-name: "BC"
+ *    provider-class-name: org.bouncycastle.jce.provider.BouncyCastleProvider
+ *    algorithm: "PBEWITHSHA256AND128BITAES-CBC-BC"
+ *    password: "mysecretpassword" #keyfilefallbackvalue
+ *    iv-generator-classname: org.jasypt.iv.NoIvGenerator #CBC-BC does not need iv
+ */
+@Deprecated
 public class EncryptionConfiguration extends SimplePBEConfig {
     private static final String ALGORITHM = "PBEWITHSHA256AND128BITAES-CBC-BC";
 

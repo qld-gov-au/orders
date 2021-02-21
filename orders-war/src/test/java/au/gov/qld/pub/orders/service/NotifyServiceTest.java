@@ -2,16 +2,16 @@ package au.gov.qld.pub.orders.service;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static java.util.Arrays.asList;
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
@@ -33,7 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -81,7 +81,7 @@ public class NotifyServiceTest {
     @Before
     public void setUp() throws Exception {
         when(orderGrouper.paidByProductGroup(order)).thenReturn(of(PRODUCT_ID, groupedOrder));
-        when(groupedOrder.getItems()).thenReturn(asList(item));
+//        when(groupedOrder.getItems()).thenReturn(asList(item)); //UnnecessaryStubbingException
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -105,7 +105,7 @@ public class NotifyServiceTest {
         when(configurationService.getMailFrom()).thenReturn(FROM);
         when(configuration.getTemplate(PRODUCT_ID + ".customer.email.ftl")).thenReturn(customerTemplate);
         when(configuration.getTemplate(PRODUCT_ID + ".business.email.ftl")).thenReturn(businessTemplate);
-        when(orderDAO.findById(order.getId())).thenReturn(Optional.of(order));
+//        when(orderDAO.findById(order.getId())).thenReturn(Optional.of(order)); //UnnecessaryStubbingException
         service = new NotifyService(configurationService, orderDAO, mailSender, orderGrouper, inlineTemplateService, attachmentService, 
         		additionalMailContentService, additionalNotificationService) {
             @Override
@@ -120,21 +120,21 @@ public class NotifyServiceTest {
         when(order.getNotified()).thenReturn("anything");
         service.send(order);
 
-        verifyZeroInteractions(mailSender);
+        verifyNoInteractions(mailSender);
         verify(order, never()).setNotified(anyString());
         verify(orderDAO, never()).save(order);
-        verifyZeroInteractions(additionalMailContentService);
-        verifyZeroInteractions(additionalNotificationService);
+        verifyNoInteractions(additionalMailContentService);
+        verifyNoInteractions(additionalNotificationService);
     }
     
     @Test
     public void notifyToBusiness() throws Exception {
-        when(item.isPaid()).thenReturn(true);
+//        when(item.isPaid()).thenReturn(true); //UnnecessaryStubbingException
         when(item.getFieldsMap()).thenReturn((Map<String, String>)of("field", "value"));
 		when(order.getPaidItems()).thenReturn(asList(item));
 		when(groupedOrder.getPaidItems()).thenReturn(asList(item));
 
-		when(item.getNotifyBusinessFormFilename()).thenReturn("businessFile");
+//		when(item.getNotifyBusinessFormFilename()).thenReturn("businessFile"); //UnnecessaryStubbingException
         when(item.getNotifyBusinessEmail()).thenReturn(BUSINESS_TO);
         when(item.getNotifyBusinessEmailSubject()).thenReturn(BUSINESS_SUBJECT);
         when(order.getPaid()).thenReturn(PAID);
@@ -157,18 +157,18 @@ public class NotifyServiceTest {
         when(order.getPaid()).thenReturn(null);
         service.send(order);
 
-        verifyZeroInteractions(mailSender);
-        verifyZeroInteractions(attachmentService);
-        verifyZeroInteractions(additionalMailContentService);
+        verifyNoInteractions(mailSender);
+        verifyNoInteractions(attachmentService);
+        verifyNoInteractions(additionalMailContentService);
         verify(order, never()).setNotified(anyString());
         verify(orderDAO, never()).save(order);
-        verifyZeroInteractions(additionalNotificationService);
+        verifyNoInteractions(additionalNotificationService);
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void notifyToCustomerFromCustomerDetails() throws Exception {
-    	when(item.getNotifyCustomerFormFilename()).thenReturn("customerFile");
+//    	when(item.getNotifyCustomerFormFilename()).thenReturn("customerFile"); //UnnecessaryStubbingException
         when(item.getNotifyCustomerEmailField()).thenReturn("customerDetails");
         when(item.getNotifyCustomerEmailSubject()).thenReturn(CUSTOMER_SUBJECT);
         when(groupedOrder.getCustomerDetailsMap()).thenReturn(of("email", CUSTOMER_TO));
@@ -193,7 +193,7 @@ public class NotifyServiceTest {
         when(order.getPaid()).thenReturn(PAID);
         when(order.getPaidItems()).thenReturn(asList(item));
         when(groupedOrder.getPaidItems()).thenReturn(asList(item));
-        when(item.getNotifyCustomerFormFilename()).thenReturn("customerFile");
+//        when(item.getNotifyCustomerFormFilename()).thenReturn("customerFile"); //UnnecessaryStubbingException
         when(item.getNotifyCustomerEmailField()).thenReturn("deliveryDetails");
         when(item.getNotifyCustomerEmailSubject()).thenReturn(CUSTOMER_SUBJECT);
         when(groupedOrder.getDeliveryDetailsMap()).thenReturn(of("email", CUSTOMER_TO));        

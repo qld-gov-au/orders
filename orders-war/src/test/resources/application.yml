@@ -1,11 +1,21 @@
 ---
 
-spring.profiles.include: "default"
-
 errorRedirect: "${sourceUrl}"
 
-keyfile: "/tmp/.orders.key"
-keyfilefallbackvalue: "testkey"
+jasypt:
+  encryptor:
+    #provider needs to be bouncycastel for this algorithm
+    provider-name: "BC"
+    provider-class-name: org.bouncycastle.jce.provider.BouncyCastleProvider
+    algorithm: "PBEWITHSHA256AND128BITAES-CBC-BC"
+    password: "testkey" #keyfilefallbackvalue
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator #CBC-BC does not need iv
+    #TODO rotate secrets to better algorithm with iv, https://nickolasfisher.com/blog/A-Concise-Guide-to-Using-Jasypt-In-Spring-Boot-for-Configuration-Encryption
+    #der style
+    #privateKeyLocation: classpath:private_key.der
+    #PEM style #keyfile ?
+#    privateKeyFormat: PEM
+#    privateKeyLocation: classpath:private_key.pem
 
 mail:
   from: "noreply@www.qld.gov.au"
@@ -23,8 +33,8 @@ management:
       base-path: "/manage"
   server:
     add-application-context-header: false
-    servlet:
-      context-path: ""
+#    servlet:
+#      context-path: "/order"
 
 noticeToPay:
   default:
@@ -51,6 +61,7 @@ scheduler:
     delay: 3600000
     maxAgeForRetry: 86400000
 
+
 server:
   error:
     path: "/error"
@@ -61,6 +72,7 @@ server:
     encoding:
       charset: "UTF-8"
       force: true
+#    context-path: "/order"
 
 serviceFranchise: "Agency franchise"
 serviceFullUrl: "http://localhost:8091${web.context}"
@@ -70,7 +82,8 @@ serviceWsNotify: "${serviceFullUrl}/notify"
 serviceWsPassword: "ENC(XLW43w1vH+GlFUViiEBRCn/PvVlwlIT37w6ceV+W+rU=)"
 serviceWsUsername: "test"
 sourceEncoding: "UTF-8"
-sourceUrl: "http://localhost:8091/order/test"
+sourceUrl: "http://localhost:8091/test"
+#sourceUrl: "http://localhost:8091/order/test"
 
 spring:
   datasource:
@@ -98,9 +111,9 @@ spring:
     port: 1325
   main:
     web-application-type: servlet
-  mvc:
-    servlet:
-      path: "/order"
+#  mvc:
+#    servlet:
+#      path: "/order"
   profiles:
     include: "default"
 
@@ -109,4 +122,18 @@ upload:
   max: 15728640
   supported: "doc;docx;pdf;odf;jpg;jpeg;bmp;tif;tiff;png;xls;xlsx"
 web:
-  context: "/order"
+#  context: "/order"
+  context: "/"
+
+reportUri:
+  reportto: "{\"group\":\"default\",\"max_age\":31536000,\"endpoints\":[{\"url\":\"https://qldonline.report-uri.com/a/d/g\"}],\"include_subdomains\":true}"
+  nel: "{\"report_to\":\"default\",\"max_age\":31536000,\"include_subdomains\":true}"
+  csp:
+    enforce: false #should be true so that it blocks inline script injection attacks etc
+    upgradeInsecureRequests: ""
+    default-src-data: "test.smartservice.qld.gov.au beta-static.qgov.net.au static.qgov.net.au fonts.gstatic.com www.google.com www.google.com.au stats.g.doubleclick.net www.googletagmanager.com tagmanager.google.com *.google-analytics.com https://*.gstatic.com fonts.googleapis.com ajax.googleapis.com rawgit.com code.jquery.com "
+    script-src-data: "test.smartservice.qld.gov.au beta-static.qgov.net.au static.qgov.net.au  www.google.com www.googletagmanager.com tag.manager.google.com tagmanager.google.com www.google-analytics.com stats.g.doubleclick.net www.gstatic.com maps.googleapis.com fonts.googleapis.com ajax.googleapis.com code.jquery.com"
+    style-src-data: "'test.smartservice.qld.gov.au beta-static.qgov.net.au static.qgov.net.au  fonts.gstatic.com www.google.com www.google.com.au stats.g.doubleclick.net www.googletagmanager.com tagmanager.google.com *.google-analytics.com https://*.gstatic.com fonts.googleapis.com ajax.googleapis.com rawgit.com code.jquery.com "
+    report-url: "https://qldonline.report-uri.com/r/d/csp/reportonly"
+    filter: "default-src 'self' 'unsafe-inline' data: ${reportUri.csp.default-src-data}; script-src 'nonce-[__csp_nonce]' 'strict-dynamic' 'self' 'unsafe-inline' 'unsafe-eval' data: ${reportUri.csp.script-src-data}; ${reportUri.csp.upgradeInsecureRequests} frame-ancestors 'self'; form-action 'self' www.smartservice.qld.gov.au; report-uri ${reportUri.csp.report-url};"
+

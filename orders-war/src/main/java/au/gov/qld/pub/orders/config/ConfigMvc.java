@@ -2,15 +2,12 @@ package au.gov.qld.pub.orders.config;
 
 
 import au.gov.qld.pub.orders.config.filter.CspInterceptor;
+import au.gov.qld.pub.orders.web.ErrorHandlerFilter;
 import au.gov.qld.pub.orders.web.ViewPostProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,11 +16,11 @@ import java.util.concurrent.TimeUnit;
 public class ConfigMvc implements WebMvcConfigurer {
 
     @Autowired
-    ViewPostProcessor viewPostProcessor;
+    private ViewPostProcessor viewPostProcessor;
 
     @Autowired
     private CspInterceptor cspInterceptor;
-
+    
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(viewPostProcessor);
@@ -35,7 +32,7 @@ public class ConfigMvc implements WebMvcConfigurer {
         registry.addResourceHandler("/web-template-release/**").addResourceLocations("classpath:/templates/web-template-release")
             .setCacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES));
 
-//        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
     }
 
     @Override
@@ -46,8 +43,5 @@ public class ConfigMvc implements WebMvcConfigurer {
         //- TODO: REMOVE FOR RELEASES or make only on profile dev local etc
         registry.addViewController("/test").setViewName("test");
     }
-
-
-
 
 }

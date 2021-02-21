@@ -10,7 +10,7 @@ public class DefaultControlerStuff {
 
     @RequestMapping("/")
     public String randohome() {
-        return "error";
+        return "index";
     }
 
     @RequestMapping("/notfound")

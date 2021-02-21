@@ -6,6 +6,7 @@
     </Appenders>
     <Loggers>
         <Logger name="com.gargoylesoftware.htmlunit" level="fatal" />
+        <Logger name="org" level="warn" />
 
         <Root level="debug">
             <AppenderRef ref="STDOUT" />

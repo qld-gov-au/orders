@@ -2,7 +2,16 @@
 <#import "macro/page.ftlh" as page>
 <#global title = "Example home"/>
 
+<#global head>
+
+</#global>
+
+<#global footer_script>
+
+</#global>
+
 <@page.page>
+
 <content tag="top_nav">
 <li>Top nav item</li>
 </content>

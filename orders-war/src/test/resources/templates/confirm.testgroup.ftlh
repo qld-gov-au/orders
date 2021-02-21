@@ -23,7 +23,7 @@
         <input type="hidden" name="${key}" value="${fields[key]!""}"/>
     </#list>
     
-    <script type="text/javascript"><!--
+    <script nonce="${__csp_nonce}" type="text/javascript"><!--
     document.write('<input type="hidden" name="ssqCartId" value="' + SSQ.cart.id + '" />');
     // --></script>
 </form>

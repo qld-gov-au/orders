@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 
-import java.io.IOException;
 
 @org.springframework.context.annotation.Configuration
 //ignoreResourceNotFound set to true so that Intellij builds don't fail
