@@ -26,7 +26,7 @@
     Product ID 2: <input type="text" name="some-field-for-product2" id="productId" value="test2"/><br/>
     Field 1: <input type="text" name="field1" id="field1" value="field1"/><br/>
     Field 2: <input type="text" name="field2" id="field2" value="field2"/><br/>
-    Upload 1: <input type="file" name="upload1" id="upload1"/><br/>
+    Upload 1: <input type="file" name="upload" id="upload"/><br/>
 
     <ul class="actions">
         <li>

@@ -1,7 +1,24 @@
 <#ftl strip_whitespace=true>
-<head>
-<title>Added to cart</title>
-</head>
+<#import "macro/page.ftlh" as page>
+<#global title = "Added to cart"/>
+
+<#global head>
+
+</#global>
+
+<#global footer_script>
+
+</#global>
+
+<@page.page>
+
+<content tag="top_nav">
+<li>Top nav item</li>
+</content>
+
+<content tag="left_nav">
+<li>Left nav item</li>
+</content>
 
 <h1>Order</h1>
 <#if cartId?has_content>
@@ -24,3 +41,4 @@ You can proceed to the checkout or continue shopping.
     <a class="button" style="float: right;" href="${sourceUrl}" id="continue">Continue shopping</a>
 </div>
 </#if>
+</@page.page>

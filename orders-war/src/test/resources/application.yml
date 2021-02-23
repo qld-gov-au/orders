@@ -123,7 +123,7 @@ upload:
   supported: "doc;docx;pdf;odf;jpg;jpeg;bmp;tif;tiff;png;xls;xlsx"
 web:
 #  context: "/order"
-  context: "/"
+  context: ""
 
 reportUri:
   reportto: "{\"group\":\"default\",\"max_age\":31536000,\"endpoints\":[{\"url\":\"https://qldonline.report-uri.com/a/d/g\"}],\"include_subdomains\":true}"
