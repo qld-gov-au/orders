@@ -45,7 +45,7 @@
         <dependency>
             <groupId>au.gov.qld.pub</groupId>
             <artifactId>orders-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
      	<dependency>
 			<groupId>commons-fileupload</groupId>
