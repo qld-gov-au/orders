@@ -4,32 +4,41 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.config.SimplePBEConfig;
 
+/**
+ * @deprecated for use of jasypt-spring-boot-starter springboot wiring
+ *
+ * jasypt:
+ *   encryptor:
+ *     #provider needs to be bouncycastel for this algorithm
+ *     provider-name: "BC"
+ *    provider-class-name: org.bouncycastle.jce.provider.BouncyCastleProvider
+ *    algorithm: "PBEWITHSHA256AND128BITAES-CBC-BC"
+ *    password: "mysecretpassword" #keyfilefallbackvalue
+ *    iv-generator-classname: org.jasypt.iv.NoIvGenerator #CBC-BC does not need iv
+ */
+@Deprecated
 public class EncryptionConfiguration extends SimplePBEConfig {
     private static final String ALGORITHM = "PBEWITHSHA256AND128BITAES-CBC-BC";
-    
-    public EncryptionConfiguration() throws IOException {
+
+    public EncryptionConfiguration(String keyfilename,
+                                   String keyfilefallbackvalue) throws IOException {
         super();
-        Properties applicationProps = new Properties();
-        applicationProps.load(EncryptionConfiguration.class.getClassLoader().getResourceAsStream("application.properties"));
-        
         setProvider(new BouncyCastleProvider());
         setAlgorithm(ALGORITHM);
-        
+
         final char[] password;
-        String filename = applicationProps.getProperty("keyfile");
-        File keyfile = new File(filename);
+        File keyfile = new File(keyfilename);
 		if (keyfile.exists()) {
         	password = IOUtils.toCharArray(new FileReader(keyfile));
         } else {
-        	password = applicationProps.getProperty("keyfilefallbackvalue").toCharArray();
+        	password = keyfilefallbackvalue.toCharArray();
         }
-		
+
         int end = password.length;
         for (int i=0; i < password.length; i++) {
             if (password[i] == '\n' || password[i] == '\r' || password[i] == ' ') {
@@ -39,10 +48,10 @@ public class EncryptionConfiguration extends SimplePBEConfig {
         }
         char[] trimmedPassword = Arrays.copyOfRange(password, 0, end);
         Arrays.fill(password, ' ');
-        
+
         setProvider(new BouncyCastleProvider());
         setPasswordCharArray(trimmedPassword);
-        Arrays.fill(trimmedPassword, ' '); 
+        Arrays.fill(trimmedPassword, ' ');
     }
-    
+
 }

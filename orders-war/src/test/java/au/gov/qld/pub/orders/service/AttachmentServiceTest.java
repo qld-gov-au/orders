@@ -5,7 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -116,13 +116,13 @@ public class AttachmentServiceTest {
         when(item.getPriceGst()).thenReturn(PRICE_GST);
         when(item.getId()).thenReturn(ITEM_ID + suffix);
         when(item.getFieldsMap()).thenReturn(fieldsMap);
-        when(item.getNotifyBusinessFormUri()).thenReturn(BUSINESS_FORM_URI);
+//        when(item.getNotifyBusinessFormUri()).thenReturn(BUSINESS_FORM_URI); //UnnecessaryStubbingException
         when(item.getNotifyFormUri(NotifyType.BUSINESS)).thenReturn(BUSINESS_FORM_URI);
         when(item.getNotifyBusinessFormFilename()).thenReturn(BUSINESS_FORM_FILE_NAME);
-        when(item.getNotifyCustomerFormUri()).thenReturn(CUSTOMER_FORM_URI);
+//        when(item.getNotifyCustomerFormUri()).thenReturn(CUSTOMER_FORM_URI); //UnnecessaryStubbingException
         when(item.getNotifyFormUri(NotifyType.CUSTOMER)).thenReturn(CUSTOMER_FORM_URI);
         when(item.getNotifyCustomerFormFilename()).thenReturn(CUSTOMER_FORM_FILE_NAME);
-        when(item.isPaid()).thenReturn(true);
+//        when(item.isPaid()).thenReturn(true); //UnnecessaryStubbingException
         when(item.getQuantityPaid()).thenReturn(QUANTITY_PAID);
 	}
     
@@ -148,8 +148,8 @@ public class AttachmentServiceTest {
     
     @Test(expected = IllegalStateException.class)
     public void throwExceptionWhenAttemptingToDownloadItemThatDoesNotExist() throws Exception {
-        when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, EXPECTED_FORM_DATA))))
-            .thenReturn(businessResponse);
+//        when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, EXPECTED_FORM_DATA))))
+//            .thenReturn(businessResponse); //UnnecessaryStubbingException
         
         service.retrieve(order, NotifyType.BUSINESS, "bogus");
     }

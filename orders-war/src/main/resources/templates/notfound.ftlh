@@ -1,3 +1,4 @@
+<#ftl strip_whitespace=true>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 
@@ -7,27 +8,27 @@
     <title>A server error has prevented the requested resource from being displayed</title>
         <meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />
 
-    <link rel="stylesheet" type="text/css" href="https://static.qgov.net.au/assets/v2/style/qgov.css" media="all" />
-    <!--[if lt IE 9]><link rel="stylesheet" href="https://static.qgov.net.au/assets/v2/style/qgov-ie.css" type="text/css" media="all" /><![endif]-->
-    
+    <link nonce="${__csp_nonce}" rel="stylesheet" type="text/css" href="https://static.qgov.net.au/assets/v2/style/qgov.css" media="all" />
+    <!--[if lt IE 9]><link nonce="${__csp_nonce}" rel="stylesheet" href="https://static.qgov.net.au/assets/v2/style/qgov-ie.css" type="text/css" media="all" /><![endif]-->
+
     <!-- layout-small is assumed by default (combined with qgov.css) -->
-    <link href="https://static.qgov.net.au/assets/v2/style/layout-medium.css" media="only all and (min-width: 640px) and (max-width: 980px)" rel="stylesheet" type="text/css" />
-    <link href="https://static.qgov.net.au/assets/v2/style/layout-large.css" media="only all and (min-width: 980px)" rel="stylesheet" type="text/css" />
-    
+    <link nonce="${__csp_nonce}" href="https://static.qgov.net.au/assets/v2/style/layout-medium.css" media="only all and (min-width: 640px) and (max-width: 980px)" rel="stylesheet" type="text/css" />
+    <link nonce="${__csp_nonce}" href="https://static.qgov.net.au/assets/v2/style/layout-large.css" media="only all and (min-width: 980px)" rel="stylesheet" type="text/css" />
+
     <meta name="viewport" content="width=device-width" />
-    
-    
+
+
     <link rel="shortcut icon" href="https://static.qgov.net.au/assets/v2/images/skin/favicon.ico" />
 
-    <!-- Grab Google CDN's jQuery. Fall back to local copy if necessary --> 
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script> 
-    <script type="text/javascript"><!-- //
+    <!-- Grab Google CDN's jQuery. Fall back to local copy if necessary -->
+    <script nonce="${__csp_nonce}" type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+    <script nonce="${__csp_nonce}" type="text/javascript"><!-- //
         !window.jQuery && document.write(unescape('%3Cscript src="https://static.qgov.net.au/assets/v2/script/jquery-1.4.4-min.js"%3E%3C/script%3E'));
     // --></script>
-    <script type="text/javascript" src="https://static.qgov.net.au/assets/v2/script/qgov-environment.js" id="qgov-environment"></script>
+    <script nonce="${__csp_nonce}" type="text/javascript" src="https://static.qgov.net.au/assets/v2/script/qgov-environment.js" id="qgov-environment"></script>
     <!--[if lt IE 9]>
-    <script type="text/javascript">document.createElement('abbr');document.createElement('time');</script>
-    <script type="text/javascript" src="https://static.qgov.net.au/assets/v2/script/ie-layout.js"></script>
+    <script nonce="${__csp_nonce}" type="text/javascript">document.createElement('abbr');document.createElement('time');</script>
+    <script nonce="${__csp_nonce}" type="text/javascript" src="https://static.qgov.net.au/assets/v2/script/ie-layout.js"></script>
     <![endif]-->
 
     <link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />
@@ -40,7 +41,7 @@
 
 <!-- noindex -->
     <!--[if lt IE 9]><script type="text/javascript">jQuery && jQuery.transformer({addClasses:true});</script><![endif]-->
-    
+
     <div id="access">
         <h2>Skip links and keyboard navigation</h2>
         <ul>
@@ -213,11 +214,11 @@
     </div></div>
 </div>
 <div id="scripts">
-<script type="text/javascript" src="https://static.qgov.net.au/assets/v2/script/loader.js"></script>
-<script type="text/javascript" src="https://static.qgov.net.au/assets/v2/script/init.js"></script>
+<script nonce="${__csp_nonce}" type="text/javascript" src="https://static.qgov.net.au/assets/v2/script/loader.js"></script>
+<script nonce="${__csp_nonce}" type="text/javascript" src="https://static.qgov.net.au/assets/v2/script/init.js"></script>
 </div>
-    
 
-  
+
+
 </body>
 </html>

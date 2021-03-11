@@ -1,6 +1,25 @@
-<head>
-<title>Confirm test</title>
-</head>
+<#ftl strip_whitespace=true>
+<#import "macro/page.ftlh" as page>
+<#global title = "Confirm test"/>
+
+<#global head>
+
+</#global>
+
+<#global footer_script>
+
+</#global>
+
+<@page.page>
+
+<content tag="top_nav">
+<li>Top nav item</li>
+</content>
+
+<content tag="left_nav">
+<li>Left nav item</li>
+</content>
+
 
 <form action="${context}/add" method="post">
     <ul class="actions">
@@ -23,7 +42,9 @@
         <input type="hidden" name="${key}" value="${fields[key]!""}"/>
     </#list>
     
-    <script type="text/javascript"><!--
+    <script nonce="${__csp_nonce}" type="text/javascript"><!--
     document.write('<input type="hidden" name="ssqCartId" value="' + SSQ.cart.id + '" />');
     // --></script>
 </form>
+
+</@page.page>

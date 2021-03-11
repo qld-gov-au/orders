@@ -9,7 +9,7 @@ import org.junit.Test;
 public class EncryptionConfigurationTest {
     @Test
     public void loadEncryptionKey() throws Exception {
-        EncryptionConfiguration configuration = new EncryptionConfiguration();
+        EncryptionConfiguration configuration = new EncryptionConfiguration("/tmp/.orders.key", "testkey");
         assertThat(configuration.getPassword(), is("testkey"));
     }
 }

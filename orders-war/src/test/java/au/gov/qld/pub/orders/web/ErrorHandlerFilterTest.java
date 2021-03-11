@@ -2,7 +2,7 @@ package au.gov.qld.pub.orders.web;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import javax.servlet.FilterChain;
@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import au.gov.qld.pub.orders.service.ConfigurationService;
 
@@ -57,6 +57,6 @@ public class ErrorHandlerFilterTest {
         filter.destroy();
         
         verify(filterChain).doFilter(request, response);
-        verifyZeroInteractions(response);
+        verifyNoInteractions(response);
     }
 }

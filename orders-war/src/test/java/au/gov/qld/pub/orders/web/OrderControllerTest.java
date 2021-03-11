@@ -7,12 +7,12 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -24,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -86,7 +86,7 @@ public class OrderControllerTest {
         when(command.getProductId()).thenReturn(null);
         RedirectView result = controller.add(null, null, command, request, response);
         assertThat(result.getUrl(), is(ERROR_REDIRECT));
-        verifyZeroInteractions(orderService);
+        verifyNoInteractions(orderService);
     }
     
     @SuppressWarnings("unchecked")
@@ -111,7 +111,7 @@ public class OrderControllerTest {
         RedirectView result = controller.add(COOKIE_CART_ID, REQ_CART_ID, command, request, response);
         assertThat(result.getUrl(), is(ERROR_REDIRECT));
         verify(orderService).add(asList(item), COOKIE_CART_ID);
-        verifyZeroInteractions(response);
+        verifyNoInteractions(response);
         verify(preCartValidator).validate(anyString(), anyString(), anyMap());
     }
     

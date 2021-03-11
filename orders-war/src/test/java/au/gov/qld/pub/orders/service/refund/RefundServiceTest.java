@@ -3,10 +3,10 @@ package au.gov.qld.pub.orders.service.refund;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import au.gov.qld.pub.orders.dao.RefundItemDAO;
 import au.gov.qld.pub.orders.entity.RefundItem;
@@ -68,9 +68,9 @@ public class RefundServiceTest {
 	
 	@Test
 	public void shouldIgnorePreparingRefundsNotNew() {
-		when(refundItem.getRefundState()).thenReturn(RefundState.ERROR);
+//		when(refundItem.getRefundState()).thenReturn(RefundState.ERROR); //UnnecessaryStubbingException
 		service.refundNewItems();
-		verifyZeroInteractions(client);
+		verifyNoInteractions(client);
 		verify(refundItem, never()).updated();
 	}
 	
@@ -79,8 +79,8 @@ public class RefundServiceTest {
 		when(refundItem.getRefundState()).thenReturn(RefundState.NEW);
 		when(refundItemDAO.findByRefundState(RefundState.NEW)).thenReturn(asList(refundItem));
 		when(refundRequestBuilder.buildQuery(refundItem)).thenReturn(QUERY_REQUEST);
-		when(refundRequestBuilder.buildRequest(argThat(hasProperty("papiLineItemId", is(PAPI_LINE_ITEM_ID))))).thenReturn(REQUEST_REQUEST);
-		when(refundResponseParser.parseRequestResponse(REQUEST_RESPONSE)).thenReturn(requestResponse);
+//		when(refundRequestBuilder.buildRequest(argThat(hasProperty("papiLineItemId", is(PAPI_LINE_ITEM_ID))))).thenReturn(REQUEST_REQUEST); //UnnecessaryStubbingException
+//		when(refundResponseParser.parseRequestResponse(REQUEST_RESPONSE)).thenReturn(requestResponse); //UnnecessaryStubbingException
 		when(refundItemDAO.findByOrderLineIdAndRefundState(ORDERLINE_ID, RefundState.NEW)).thenReturn(asList(refundItem));
 		when(refundItemDAO.findByOrderLineIdAndRefundState("associated" + ORDERLINE_ID, RefundState.NEW)).thenReturn(asList(associatedRefundItem));
 		when(refundResponseParser.parseQueryResponse(QUERY_RESPONSE)).thenReturn(queryResponse);
