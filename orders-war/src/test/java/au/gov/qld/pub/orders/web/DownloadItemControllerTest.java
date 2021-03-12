@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.nio.charset.Charset;
@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.google.common.collect.ImmutableMap;
@@ -58,10 +58,10 @@ public class DownloadItemControllerTest {
     public void setUp() throws Exception {
     	when(attachment.getData()).thenReturn("test".getBytes(Charset.defaultCharset()));
     	response = new MockHttpServletResponse();
-        when(unpaidItem.getId()).thenReturn(ITEM_ID);
-        when(paidItem.getId()).thenReturn(ITEM_ID);
+//        when(unpaidItem.getId()).thenReturn(ITEM_ID); //UnnecessaryStubbingException
+//        when(paidItem.getId()).thenReturn(ITEM_ID); //UnnecessaryStubbingException
         when(paidItem.getProductGroup()).thenReturn(PRODUCT_GROUP);
-        when(groupedOrder.getId()).thenReturn(ORDER_ID);
+//        when(groupedOrder.getId()).thenReturn(ORDER_ID); //UnnecessaryStubbingException
         
         when(paidItem.getNotifyCustomerFormFilename()).thenReturn(FILENAME);
         when(unpaidItem.isPaid()).thenReturn(false);
@@ -90,8 +90,8 @@ public class DownloadItemControllerTest {
         when(itemDao.findById(ITEM_ID)).thenReturn(Optional.of(paidItem));
         controller.download(ORDER_ID, ITEM_ID, response);
         
-        verifyZeroInteractions(orderService);
-        verifyZeroInteractions(notifyService);
+        verifyNoInteractions(orderService);
+        verifyNoInteractions(notifyService);
 
         assertThat(response.getContentType(), is("application/pdf"));
         assertThat(response.getHeader("Content-Disposition"), is("attachment; filename=\"" + FILENAME + "\""));
@@ -108,7 +108,7 @@ public class DownloadItemControllerTest {
             assertThat(e.getMessage(), is("Attempted to download unpaid item id: " + ITEM_ID + " with order id" + ORDER_ID));
         } finally {
             verify(orderService).notifyPayment(ORDER_ID);
-            verifyZeroInteractions(attachmentService);
+            verifyNoInteractions(attachmentService);
         }
     }
     
@@ -120,9 +120,9 @@ public class DownloadItemControllerTest {
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), containsString(ITEM_ID));
         } finally {
-            verifyZeroInteractions(notifyService);
-            verifyZeroInteractions(orderService);
-            verifyZeroInteractions(attachmentService);
+            verifyNoInteractions(notifyService);
+            verifyNoInteractions(orderService);
+            verifyNoInteractions(attachmentService);
         }
     }
 }

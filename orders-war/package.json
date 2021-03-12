@@ -1,0 +1,19 @@
+{
+  "name": "coa-swe",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "postinstall": "gulp build"
+  },
+  "devDependencies": {
+    "cp-cli": "^1.1.2",
+    "del": "5.0.0",
+    "gulp": "^4.0.2",
+    "gulp-replace": "^1.0.0",
+    "path": "^0.12.7",
+    "rimraf": "^2.6.2"
+  },
+  "dependencies": {
+    "web-template-release": "^4.0.2"
+  }
+}

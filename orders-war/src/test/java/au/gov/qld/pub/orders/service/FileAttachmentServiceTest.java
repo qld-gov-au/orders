@@ -2,7 +2,7 @@ package au.gov.qld.pub.orders.service;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static java.util.Arrays.asList;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import au.gov.qld.pub.orders.dao.FormFileDAO;
@@ -57,6 +57,6 @@ public class FileAttachmentServiceTest {
 	@Test
 	public void doNotAttachFilesToMessageForCustomer() throws Exception {
 		service.append(message, helper, true, paidItemsFields);
-		verifyZeroInteractions(fileService);
+		verifyNoInteractions(fileService);
 	}
 }
