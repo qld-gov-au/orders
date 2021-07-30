@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>h:mm a, d MMMM yyyy</maven.build.timestamp.format>
         <jetty.version>9.4.35.v20201120</jetty.version>
-        <hibernate.version>5.5.4.Final</hibernate.version>
+        <hibernate.version>5.5.5.Final</hibernate.version>
         <maven-jetty-plugin.version>9.4.35.v20201120</maven-jetty-plugin.version>
         <maven-jetty-plugin.port>8091</maven-jetty-plugin.port>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
