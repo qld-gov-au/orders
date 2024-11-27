@@ -3,9 +3,9 @@ package au.gov.qld.pub.orders.scenario;
 import java.net.URL;
 
 import com.dumbster.smtp.SimpleSmtpServer;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
@@ -19,20 +19,20 @@ public class ScenarioSetup {
     public static WebDriver driver;
     private static SimpleSmtpServer mailServer;
 
-    @BeforeClass
+    @BeforeAll
     public static void setupDriver() {
         driver = new HtmlUnitDriver(false);
     }
 
-    @AfterClass
+    @AfterAll
     public static void teardownDriver() {
         driver.quit();
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startJetty() throws Exception {
         try {
-            new URL(BASE_URL).openConnection().getInputStream();
+            //new URL(BASE_URL).openConnection().getInputStream();
             System.out.println("Using existing instance");
         } catch (Exception e) {
             try {
@@ -44,7 +44,7 @@ public class ScenarioSetup {
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void stopJetty() throws Exception {
         try{
             if (embedded) {
@@ -56,7 +56,7 @@ public class ScenarioSetup {
         } catch (Exception e) {}
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         driver.get(ConfirmPage.URL);
     }

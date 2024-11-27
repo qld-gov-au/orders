@@ -7,26 +7,29 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import au.gov.qld.pub.orders.service.refund.dto.RefundQueryResponse;
 import au.gov.qld.pub.orders.service.refund.dto.RefundRequestResponse;
 
 public class RefundResponseParserTest {
-	
+
 	RefundResponseParser parser;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		parser = new RefundResponseParser();
 	}
-	
-	@Test(expected = IllegalArgumentException.class)
+
+	@Test
 	public void throwExceptionIfUnableToParseRefundQueryResponse() {
-		parser.parseQueryResponse("bogus");
+		assertThrows(IllegalArgumentException.class, () -> {
+			parser.parseQueryResponse("bogus");
+		});
 	}
-	
+
 	@Test
 	public void shouldReturnParsedQueryResponse() throws IOException {
 		String refundQueryWsResponse = IOUtils.resourceToString("/testrefundqueryresponse.xml", StandardCharsets.UTF_8);
@@ -36,13 +39,13 @@ public class RefundResponseParserTest {
 		assertThat(response.getLineItem().get(0).getQuatity(), is(1));
 		assertThat(response.getLineItem().get(0).getPapiLineItemId(), is(258093));
 		assertThat(response.getLineItem().get(0).getAgencyReference(), is("ccpb"));
-		
+
 		assertThat(response.getLineItem().get(1).getOrderLineId(), is("order line 2"));
 		assertThat(response.getLineItem().get(1).getQuatity(), is(1));
 		assertThat(response.getLineItem().get(1).getPapiLineItemId(), is(258092));
 		assertThat(response.getLineItem().get(1).getAgencyReference(), is("aure"));
 	}
-	
+
 	@Test
 	public void shouldReturnParsedRequestResponse() throws IOException {
 		String refundRequestWsResponse = IOUtils.resourceToString("/testrefundrequestresponse.xml", StandardCharsets.UTF_8);

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.joda.time.LocalDateTime;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import au.gov.qld.pub.orders.ApplicationContextAwareTest;
@@ -21,25 +21,25 @@ import au.gov.qld.pub.orders.service.ws.OrderDetails;
 
 import com.google.common.collect.ImmutableMap;
 
-public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
+public class OrderDAOIT extends ApplicationContextAwareTest {
     @Autowired OrderDAO dao;
     @Autowired ItemDAO itemDAO;
     @Autowired ItemPropertiesDAO itemPropertiesDAO;
-    
+
     @Test
     public void saveAndFind() {
         String cartId = UUID.randomUUID().toString();
-        
+
         Order order = new Order(cartId);
         Item item = Item.createItem(itemPropertiesDAO.findById("test").get());
         Map<String, String> fields = ImmutableMap.of("field1", "value1", "field2", "value2");
         item.setFieldsFromMap(fields);
         itemDAO.save(item);
         order.add(item);
-        
+
         String id = order.getId();
         dao.save(order);
-        
+
         Order findByCartId = dao.findByCartId(cartId);
         assertThat(findByCartId, notNullValue());
         assertThat(findByCartId.getId(), is(id));
@@ -47,7 +47,7 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
         assertThat(findByCartId.getItems().size(), is(1));
         assertThat(findByCartId.getItems().get(0).getId(), is(item.getId()));
         assertThat(findByCartId.getItems().get(0).getFieldsMap(), is(fields));
-        
+
         Order findByOrderId = dao.findById(id).get();
         assertThat(findByOrderId, notNullValue());
         assertThat(findByOrderId.getId(), is(id));
@@ -55,13 +55,13 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
         assertThat(findByOrderId.getItems().size(), is(1));
         assertThat(findByOrderId.getItems().get(0).getId(), is(item.getId()));
         assertThat(findByOrderId.getItems().get(0).getFieldsMap(), is(fields));
-        
+
         OrderDetails orderDetails = new OrderDetails();
         orderDetails.setCustomerDetails(ImmutableMap.of("customer type", "customer detail"));
         orderDetails.setDeliveryDetails(ImmutableMap.of("delivery type", "delivery detail"));
         orderDetails.setOrderlineQuantities(ImmutableMap.of(item.getId(), "2"));
         findByOrderId.setPaid("some receipt", orderDetails);
-        
+
         dao.save(findByOrderId);
         findByOrderId = dao.findById(id).get();
         assertThat(findByOrderId, notNullValue());
@@ -71,7 +71,7 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
         assertThat(findByOrderId.getItems().get(0).getQuantityPaid(), is("2"));
         assertThat(findByOrderId.getPaid(), notNullValue());
     }
-    
+
     @Test
     public void dontSaveCartIdWhenNull() {
         Order order = new Order(null);
@@ -79,27 +79,27 @@ public class OrderDAOIntegrationTest extends ApplicationContextAwareTest {
         order.add(Item.createItem(itemPropertiesDAO.findById("test").get()));
         itemDAO.saveAll(order.getItems());
         dao.save(order);
-        
+
         Order findByCartId = dao.findByCartId("null");
         assertThat(findByCartId, nullValue());
-        
+
         Order findByOrderId = dao.findById(id).get();
         assertThat(findByOrderId, notNullValue());
         assertThat(findByOrderId.getId(), is(id));
     }
-    
+
     @Test
     public void findUnpaidOrdersCreatedAfterMinDate() {
         Order unpaidOrder = new Order(UUID.randomUUID().toString());
         String unpaidId = unpaidOrder.getId();
         dao.save(unpaidOrder);
-        
+
         Order paidOrder = new Order(UUID.randomUUID().toString());
         paidOrder.setPaid("some paid");
         String paidId = paidOrder.getId();
         dao.save(paidOrder);
-        
-        
+
+
         Iterable<String> unpaidIds = dao.findUnpaidOrdersCreatedAfter(new LocalDateTime().minusHours(1).toDate());
         assertThat(unpaidIds, hasItem(unpaidId));
         assertThat(unpaidIds, not(hasItem(paidId)));

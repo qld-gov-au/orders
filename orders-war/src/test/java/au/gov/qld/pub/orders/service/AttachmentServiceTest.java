@@ -4,7 +4,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -27,18 +27,22 @@ import org.apache.http.entity.StringEntity;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.google.common.collect.ImmutableMap;
 
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.Order;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AttachmentServiceTest {
     private static final String EXPECTED_FORM_DATA = "name=value&quantityPaid=1&productGroup=some+product+group&productId=some+product+id"
     		+ "&priceTotal=579&priceGst=456&priceExGst=123&paid=paid+at&receipt=receipt";
@@ -65,7 +69,7 @@ public class AttachmentServiceTest {
     private static final String ITEM_ID = "some item id";
 
     AttachmentService service;
-    
+
     @Mock Order order;
     @Mock Item item;
     @Mock Item item2;
@@ -76,10 +80,10 @@ public class AttachmentServiceTest {
     @Mock CloseableHttpResponse bundledCustomerResponse;
     @Mock StatusLine statusLine;
     @Mock ConfigurationService config;
-    
+
     Map<String, String> fieldsMap = ImmutableMap.of("name", "value");
-    
-    @Before
+
+    @BeforeEach
     public void setUp() throws Exception {
         when(order.getUnbundledPaidItems()).thenReturn(asList(item));
         when(order.getPaid()).thenReturn(PAID_AT);
@@ -96,11 +100,11 @@ public class AttachmentServiceTest {
         when(customerResponse.getEntity()).thenReturn(new StringEntity(CUSTOMER_CONTENT));
         when(bundledCustomerResponse.getStatusLine()).thenReturn(statusLine);
         when(bundledCustomerResponse.getEntity()).thenReturn(new StringEntity(BUNDLED_CUSTOMER_CONTENT));
-        
+
         when(config.getNotifyFormRetryCount()).thenReturn(RETRY_COUNT);
         when(config.getNotifyFormRetryWait()).thenReturn(RETRY_WAIT);
         when(config.getNotifyFormTimeout()).thenReturn(TIMEOUT);
-        
+
         service = new AttachmentService(config) {
             @Override
             protected HttpClient createClient() {
@@ -125,46 +129,48 @@ public class AttachmentServiceTest {
 //        when(item.isPaid()).thenReturn(true); //UnnecessaryStubbingException
         when(item.getQuantityPaid()).thenReturn(QUANTITY_PAID);
 	}
-    
+
     @Test
     public void sendOrderAndItemDetailsToFormServiceAndReturnAsAttachmentsForBusiness() throws Exception {
         when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(businessResponse);
-        
+
         List<FileAttachment> result = service.retrieve(order, NotifyType.BUSINESS);
         assertThat(result.size(), is(1));
         assertThat(new String(result.get(0).getName()), is(BUSINESS_FORM_FILE_NAME));
         assertThat(new String(result.get(0).getData()), is(BUSINESS_CONTENT));
     }
-    
+
     @Test
     public void sendOrderAndItemDetailsToFormServiceAndReturnAsAttachmentsForBusinessForGivenItem() throws Exception {
         when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(businessResponse);
-        
+
         String result = new String(service.retrieve(order, NotifyType.BUSINESS, ITEM_ID).getData());
         assertThat(result, is(BUSINESS_CONTENT));
     }
-    
-    @Test(expected = IllegalStateException.class)
+
+    @Test
     public void throwExceptionWhenAttemptingToDownloadItemThatDoesNotExist() throws Exception {
+        assertThrows(IllegalStateException.class, () -> {
 //        when(client.execute(argThat(postRequest(BUSINESS_FORM_URI, EXPECTED_FORM_DATA))))
 //            .thenReturn(businessResponse); //UnnecessaryStubbingException
-        
-        service.retrieve(order, NotifyType.BUSINESS, "bogus");
+
+            service.retrieve(order, NotifyType.BUSINESS, "bogus");
+        });
     }
-    
+
     @Test
     public void sendOrderAndItemDetailsToFormServiceAndReturnAsAttachmentsForCustomerAsSeparateItemsWhenNotBundled() throws Exception {
         when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(customerResponse);
-        
+
         List<FileAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
         assertThat(result.size(), is(1));
         assertThat(new String(result.get(0).getName()), is(CUSTOMER_FORM_FILE_NAME));
         assertThat(new String(result.get(0).getData()), is(CUSTOMER_CONTENT));
     }
-    
+
     @Test
     public void sendOrderAndItemDetailsBundledPerGroupAndReturnOneAttachmentWhenItemsShouldBeBundled() throws Exception {
     	when(order.getUnbundledPaidItems()).thenReturn(asList(item));
@@ -173,21 +179,21 @@ public class AttachmentServiceTest {
     	when(order.getBundledPaidItems()).thenReturn(asList(item2, item3));
     	when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA_BUNDLED))))
     		.thenReturn(bundledCustomerResponse);
-    	
+
     	List<FileAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
     	assertThat(result.size(), is(2));
     	assertThat(new String(result.get(0).getData()), is(BUNDLED_CUSTOMER_CONTENT));
     	assertThat(new String(result.get(1).getData()), is(CUSTOMER_CONTENT));
-    	
+
     	String itemResult = new String(service.retrieve(order, NotifyType.CUSTOMER, item2.getId()).getData());
     	assertThat(itemResult, is(BUNDLED_CUSTOMER_CONTENT));
     	itemResult = new String(service.retrieve(order, NotifyType.CUSTOMER, item3.getId()).getData());
     	assertThat(itemResult, is(BUNDLED_CUSTOMER_CONTENT));
-    	
+
     	itemResult = new String(service.retrieve(order, NotifyType.CUSTOMER, item.getId()).getData());
     	assertThat(itemResult, is(CUSTOMER_CONTENT));
     }
-    
+
     @Test
     public void retryWhenCannotDownload() throws Exception {
         when(config.getNotifyFormRetryCount()).thenReturn(2);
@@ -197,18 +203,18 @@ public class AttachmentServiceTest {
                 return client;
             }
         };
-        
+
         when(statusLine.getStatusCode()).thenReturn(500, AttachmentService.OKAY_STATUS_CODE);
         when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))))
             .thenReturn(customerResponse);
-        
+
         List<FileAttachment> result = service.retrieve(order, NotifyType.CUSTOMER);
         assertThat(result.size(), is(1));
         assertThat(new String(result.get(0).getData()), is(CUSTOMER_CONTENT));
-        
+
         verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))));
     }
-    
+
     @Test
     public void retryWhenCannotDownloadWithIOException() throws Exception {
         when(config.getNotifyFormRetryCount()).thenReturn(2);
@@ -218,7 +224,7 @@ public class AttachmentServiceTest {
                 return client;
             }
         };
-        
+
         doThrow(new SocketTimeoutException("expected")).when(client).execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA)));
         try {
         	service.retrieve(order, NotifyType.CUSTOMER);
@@ -228,33 +234,37 @@ public class AttachmentServiceTest {
         }
         verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))));
     }
-    
-    @Test(expected = IOException.class)
+
+    @Test
     public void throwExceptionWhencannotConnect() throws Exception {
-        when(config.getNotifyFormRetryCount()).thenReturn(2);
-        new AttachmentService(config).retrieve(order, NotifyType.CUSTOMER);
+        assertThrows(IOException.class, () -> {
+            when(config.getNotifyFormRetryCount()).thenReturn(2);
+            new AttachmentService(config).retrieve(order, NotifyType.CUSTOMER);
+        });
     }
-    
-    @Test(expected = IOException.class)
+
+    @Test
     public void throwExceptionWhenRetriesExhausted() throws Exception {
-        when(config.getNotifyFormRetryCount()).thenReturn(2);
-        service = new AttachmentService(config) {
-            @Override
-            protected HttpClient createClient() {
-                return client;
+        assertThrows(IOException.class, () -> {
+            when(config.getNotifyFormRetryCount()).thenReturn(2);
+            service = new AttachmentService(config) {
+                @Override
+                protected HttpClient createClient() {
+                    return client;
+                }
+            };
+
+            when(statusLine.getStatusCode()).thenReturn(500);
+            when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))))
+                .thenReturn(customerResponse);
+
+            try {
+                service.retrieve(order, NotifyType.CUSTOMER);
+            } catch (IOException e) {
+                verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))));
+                throw e;
             }
-        };
-        
-        when(statusLine.getStatusCode()).thenReturn(500);
-        when(client.execute(argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))))
-            .thenReturn(customerResponse);
-        
-        try {
-            service.retrieve(order, NotifyType.CUSTOMER);
-        } catch(IOException e) {
-            verify(client, times(2)).execute((argThat(postRequest(CUSTOMER_FORM_URI, EXPECTED_FORM_DATA))));
-            throw e;
-        }
+        });
     }
 
     private Matcher<HttpPost> postRequest(final String uri, final String data) {
@@ -265,12 +275,12 @@ public class AttachmentServiceTest {
                 if (post == null) {
                 	return false;
                 }
-                
+
                 System.out.println("Request to: " + post.getURI().toString());
                 if (!uri.equals(post.getURI().toString())) {
                     return false;
                 }
-                
+
                 UrlEncodedFormEntity entity = (UrlEncodedFormEntity) post.getEntity();
                 try {
                     String content = IOUtils.toString(entity.getContent(), Charset.defaultCharset());

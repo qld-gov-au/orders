@@ -9,8 +9,8 @@ import static org.hamcrest.Matchers.nullValue;
 import java.util.Date;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import au.gov.qld.pub.orders.entity.Item;
 import au.gov.qld.pub.orders.entity.ItemBuilder;
@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableMap;
 public class OrderGrouperTest {
     OrderGrouper orderGrouper;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         orderGrouper = new OrderGrouper();
     }

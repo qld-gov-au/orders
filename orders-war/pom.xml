@@ -11,6 +11,7 @@
         <groupId>au.gov.qld.pub</groupId>
         <artifactId>orders</artifactId>
         <version>2.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
@@ -156,44 +157,20 @@
             <artifactId>spring-orm</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>${hibernate.version}</version>
+<!--            <version>5.6.14.Final</version>-->
         </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>${hibernate.version}</version>
-        </dependency>
-        <dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-dbcp2</artifactId>
-		    <version>2.9.0</version>
-		</dependency>
-        <dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-            <version>42.5.2</version>
-        </dependency>
+        <dependency><groupId>org.hsqldb</groupId><artifactId>hsqldb</artifactId><classifier>jdk8</classifier><version>2.7.2</version></dependency>
+<!--        <dependency>-->
+<!--			<groupId>org.postgresql</groupId>-->
+<!--			<artifactId>postgresql</artifactId>-->
+<!--            <version>42.5.2</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.14</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.70</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jasypt</groupId>
-            <artifactId>jasypt</artifactId>
-            <version>1.9.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jasypt</groupId>
-            <artifactId>jasypt-spring4</artifactId>
-            <version>1.9.3</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -306,17 +283,8 @@
 			<version>2.1.214</version>
 			<scope>provided</scope>
 		</dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <scope>test</scope>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-        </dependency>
+        <dependency><scope>test</scope><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.11.3</version></dependency>
+
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
@@ -382,6 +350,7 @@
                 <executions><execution><phase>compile</phase><goals><goal>revision</goal></goals></execution></executions>
                 <configuration>
                     <dotGitDirectory>${project.basedir}/../.git</dotGitDirectory>
+                    <offline>true</offline>
                     <!-- this is false by default, forces the plugin to generate the git.properties file -->
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
                     <!-- The path for the properties file to be generated. See Super Pom for default variable reference https://maven.apache.org/guides/introduction/introduction-to-the-pom.html -->
@@ -397,11 +366,33 @@
                         <phase>none</phase> <!-- spring-boot:run is phase none, also stops it running on validate step -->
                         <goals><goal>run</goal></goals>
                         <configuration>
+                            <profiles>local</profiles>
                             <fork>false</fork><!-- PE was true - changed for IJ debug -->
                             <arguments>${springBootRunArguments}</arguments>
                             <useTestClasspath>true</useTestClasspath>
-                            <folders>${project.basedir}/src/test/resources</folders>
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>${project.build.testOutputDirectory}</additionalClasspathElement>
+                                <additionalClasspathElement>${project.build.outputDirectory}</additionalClasspathElement>
+                            </additionalClasspathElements>
                         </configuration>
+                    </execution>
+                    <execution>
+                        <id>pre-integration-test</id>
+                        <goals><goal>start</goal></goals>
+                        <configuration>
+<!--                            <arguments>&#45;&#45;server.port=${server.port}</arguments>-->
+                            <useTestClasspath>true</useTestClasspath>
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>${project.basedir}/src/test/resources</additionalClasspathElement>
+                            </additionalClasspathElements>
+                            <profiles>
+                                <profile>local</profile>
+                            </profiles>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-integration-test</id>
+                        <goals><goal>stop</goal></goals>
                     </execution>
                 </executions>
             </plugin>
@@ -447,7 +438,7 @@
                             </goals>
                             <configuration>
                                 <files>
-                                    <file>${basedir}/src/test/resources/application.yml</file>
+                                    <file>${basedir}/src/main/resources/application-local.yml</file>
                                 </files>
                             </configuration>
                         </execution>
@@ -518,31 +509,43 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.5.2</version>
                 <configuration>
-                    <excludes>
-                        <exclude>**/scenario/**/*Test.java</exclude>
-                    </excludes>
+                    <skipTests>${surefire.skip}</skipTests>
+                    <systemPropertyVariables>
+                        <server.port>8091</server.port>
+                    </systemPropertyVariables>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.5.2</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <server.port>8091</server.port>
+                    </systemPropertyVariables>
+                    <skipTests>${skipTests}</skipTests>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>surefire-itest</id>
-                        <phase>integration-test</phase>
+                        <id>default</id>
                         <goals>
-                            <goal>test</goal>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
                         </goals>
                         <configuration>
-                            <excludes>
-                                <exclude>none</exclude>
-                            </excludes>
+                            <skipITs>${failsafe.skip}</skipITs>
                             <includes>
-                                <include>**/scenario/**/*Test.java</include>
+                                <include>**/*IT.java</include>
                             </includes>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 

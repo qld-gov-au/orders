@@ -8,9 +8,9 @@ import static org.hamcrest.Matchers.notNullValue;
 import java.util.List;
 
 import org.apache.commons.collections4.IteratorUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import au.gov.qld.pub.orders.ApplicationContextAwareTest;
@@ -24,17 +24,17 @@ import au.gov.qld.pub.orders.service.ws.OrderDetails;
 import com.dumbster.smtp.SmtpMessage;
 import com.google.common.collect.ImmutableMap;
 
-public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
+public class NotifyServiceIT extends ApplicationContextAwareTest {
     static final String RECEIPT = "some receipt";
-    
+
     @Autowired OrderDAO orderDAO;
     @Autowired ItemDAO itemDAO;
     @Autowired ItemPropertiesDAO itemPropertiesDAO;
     @Autowired NotifyService service;
     Order order;
-    Item item;    
-    
-    @Before
+    Item item;
+
+    @BeforeEach
     public void setUp() {
         order = new Order(null);
         item = Item.createItem(itemPropertiesDAO.findById("test").get());
@@ -48,16 +48,16 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
         itemDAO.saveAll(order.getItems());
         orderDAO.save(order);
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
-    @Ignore
+    @Disabled
     public void notifyAndSetOrderNotifiedForEachProductId() throws ServiceException, InterruptedException {
         service.send(order);
-        
+
         Order saved = orderDAO.findById(order.getId()).get();
         assertThat(saved.getNotified(), notNullValue());
-        
+
         List<SmtpMessage> messages = IteratorUtils.toList(mailServer.getReceivedEmail());
         assertThat(messages.size(), is(2));
 
@@ -66,27 +66,27 @@ public class NotifyServiceIntegrationTest extends ApplicationContextAwareTest {
         assertThat(business.getHeaderValue("From"), is("noreply@www.qld.gov.au"));
         assertThat(business.getHeaderValue("Subject"), is("Test product has been purchased with receipt " + RECEIPT));
         assertThat(business.getBody(), containsString("business"));
-        
+
         assertThat(customer.getHeaderValue("Subject"), is("Test product you purchased with receipt " + RECEIPT));
         assertThat(customer.getHeaderValue("From"), is("noreply@www.qld.gov.au"));
         assertThat(customer.getBody(), containsString("customer"));
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
-    @Ignore
+    @Disabled
     public void dontNotifyCustomerWhenEmailBlank() throws ServiceException, InterruptedException {
         OrderDetails orderDetails = new OrderDetails();
         orderDetails.setOrderlineQuantities(ImmutableMap.of(item.getId(), "1"));
         order.setPaid(RECEIPT, orderDetails);
         itemDAO.saveAll(order.getItems());
         orderDAO.save(order);
-        
+
         service.send(order);
-        
+
         Order saved = orderDAO.findById(order.getId()).get();
         assertThat(saved.getNotified(), notNullValue());
-        
+
         List<SmtpMessage> messages = IteratorUtils.toList(mailServer.getReceivedEmail());
         assertThat(messages.size(), is(1));
         SmtpMessage business = messages.get(0);

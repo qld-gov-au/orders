@@ -12,11 +12,12 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import au.gov.qld.pub.orders.dao.FileItemPropertiesDAO;
@@ -25,7 +26,7 @@ import au.gov.qld.pub.orders.entity.ItemProperties;
 
 import com.google.common.collect.ImmutableMap;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DatabaseItemPropertiesServiceTest {
     private static final String PRODUCT_ID_1 = "test";
     private static final String PRODUCT_ID_2 = "test2";
@@ -40,7 +41,7 @@ public class DatabaseItemPropertiesServiceTest {
     Properties properties1;
     Properties properties2;
     
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         properties1 = new Properties();
         properties1.setProperty("productId", PRODUCT_ID_1);

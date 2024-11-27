@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.hamcrest.Matcher;
 import org.joda.time.LocalDateTime;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.ImmutableMap;
@@ -25,46 +25,46 @@ import au.gov.qld.pub.orders.entity.Order;
 
 import java.util.Optional;
 
-public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
+public class OrderServiceIT extends ApplicationContextAwareTest {
     @Autowired OrderService service;
     @Autowired OrderDAO orderDAO;
     @Autowired ItemDAO itemDAO;
-    
+
     @Test
     public void addToNewCart() throws Exception {
         Item item = createItem();
         item.setFieldsFromMap(ImmutableMap.of("field1", "value1", "field2", "value2"));
-        
+
         Order order = service.add(asList(item), null);
         assertThat(order.getCartId(), not(nullValue()));
         assertThat(order.getGeneratedId(), not(nullValue()));
-        
+
         Order saved = orderDAO.findById(order.getId()).get();
         assertThat(saved.getCartId(), not(nullValue()));
         assertThat(saved.getGeneratedId(), not(nullValue()));
-        
+
         Matcher<Item> itemWith = allOf(hasProperty("productId", is("test")), hasProperty("cartState", is(CartState.ADDED)));
         assertThat(saved.getItems(), hasItem(itemWith));
     }
-    
+
     @Test
     public void addToNewCartWhenCartIdNotValidFromPAPI() throws Exception {
         Item item = createItem();
         item.setFieldsFromMap(ImmutableMap.of("field1", "value1", "field2", "value2"));
-        
+
         Order order = service.add(asList(item), "bogus");
         assertThat(order.getCartId(), not(nullValue()));
         assertThat(order.getCartId(), not(is("bogus")));
         assertThat(order.getGeneratedId(), not(nullValue()));
-        
+
         Order saved = orderDAO.findById(order.getId()).get();
         assertThat(saved.getCartId(), not(nullValue()));
         assertThat(saved.getGeneratedId(), not(nullValue()));
-        
+
         Matcher<Item> itemWith = allOf(hasProperty("productId", is("test")), hasProperty("cartState", is(CartState.ADDED)));
         assertThat(saved.getItems(), hasItem(itemWith));
     }
-    
+
     @Test
     public void populateItemFromDto() {
         Item item = service.findAndPopulate("test");
@@ -76,28 +76,28 @@ public class OrderServiceIntegrationTest extends ApplicationContextAwareTest {
     private Item createItem() {
         return service.findAndPopulate("test");
     }
-    
+
     @Test
     public void deletePaidOrdersOlderThanMaxCreatedDate() {
         LocalDateTime maxCreatedAt = new LocalDateTime().minusDays(10);
-        
+
         Order oldPaid = createOrder(maxCreatedAt, true, createItem());
         Order oldUnpaid = createOrder(maxCreatedAt, false, createItem());
         Order youngPaid = createOrder(maxCreatedAt.plusDays(1), true, createItem());
         Order youngUnpaid = createOrder(maxCreatedAt.plusDays(1), false, createItem());
-        
+
         service.deleteOlderThan(maxCreatedAt, true);
         assertThat(orderDAO.findById(oldPaid.getId()), is(Optional.empty()));
         assertThat(orderDAO.findById(oldUnpaid.getId()).get(), is(oldUnpaid));
         assertThat(orderDAO.findById(youngPaid.getId()).get(), is(youngPaid));
         assertThat(orderDAO.findById(youngUnpaid.getId()).get(), is(youngUnpaid));
-        
+
         service.deleteOlderThan(maxCreatedAt, false);
         assertThat(orderDAO.findById(oldUnpaid.getId()), is(Optional.empty()));
         assertThat(orderDAO.findById(youngPaid.getId()).get(), is(youngPaid));
         assertThat(orderDAO.findById(youngUnpaid.getId()).get(), is(youngUnpaid));
     }
-    
+
     private Order createOrder(LocalDateTime created, boolean paid, Item item) {
         item = itemDAO.save(item);
         Order order = new Order("");

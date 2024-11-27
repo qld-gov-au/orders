@@ -1,8 +1,8 @@
 package au.gov.qld.pub.orders.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 import au.gov.qld.pub.orders.service.ItemPropertiesDTO;
 

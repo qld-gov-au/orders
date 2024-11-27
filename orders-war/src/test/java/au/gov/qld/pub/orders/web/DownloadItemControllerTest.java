@@ -10,11 +10,13 @@ import static org.mockito.Mockito.when;
 import java.nio.charset.Charset;
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.google.common.collect.ImmutableMap;
@@ -30,16 +32,17 @@ import au.gov.qld.pub.orders.service.NotifyType;
 import au.gov.qld.pub.orders.service.OrderGrouper;
 import au.gov.qld.pub.orders.service.OrderService;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class DownloadItemControllerTest {
-    
+
     private static final String PRODUCT_GROUP = "product group";
 	private static final String ITEM_ID = "some item id";
     private static final String ORDER_ID = "some order id";
     private static final String FILENAME = "some filename";
 
     DownloadItemController controller;
-    
+
     @Mock OrderService orderService;
     @Mock NotifyService notifyService;
     @Mock AttachmentService attachmentService;
@@ -52,9 +55,9 @@ public class DownloadItemControllerTest {
     @Mock Order groupedOrder;
     @Mock OrderGrouper orderGrouper;
     @Mock FileAttachment attachment;
-    
+
     @SuppressWarnings("unchecked")
-	@Before
+	@BeforeEach
     public void setUp() throws Exception {
     	when(attachment.getData()).thenReturn("test".getBytes(Charset.defaultCharset()));
     	response = new MockHttpServletResponse();
@@ -62,14 +65,14 @@ public class DownloadItemControllerTest {
 //        when(paidItem.getId()).thenReturn(ITEM_ID); //UnnecessaryStubbingException
         when(paidItem.getProductGroup()).thenReturn(PRODUCT_GROUP);
 //        when(groupedOrder.getId()).thenReturn(ORDER_ID); //UnnecessaryStubbingException
-        
+
         when(paidItem.getNotifyCustomerFormFilename()).thenReturn(FILENAME);
         when(unpaidItem.isPaid()).thenReturn(false);
         when(paidItem.isPaid()).thenReturn(true);
         when(itemDao.findById(ITEM_ID)).thenReturn(Optional.of(unpaidItem), Optional.of(paidItem));
         when(orderDao.findById(ORDER_ID)).thenReturn(Optional.of(order));
         when(orderGrouper.paidByProductGroup(order)).thenReturn(ImmutableMap.of(PRODUCT_GROUP, groupedOrder));
-        
+
         controller = new DownloadItemController(orderService, attachmentService, itemDao, orderDao, orderGrouper);
     }
 
@@ -77,19 +80,19 @@ public class DownloadItemControllerTest {
     public void outputAttachmentForUnpaidItemToResponseAfterCheckingPaid() throws Exception {
         when(attachmentService.retrieve(groupedOrder, NotifyType.CUSTOMER, ITEM_ID)).thenReturn(attachment);
         controller.download(ORDER_ID, ITEM_ID, response);
-        
+
         verify(orderService).notifyPayment(ORDER_ID);
         assertThat(response.getContentType(), is("application/pdf"));
         assertThat(response.getHeader("Content-Disposition"), is("attachment; filename=\"" + FILENAME + "\""));
         assertThat(response.getContentAsString(), is("test"));
     }
-    
+
     @Test
     public void immediatelyOutputAttachmentForItemWhenAlreadyPaid() throws Exception {
         when(attachmentService.retrieve(groupedOrder, NotifyType.CUSTOMER, ITEM_ID)).thenReturn(attachment);
         when(itemDao.findById(ITEM_ID)).thenReturn(Optional.of(paidItem));
         controller.download(ORDER_ID, ITEM_ID, response);
-        
+
         verifyNoInteractions(orderService);
         verifyNoInteractions(notifyService);
 
@@ -97,7 +100,7 @@ public class DownloadItemControllerTest {
         assertThat(response.getHeader("Content-Disposition"), is("attachment; filename=\"" + FILENAME + "\""));
         assertThat(response.getContentAsString(), is("test"));
     }
-    
+
     @SuppressWarnings("unchecked")
 	@Test
     public void throwExceptionWhenItemNotPaid() throws Exception {
@@ -111,7 +114,7 @@ public class DownloadItemControllerTest {
             verifyNoInteractions(attachmentService);
         }
     }
-    
+
     @Test
     public void throwExceptionWhenItemNotExists() throws Exception {
         when(itemDao.findById(ITEM_ID)).thenReturn(Optional.empty());

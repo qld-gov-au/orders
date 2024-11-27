@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import au.gov.qld.pub.orders.entity.ItemBuilder;
 import au.gov.qld.pub.orders.entity.Order;

@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
@@ -14,12 +14,6 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
     protected static final String ERROR_404 = "error";
     protected static final String ERROR_5XX = "error";
     protected static final String GENERAL_ERROR_VIEW = "error";
-
-    @Override
-    public String getErrorPath() {
-        return null;
-    }
-
 
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request) {

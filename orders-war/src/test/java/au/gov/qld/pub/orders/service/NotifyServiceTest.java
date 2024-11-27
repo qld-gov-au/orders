@@ -21,19 +21,22 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.mail.Address;
-import javax.mail.Message.RecipientType;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Address;
+import jakarta.mail.Message.RecipientType;
+import jakarta.mail.internet.MimeMessage;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -44,7 +47,8 @@ import au.gov.qld.pub.orders.entity.Order;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class NotifyServiceTest {
     private static final String CUSTOMER_SUBJECT = "customer email subject";
     private static final String BUSINESS_SUBJECT = "business email subject";
@@ -56,7 +60,7 @@ public class NotifyServiceTest {
     private static final String FROM = "somefromaddress";
     private static final String TEMPLATED = "some subject templated";
     private static final String PAID = "some paid at";
-    
+
     @Mock ConfigurationService configurationService;
     @Mock OrderDAO orderDAO;
     @Mock JavaMailSender mailSender;
@@ -74,11 +78,11 @@ public class NotifyServiceTest {
     @Mock InputStream attachmentStream;
     @Mock AdditionalMailContentService additionalMailContentService;
     @Mock AdditionalNotificationService additionalNotificationService;
-    
+
     NotifyService service;
 
     @SuppressWarnings("rawtypes")
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(orderGrouper.paidByProductGroup(order)).thenReturn(of(PRODUCT_ID, groupedOrder));
 //        when(groupedOrder.getItems()).thenReturn(asList(item)); //UnnecessaryStubbingException
@@ -88,7 +92,7 @@ public class NotifyServiceTest {
                 StringWriter writer = (StringWriter)invocation.getArguments()[1];
                 writer.write(CUSTOMER_BODY);
                 return null;
-            }            
+            }
         }).when(customerTemplate).process(anyMap(), isA(Writer.class));
         doAnswer(new Answer() {
             @Override
@@ -96,9 +100,9 @@ public class NotifyServiceTest {
                 StringWriter writer = (StringWriter)invocation.getArguments()[1];
                 writer.write(BUSINESS_BODY);
                 return null;
-            }            
+            }
         }).when(businessTemplate).process(anyMap(), isA(Writer.class));
-        
+
         when(mailSender.createMimeMessage()).thenReturn(message);
         when(inlineTemplateService.template("subject", BUSINESS_SUBJECT, groupedOrder)).thenReturn(TEMPLATED);
         when(inlineTemplateService.template("subject", CUSTOMER_SUBJECT, groupedOrder)).thenReturn(TEMPLATED);
@@ -106,7 +110,7 @@ public class NotifyServiceTest {
         when(configuration.getTemplate(PRODUCT_ID + ".customer.email.ftl")).thenReturn(customerTemplate);
         when(configuration.getTemplate(PRODUCT_ID + ".business.email.ftl")).thenReturn(businessTemplate);
 //        when(orderDAO.findById(order.getId())).thenReturn(Optional.of(order)); //UnnecessaryStubbingException
-        service = new NotifyService(configurationService, orderDAO, mailSender, orderGrouper, inlineTemplateService, attachmentService, 
+        service = new NotifyService(configurationService, orderDAO, mailSender, orderGrouper, inlineTemplateService, attachmentService,
         		additionalMailContentService, additionalNotificationService) {
             @Override
             protected Configuration getTemplateConfiguration() {
@@ -114,7 +118,7 @@ public class NotifyServiceTest {
             }
         };
     }
-    
+
     @Test
     public void dontNotifyAlreadyNotified() throws ServiceException {
         when(order.getNotified()).thenReturn("anything");
@@ -126,7 +130,7 @@ public class NotifyServiceTest {
         verifyNoInteractions(additionalMailContentService);
         verifyNoInteractions(additionalNotificationService);
     }
-    
+
     @Test
     public void notifyToBusiness() throws Exception {
 //        when(item.isPaid()).thenReturn(true); //UnnecessaryStubbingException
@@ -151,7 +155,7 @@ public class NotifyServiceTest {
 		verify(additionalNotificationService).notifedPaidOrder(order.getId(), order.getCreated(), order.getPaid(), order.getReceipt(), order.getCartId(),
 				order.getCustomerDetailsMap(), order.getDeliveryDetailsMap(), asList((Map<String, String>)of("field", "value")));
     }
-    
+
     @Test
     public void dontNotifyWhenNotPaid() throws Exception {
         when(order.getPaid()).thenReturn(null);
@@ -186,7 +190,7 @@ public class NotifyServiceTest {
         verify(orderDAO).save(order);
         verify(additionalMailContentService).append(eq(message), isA(MimeMessageHelper.class), eq(true), anyList());
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void notifyToCustomerFromDeliveryDetails() throws Exception {
@@ -196,7 +200,7 @@ public class NotifyServiceTest {
 //        when(item.getNotifyCustomerFormFilename()).thenReturn("customerFile"); //UnnecessaryStubbingException
         when(item.getNotifyCustomerEmailField()).thenReturn("deliveryDetails");
         when(item.getNotifyCustomerEmailSubject()).thenReturn(CUSTOMER_SUBJECT);
-        when(groupedOrder.getDeliveryDetailsMap()).thenReturn(of("email", CUSTOMER_TO));        
+        when(groupedOrder.getDeliveryDetailsMap()).thenReturn(of("email", CUSTOMER_TO));
         service.send(order);
 
         verify(mailSender).send(message);
@@ -208,7 +212,7 @@ public class NotifyServiceTest {
         verify(orderDAO).save(order);
         verify(additionalMailContentService).append(eq(message), isA(MimeMessageHelper.class), eq(true), anyList());
     }
-    
+
     private Matcher<Address> addressOf(final String to) {
         return new BaseMatcher<Address>() {
             @Override
