@@ -80,12 +80,12 @@
         <dependency><groupId>commons-beanutils</groupId><artifactId>commons-beanutils</artifactId><version>1.9.4</version></dependency>
 
         <!-- TEST DEPENDENCIES -->
-        <dependency><scope>test</scope><groupId>dumbster</groupId><artifactId>dumbster</artifactId><version>1.6</version></dependency>
+        <dependency><scope>test</scope><groupId>com.github.dhsmith1001</groupId><artifactId>dumbster</artifactId><version>2.0.0-SNAPSHOT</version></dependency>
         <dependency><scope>test</scope><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId></dependency>
         <dependency><scope>test</scope><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.11.3</version></dependency>
 
         <dependency><scope>test</scope><groupId>org.hamcrest</groupId><artifactId>hamcrest</artifactId><version>3.0</version></dependency>
-        <dependency><scope>test</scope><groupId>au.gov.qld.online</groupId><artifactId>seleniumHelper</artifactId><version>4.21.0.003</version></dependency>
+        <dependency><scope>test</scope><groupId>au.gov.qld.online</groupId><artifactId>selenium-helper</artifactId><version>4.23.0.003</version></dependency>
         <dependency><scope>test</scope><groupId>org.mockito</groupId><artifactId>mockito-core</artifactId></dependency>
         <dependency><scope>test</scope><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><version>3.26.3</version></dependency>
     </dependencies>
@@ -285,7 +285,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <server.port>8091</server.port>
-                        <headless.disabled>false</headless.disabled>
+<!--                        <headless.disabled>false</headless.disabled>-->
                     </systemPropertyVariables>
                     <skipTests>${skipTests}</skipTests>
                 </configuration>

@@ -58,7 +58,7 @@ public class NotifyServiceIT extends ApplicationContextAwareTest {
         Order saved = orderDAO.findById(order.getId()).get();
         assertThat(saved.getNotified(), notNullValue());
 
-        List<SmtpMessage> messages = IteratorUtils.toList(mailServer.getReceivedEmail());
+        List<SmtpMessage> messages = mailServer.getReceivedEmails();
         assertThat(messages.size(), is(2));
 
         SmtpMessage business = messages.get(0);
@@ -87,7 +87,7 @@ public class NotifyServiceIT extends ApplicationContextAwareTest {
         Order saved = orderDAO.findById(order.getId()).get();
         assertThat(saved.getNotified(), notNullValue());
 
-        List<SmtpMessage> messages = IteratorUtils.toList(mailServer.getReceivedEmail());
+        List<SmtpMessage> messages = mailServer.getReceivedEmails();
         assertThat(messages.size(), is(1));
         SmtpMessage business = messages.get(0);
         assertThat(business.getHeaderValue("Subject"), is("Test product has been purchased with receipt " + RECEIPT));
