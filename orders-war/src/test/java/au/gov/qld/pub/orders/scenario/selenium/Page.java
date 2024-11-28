@@ -16,6 +16,12 @@ import au.gov.qld.pub.orders.scenario.ScenarioSetup;
 public class Page {
     public static final String URL = ScenarioSetup.BASE_URL;
 
+    protected WebDriver webDriver;
+
+    public Page(WebDriver webDriver){
+        this.webDriver = webDriver;
+    }
+
     public void selectOption(WebElement element, String value) {
         List<WebElement> options = element.findElements(By.tagName("option"));
         for (WebElement option : options) {
@@ -28,12 +34,9 @@ public class Page {
     }
 
     public String getText() {
-        return getDriver().getPageSource();
+        return webDriver.getPageSource();
     }
 
-    public static WebDriver getDriver() {
-        return ScenarioSetup.driver;
-    }
 
     public static void select(WebElement element, String text) {
         Map<String, WebElement> options = elementsByText(element.findElements(By.xpath("option")));

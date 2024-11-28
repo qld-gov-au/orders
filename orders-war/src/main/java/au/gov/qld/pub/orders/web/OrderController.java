@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import au.gov.qld.pub.orders.web.model.ItemCommand;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -57,9 +58,9 @@ public class OrderController {
         this.errorRedirect = configurationService.getErrorRedirect();
         LOG.info("Loaded precart validators: {}", preCartValidators);
     }
-    
+
     @RequestMapping(value = "/confirm", method = RequestMethod.POST)
-    public ModelAndView confirm(@RequestParam String group, HttpServletRequest request) {
+    public ModelAndView confirm(@RequestParam("group") String group, HttpServletRequest request) {
         Map<String, Object> fields = new HashMap<String, Object>();
         List<String> fieldNames = EnumerationUtils.toList(request.getParameterNames());
         for (String fieldName : fieldNames) {
@@ -67,7 +68,7 @@ public class OrderController {
                 fields.put(fieldName, request.getParameter(fieldName));
             }
         }
-        
+
         ModelAndView mav = new ModelAndView("confirm." + group);
         mav.getModel().put("fields", fields);
         return mav;
@@ -81,18 +82,18 @@ public class OrderController {
             if (!allowedFields.contains(name)) {
                 continue;
             }
-            
+
             String value = defaultString(request.getParameter(name)).trim();
             if (value.length() > MAX_FIELD_LENGTH) {
                 value = value.substring(0, MAX_FIELD_LENGTH);
             }
-            
+
             fields.put(name.trim(), value);
         }
-        
+
         fields.remove("ssqCartId");
         fields.remove("productId");
-        
+
         for (PreCartValidator preCartValidator : preCartValidators) {
         	preCartValidator.validate(productGroup, productId, fields);
         }
@@ -111,36 +112,36 @@ public class OrderController {
                 items.add(item);
             }
         }
-        
+
         return items;
     }
-    
+
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public RedirectView add(@CookieValue(value=Constants.CART_ID, required=false) String cookieCartId, @RequestParam(required=false) String ssqCartId, 
+    public RedirectView add(@CookieValue(value=Constants.CART_ID, required=false) String cookieCartId, @RequestParam(value="ssqCardId", required=false) String ssqCartId,
             @ModelAttribute("command") ItemCommand command, HttpServletRequest request, HttpServletResponse response) throws ServiceException, InterruptedException, ValidationException {
         String effectiveCartId = isBlank(cookieCartId) ? ssqCartId : cookieCartId;
-        
+
         List<Item> items = validateAndCreate(command);
         if (items.isEmpty()) {
             return WebUtils.redirect(errorRedirect);
         }
-        
+
         for (Item item : items) {
             Collection<String> allowedFields = orderService.getAllowedFields(item.getProductId());
             item.setFieldsFromMap(validateAndGetFields(request, allowedFields, item.getProductGroup(), item.getProductId()));
         }
-        
+
         LOG.info("Adding to cart with cartId: " + effectiveCartId);
         Order order = orderService.add(items, effectiveCartId);
         if (order == null) {
         	return WebUtils.redirect(errorRedirect);
         }
-        
+
         Cookie cookie = new Cookie(Constants.CART_ID, order.getCartId());
         cookie.setSecure(configurationService.getServiceFullUrl().toLowerCase(Locale.getDefault()).startsWith("https://"));
         response.addCookie(cookie);
         return WebUtils.redirect(configurationService.getServiceFullUrl() + "/added");
     }
-    
-    
+
+
 }

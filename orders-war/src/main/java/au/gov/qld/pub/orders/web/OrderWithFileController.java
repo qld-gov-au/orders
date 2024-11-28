@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import au.gov.qld.pub.orders.web.validator.OrderValidator;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections4.EnumerationUtils;
@@ -47,8 +48,12 @@ public class OrderWithFileController {
 	}
 
 	@RequestMapping(value = "/confirmwithfile", method = RequestMethod.POST)
-    public ModelAndView confirmWithFile(@RequestParam String group, @RequestParam("upload") List<MultipartFile> upload,
-    		MultipartFile upload1, MultipartFile upload2, MultipartFile upload3, MultipartFile upload4,
+    public ModelAndView confirmWithFile(@RequestParam(value = "group", required = false) String group,
+										@RequestParam(value = "upload", required = false) List<MultipartFile> upload,
+										@RequestParam(value = "upload1", required = false) MultipartFile upload1,
+										@RequestParam(value = "upload2", required = false) MultipartFile upload2,
+										@RequestParam(value = "upload3", required = false) MultipartFile upload3,
+										@RequestParam(value = "upload4", required = false) MultipartFile upload4,
             HttpServletRequest request) throws IOException, ValidationException {
 		if (isBlank(group) || group.length() > MAXIMUM_GROUP_LENGTH) {
 			throw new ValidationException("Invalid group provided");
@@ -86,7 +91,7 @@ public class OrderWithFileController {
 		}
 	}
 
-	private ModelAndView confirm(@RequestParam String group, Map<String, String> fields) {
+	private ModelAndView confirm(@RequestParam("group") String group, Map<String, String> fields) {
         ModelAndView mav = new ModelAndView("confirm." + group);
         mav.getModel().put("fields", fields);
         return mav;

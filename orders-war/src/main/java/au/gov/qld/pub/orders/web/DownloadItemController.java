@@ -36,7 +36,7 @@ public class DownloadItemController {
     private final AttachmentService attachmentService;
     private final OrderDAO orderDao;
 	private final OrderGrouper orderGrouper;
-    
+
     @Autowired
     public DownloadItemController(OrderService orderService, AttachmentService attachmentService, ItemDAO itemDao, OrderDAO orderDao, OrderGrouper orderGrouper) {
         this.orderService = orderService;
@@ -45,16 +45,16 @@ public class DownloadItemController {
         this.orderDao = orderDao;
 		this.orderGrouper = orderGrouper;
     }
-    
+
     @RequestMapping(value = "/download/{orderId}/{itemId}")
-    public void download(@PathVariable String orderId, @PathVariable String itemId, HttpServletResponse response) throws IOException, ServiceException, InterruptedException {
+    public void download(@PathVariable("orderId") String orderId, @PathVariable("itemId") String itemId, HttpServletResponse response) throws IOException, ServiceException, InterruptedException {
         LOG.info("Downloading item: {}", itemId);
-        
+
         Item item = itemDao.findById(itemId).orElse(null);
         if (item == null) {
             throw new IllegalArgumentException("Unknown item id: " + itemId);
         }
-        
+
         if (!item.isPaid()) {
             orderService.notifyPayment(orderId);
             item = itemDao.findById(itemId).orElse(null);
@@ -66,11 +66,11 @@ public class DownloadItemController {
         Order order = orderDao.findById(orderId).orElse(null);
 		Map<String, Order> groupedOrders = orderGrouper.paidByProductGroup(order);
 		FileAttachment attachment = attachmentService.retrieve(groupedOrders.get(item.getProductGroup()), NotifyType.CUSTOMER, itemId);
-        
+
         response.setContentType(CONTENT_TYPE);
         response.setHeader(ATTACHMENT_HEADER, String.format(ATTACHMENT_FILENAME_FMT, item.getNotifyCustomerFormFilename()));
         IOUtils.write(attachment.getData(), response.getOutputStream());
-        response.getOutputStream().flush();   
+        response.getOutputStream().flush();
         response.getOutputStream().close();
     }
 }

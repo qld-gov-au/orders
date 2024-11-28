@@ -1,7 +1,8 @@
 ---
 logging:
   level:
-    ROOT: DEBUG
+    ROOT: ERROR
+    au.gov: DEBUG
 
 
 errorRedirect: "${sourceUrl}"

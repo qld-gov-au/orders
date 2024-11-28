@@ -20,9 +20,9 @@ public class NotifyController {
     public NotifyController(OrderService orderService) {
         this.orderService = orderService;
     }
-    
+
     @RequestMapping(value = "/notify/{orderId}")
-    public ResponseEntity<String> confirm(@PathVariable String orderId) {
+    public ResponseEntity<String> confirm(@PathVariable("orderId") String orderId) {
         LOG.info("Received notify for order id: {}", orderId);
         try {
             orderService.notifyPayment(orderId);
@@ -32,6 +32,6 @@ public class NotifyController {
             return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }
     }
-        
-    
+
+
 }

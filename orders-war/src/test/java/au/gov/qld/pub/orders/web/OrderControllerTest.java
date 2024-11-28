@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Map;
 
+import au.gov.qld.pub.orders.web.model.ItemCommand;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +53,8 @@ public class OrderControllerTest {
     @Mock OrderService orderService;
     @Mock HttpServletResponse response;
     @Mock Order order;
-    @Mock ItemCommand command;
+    @Mock
+    ItemCommand command;
     @Mock Item item;
     @Mock ConfigurationService configurationService;
     @Mock PreCartValidator preCartValidator;

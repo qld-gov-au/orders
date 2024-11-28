@@ -3,6 +3,7 @@ package au.gov.qld.pub.orders.scenario.selenium;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 
@@ -13,17 +14,21 @@ public class SubmissionPage extends Page {
     WebElement sourceId;
     WebElement sourceUrl;
     List<WebElement> productIds;
-    
-    public static SubmissionPage open() {
-        getDriver().get(SubmissionPage.URL + "test");
-        SubmissionPage submissionPage = PageFactory.initElements(getDriver(), SubmissionPage.class);
-        submissionPage.productIds = getDriver().findElements(By.id("productId"));
+
+    public SubmissionPage(WebDriver webDriver) {
+        super(webDriver);
+    }
+
+    public SubmissionPage open() {
+        webDriver.get(SubmissionPage.URL + "test");
+        SubmissionPage submissionPage = PageFactory.initElements(webDriver, SubmissionPage.class);
+        submissionPage.productIds = webDriver.findElements(By.id("productId"));
         return submissionPage;
     }
-    
+
     public ConfirmPage order() {
         confirm.click();
-        return PageFactory.initElements(getDriver(), ConfirmPage.class);
+        return PageFactory.initElements(webDriver, ConfirmPage.class);
     }
 
     public void clearProductIds() {
@@ -39,6 +44,6 @@ public class SubmissionPage extends Page {
             setText(sourceUrl, this.sourceUrl);
         }
         noticeToPay.click();
-        return getDriver().getCurrentUrl();
+        return webDriver.getCurrentUrl();
     }
 }

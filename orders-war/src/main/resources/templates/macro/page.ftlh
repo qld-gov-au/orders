@@ -108,29 +108,39 @@
                                 <div id="ssq-minicart" class="placeholder">
                                     <h2>Cart</h2>
                                     <div id="ssq-minicart-view">
-                                        <script nonce="${__csp_nonce}" type="text/javascript"> <!--
-                                            document.write('<div class="ssq-minicart-loading"><p>Loading <a href="${papiBase}/cart/view">cart</a>...</p></div>');
-                                            // --> </script>
+                                        <div class="ssq-minicart-loading"><p>Loading <a href="${papiBase}/cart/view">cart</a>...</p></div>
                                         <noscript>
                                             <p class="ssq-minicart-noscript">Edit cart or checkout to place your order.</p>
                                             <div class="ssq-minicart-submit">
                                                 <input type="hidden" id="ssq-cart-contents" name="ssq-cart-contents" value="" />
-                                                <a href="${papiBase}/cart/checkout" id="ssq-cart-checkout"><img id="ssq_minicart_checkout" src="${papiBase}/minicart/btn-checkout.png" alt="Checkout" /></a>
-                                                <a href="${papiBase}/cart/view" id="ssq-cart-edit"><img id="ssq_minicart_cart" src="${papiBase}/minicart/btn-cart.png" alt="Edit cart" /></a>
+                                                <img src="${papiBase}/minicart/synchronise?cartId=(cartId)" id="ssq-synch-img" height="0" width="0" alt="" />
+                                                <a href="${papiBase}/cart/checkout" id="ssq-cart-checkout">
+                                                    <img id="ssq_minicart_checkout" src="${papiBase}/minicart/btn-checkout.png" alt="Checkout" />
+                                                </a>
+                                                <a href="${papiBase}/cart/view" id="ssq-cart-edit">
+                                                    <img id="ssq_minicart_cart" src="${papiBase}/minicart/btn-cart.png" alt="Edit cart" />
+                                                </a>
                                             </div>
                                         </noscript>
-                                    </div>
 
+                                    </div>
                                     <#if cartId?has_content>
-                                        <img src="${papiBase}/minicart/synchronise?cartId=${cartId}" id="ssq-synch-img" height="0" width="0" alt="" />
+                                        <script nonce="${__csp_nonce}" type="text/javascript">
+                                            sessionStorage.setItem("cartId", ${cartId})
+                                        </script>
                                     </#if>
                                     <div class="ssq-minicart-cards">
                                         <h3>Cards accepted</h3>
                                         <ul>
-                                            <li><img src="${papiBase}/minicart/visa.png" alt="Visa" /></li>
-                                            <li><img src="${papiBase}/minicart/mastercard.png" alt="MasterCard" /></li>
+                                            <li>
+                                                <img src="${papiBase}/minicart/visa.png" alt="Visa"/>
+                                            </li>
+                                            <li>
+                                                <img src="${papiBase}/minicart/mastercard.png" alt="MasterCard" />
+                                            </li>
                                         </ul>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -160,6 +170,8 @@
     </script>
 
     <#include "../web-template-release/footer/footer-scripts.html">
+
+    <script nonce="${__csp_nonce}" src="${papiBase}/ui/minicart_2.0.js" type="text/javascript"></script>
     <#noautoesc>
         ${footer_script!}
     </#noautoesc>

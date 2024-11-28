@@ -52,7 +52,7 @@ import au.gov.qld.pub.orders.service.ws.CartResponseParser;
 import au.gov.qld.pub.orders.service.ws.CartService;
 import au.gov.qld.pub.orders.service.ws.OrderDetails;
 import au.gov.qld.pub.orders.service.ws.RequestBuilder;
-import au.gov.qld.pub.orders.web.ItemCommand;
+import au.gov.qld.pub.orders.web.model.ItemCommand;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
