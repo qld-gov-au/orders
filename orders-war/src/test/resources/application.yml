@@ -23,7 +23,7 @@ jasypt:
 #    privateKeyLocation: classpath:private_key.pem
 
 mail:
-  from: "noreply@www.qld.gov.au"
+  from: "noreply@qld.gov.au"
 management:
   endpoints:
     enabled-by-default: true
