@@ -2,12 +2,12 @@ package au.gov.qld.pub.orders.config.filter;
 
 import org.apache.commons.codec.binary.Base64;
 import org.assertj.core.util.Sets;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Set;
 
 import static au.gov.qld.pub.orders.config.filter.CspInterceptor.CSP_HEADER;
@@ -26,7 +26,7 @@ public class CspInterceptorTest {
 
     private CspInterceptor cspInterceptor;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         cspInterceptor = new CspInterceptor(false, "filter", "reportTo", "nel");
     }

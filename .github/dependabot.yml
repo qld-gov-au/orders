@@ -6,50 +6,8 @@ updates:
     interval: daily
     time: "19:00"
   open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: org.postgresql:postgresql
-    versions:
-    - 42.2.20
-  - dependency-name: org.eclipse.jetty:jetty-quickstart
-    versions:
-    - 11.0.1
-  - dependency-name: org.eclipse.jetty:jetty-server
-    versions:
-    - 11.0.1
-  - dependency-name: org.eclipse.jetty:jetty-maven-plugin
-    versions:
-    - 11.0.1
-  - dependency-name: org.springframework:spring-test
-    versions:
-    - 5.3.3
-    - 5.3.4
-  - dependency-name: org.springframework:spring-orm
-    versions:
-    - 5.3.3
-    - 5.3.4
-  - dependency-name: org.springframework:spring-webmvc
-    versions:
-    - 5.3.3
-    - 5.3.4
-  - dependency-name: org.springframework:spring-aspects
-    versions:
-    - 5.3.3
-    - 5.3.4
-  - dependency-name: org.springframework:spring-aop
-    versions:
-    - 5.3.3
-    - 5.3.4
-  - dependency-name: org.springframework:spring-oxm
-    versions:
-    - 5.3.3
-    - 5.3.4
-  - dependency-name: org.springframework:spring-context-support
-    versions:
-    - 5.3.3
-    - 5.3.4
-  - dependency-name: org.seleniumhq.selenium:htmlunit-driver
-    versions:
-    - 2.47.1
-  - dependency-name: joda-time:joda-time
-    versions:
-    - 2.10.10
+  groups:
+    selenium:
+      patterns:
+        - "*selenium*"
+        - "*webdrivermanager*"

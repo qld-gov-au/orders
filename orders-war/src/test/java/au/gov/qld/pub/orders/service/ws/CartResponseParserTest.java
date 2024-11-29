@@ -4,9 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class CartResponseParserTest {
@@ -14,7 +15,7 @@ public class CartResponseParserTest {
             + "<status>PAID</status><receiptNumber>1831572</receiptNumber></OrderStatusResponse>";
     static final String UNPAID_ORDER_STATUS = "<OrderStatusResponse xmlns=\"http://smartservice.qld.gov.au/payment/schemas/payment_api_1_3\">"
             + "<status>NOT_PAID</status></OrderStatusResponse>";
-    
+
     static final String ORDER_QUERY = "<OrderQueryResponse xmlns=\"http://smartservice.qld.gov.au/payment/schemas/payment_api_1_3\">"
             + "<customerDetail type=\"Customer\">"
             + "<detail type=\"nameTitle\"/>"
@@ -51,34 +52,38 @@ public class CartResponseParserTest {
             + "</OrderQueryResponse>";
 
     CartResponseParser parser;
-    
-    @Before
+
+    @BeforeEach
     public void setUp() {
         parser = new CartResponseParser();
     }
-    
-    @Test(expected = IllegalArgumentException.class)
+
+    @Test
     public void throwExceptionWhenInvalidStatusXml() {
-        parser.getReceipt("bogus");
+        assertThrows(IllegalArgumentException.class, () -> {
+            parser.getReceipt("bogus");
+        });
     }
-    
-    @Test(expected = IllegalArgumentException.class)
+
+    @Test
     public void throwExceptionWhenInvalidQueryXml() {
-        parser.getPaidOrderDetails("bogus");
+        assertThrows(IllegalArgumentException.class, () -> {
+            parser.getPaidOrderDetails("bogus");
+        });
     }
-    
+
     @Test
     public void receiptFromStatus() {
         String receipt = parser.getReceipt(ORDER_STATUS);
         assertThat(receipt, is("1831572"));
     }
-    
+
     @Test
     public void nullReceiptFromUnpaidStatus() {
         String receipt = parser.getReceipt(UNPAID_ORDER_STATUS);
         assertThat(receipt, nullValue());
     }
-    
+
     @Test
     public void detailsFromQuery() {
         OrderDetails details = parser.getPaidOrderDetails(ORDER_QUERY);

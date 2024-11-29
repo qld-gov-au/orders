@@ -8,41 +8,41 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Map;
 
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import au.gov.qld.pub.orders.dao.FormFileDAO;
 import au.gov.qld.pub.orders.entity.FormFile;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class FileAttachmentServiceTest {
 	private static final String FILE_ID_0 = "file id 0";
 	private static final String FILE_ID_1 = "file id 1";
 	private static final String FILE_ID_2 = "file id 2";
 	private static final String FILE_ID_3 = "file id 3";
-	
+
 	FileAttachmentService service;
-	
+
 	@Mock FileService fileService;
 	@Mock FormFileDAO dao;
 	@Mock FormFile formFile;
 	@Mock MimeMessage message;
 	@Mock MimeMessageHelper helper;
-	
+
 	List<Map<String, String>> paidItemsFields;
-	
-	@Before
+
+	@BeforeEach
 	public void setUp() {
 		paidItemsFields = asList((Map<String, String>)of("fileId0", FILE_ID_0, "fileId1", FILE_ID_1, "fileId2", FILE_ID_2, "fileId3", FILE_ID_3));
 		service = new FileAttachmentService(fileService);
 	}
-	
+
 	@Test
 	public void attachFilesToMessageForBusiness() throws Exception {
 		when(formFile.getName()).thenReturn("some name");

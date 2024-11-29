@@ -40,7 +40,7 @@
 
 
 <!-- noindex -->
-    <!--[if lt IE 9]><script nonce="${__csp_nonce}" type="text/javascript">jQuery && jQuery.transformer({addClasses:true});</script><![endif]-->
+    <!--[if lt IE 9]><script type="text/javascript">jQuery && jQuery.transformer({addClasses:true});</script><![endif]-->
 
     <div id="access">
         <h2>Skip links and keyboard navigation</h2>

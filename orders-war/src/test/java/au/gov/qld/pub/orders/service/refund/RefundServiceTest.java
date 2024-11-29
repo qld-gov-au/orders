@@ -1,9 +1,6 @@
 package au.gov.qld.pub.orders.service.refund;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -11,11 +8,11 @@ import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import au.gov.qld.pub.orders.dao.RefundItemDAO;
 import au.gov.qld.pub.orders.entity.RefundItem;
@@ -25,10 +22,13 @@ import au.gov.qld.pub.orders.service.refund.dto.LineItem;
 import au.gov.qld.pub.orders.service.refund.dto.RefundQueryResponse;
 import au.gov.qld.pub.orders.service.refund.dto.RefundRequestResponse;
 import au.gov.qld.pub.orders.service.ws.SOAPClient;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class RefundServiceTest {
-	
+
 	private static final String QUERY_REQUEST = "refund query request";
 	private static final String REQUEST_REQUEST = "refund request request";
 	private static final String PASSWORD = "some password";
@@ -37,7 +37,7 @@ public class RefundServiceTest {
 	private static final String REQUEST_RESPONSE = "request response";
 	private static final int PAPI_LINE_ITEM_ID = 1234;
 	private static final String ORDERLINE_ID = "some orderline id";
-	
+
 	@Mock RefundItemDAO refundItemDAO;
 	@Mock ConfigurationService configurationService;
 	@Mock SOAPClient client;
@@ -49,23 +49,23 @@ public class RefundServiceTest {
 	@Mock RefundQueryResponse queryResponse;
 	@Mock LineItem lineItem;
 	@Mock LineItem associatedLineItem;
-	
+
 	RefundService service;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		when(lineItem.getPapiLineItemId()).thenReturn(PAPI_LINE_ITEM_ID);
 		when(lineItem.getOrderLineId()).thenReturn(ORDERLINE_ID);
 		when(associatedLineItem.getOrderLineId()).thenReturn("associated" + ORDERLINE_ID);
 		when(associatedLineItem.getPapiLineItemId()).thenReturn(PAPI_LINE_ITEM_ID + 1);
 		when(queryResponse.getLineItem()).thenReturn(asList(lineItem, associatedLineItem));
-		
+
 		when(configurationService.getServiceWsUsername()).thenReturn(USERNAME);
 		when(configurationService.getServiceWsPassword()).thenReturn(PASSWORD);
 		service = new RefundService(refundItemDAO, configurationService, refundResponseParser, refundRequestBuilder);
 		service.setClient(client);
 	}
-	
+
 	@Test
 	public void shouldIgnorePreparingRefundsNotNew() {
 //		when(refundItem.getRefundState()).thenReturn(RefundState.ERROR); //UnnecessaryStubbingException
@@ -73,7 +73,7 @@ public class RefundServiceTest {
 		verifyNoInteractions(client);
 		verify(refundItem, never()).updated();
 	}
-	
+
 	@Test
 	public void shouldPrepareAndSendRefundRequestForEachNew() throws Exception {
 		when(refundItem.getRefundState()).thenReturn(RefundState.NEW);
@@ -85,9 +85,9 @@ public class RefundServiceTest {
 		when(refundItemDAO.findByOrderLineIdAndRefundState("associated" + ORDERLINE_ID, RefundState.NEW)).thenReturn(asList(associatedRefundItem));
 		when(refundResponseParser.parseQueryResponse(QUERY_RESPONSE)).thenReturn(queryResponse);
 		when(client.sendRequest(USERNAME, PASSWORD.getBytes(StandardCharsets.UTF_8), RefundService.REFUND_QUERY_NS, QUERY_REQUEST)).thenReturn(QUERY_RESPONSE);
-		
+
 		service.refundNewItems();
-		
+
 		verify(client).sendRequest(USERNAME, PASSWORD.getBytes(StandardCharsets.UTF_8), RefundService.REFUND_QUERY_NS, QUERY_REQUEST);
 		verify(refundItem).setPapiLineItemId(PAPI_LINE_ITEM_ID);
 		verify(refundItem).updated();

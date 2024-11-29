@@ -6,25 +6,20 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 import au.gov.qld.pub.orders.config.App;
-import au.gov.qld.pub.orders.config.Config;
-import au.gov.qld.pub.orders.config.OrderExtensionConfig;
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dumbster.smtp.SimpleSmtpServer;
 
 @SpringBootTest(classes = App.class)
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(classes={Config.class, OrderExtensionConfig.class}, loader= AnnotationConfigContextLoader.class)
 //@WebAppConfiguration
@@ -48,14 +43,14 @@ public abstract class ApplicationContextAwareTest {
     @Value("${spring.mail.port}") private Integer mailPort;
     protected SimpleSmtpServer mailServer;
 
-    @Before
+    @BeforeEach
     public void beforeMethod() {
         try {
             mailServer = SimpleSmtpServer.start(mailPort);
         } catch (Exception e) {}
     }
 
-    @After
+    @AfterEach
     public void afterMethod() {
         try {
             if (mailServer != null) {

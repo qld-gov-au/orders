@@ -1,0 +1,6 @@
+[submodule "utils/dumbster"]
+	path = utils/dumbster
+	url = https://github.com/dhsmith1001/dumbster.git
+[submodule "utils/selenium-helper"]
+	path = utils/selenium-helper
+	url = https://github.com/qld-gov-au/selenium-helper.git

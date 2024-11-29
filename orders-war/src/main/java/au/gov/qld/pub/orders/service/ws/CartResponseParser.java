@@ -29,7 +29,7 @@ public class CartResponseParser {
     public OrderDetails getPaidOrderDetails(String xml) {
         Document document = documentForXml(xml);
         XPathFactory pathFactory = XPathFactory.newInstance();
-        
+
         NodeList orderlineNodes = getXPathNodeList(pathFactory, "//orderline", document);
         Map<String, String> orderlineQuantities = new HashMap<String, String>();
         for (int i=0; i < orderlineNodes.getLength(); i++) {
@@ -38,10 +38,10 @@ public class CartResponseParser {
             String quantity = node.getAttributes().getNamedItem("quantity").getTextContent();
             orderlineQuantities.put(id, quantity);
         }
-        
+
         NodeList deliveryDetailsNodes = getXPathNodeList(pathFactory, "//deliveryAddress/detail", document);
         NodeList customerDetailsNodes = getXPathNodeList(pathFactory, "//customerDetail/detail", document);
-        
+
         OrderDetails orderDetails = new OrderDetails();
         orderDetails.setDeliveryDetails(getDetailsMap(deliveryDetailsNodes));
         orderDetails.setCustomerDetails(getDetailsMap(customerDetailsNodes));
@@ -59,7 +59,7 @@ public class CartResponseParser {
         }
         return details;
     }
-    
+
     private Node getXPathNode(XPathFactory pathFactory, String xpath, Document document) {
         try {
             XPathExpression expression = pathFactory.newXPath().compile(xpath);
@@ -68,7 +68,7 @@ public class CartResponseParser {
             throw new IllegalStateException(e.getMessage(), e);
         }
     }
-    
+
     private NodeList getXPathNodeList(XPathFactory pathFactory, String xpath, Document document) {
         try {
             XPathExpression expression = pathFactory.newXPath().compile(xpath);

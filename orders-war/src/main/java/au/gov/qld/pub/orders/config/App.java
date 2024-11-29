@@ -16,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @EnableAsync
 @SpringBootApplication
-@ComponentScan( basePackages = {"au.gov.qld.pub.orders"})
+@ComponentScan(basePackages = {"au.gov.qld.pub.orders"})
 @EnableCaching
 @EnableScheduling
 @EnableJpaRepositories(basePackages = "au.gov.qld.pub.orders.dao")
@@ -24,7 +24,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableConfigurationProperties
 @EnableEncryptableProperties
 public class App {
-
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
     }

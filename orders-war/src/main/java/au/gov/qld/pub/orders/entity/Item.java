@@ -11,11 +11,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

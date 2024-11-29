@@ -27,17 +27,17 @@ import au.gov.qld.pub.orders.service.refund.dto.RefundRequestResponse;
 @Component
 public class RefundResponseParser {
 	private static final Logger LOG = LoggerFactory.getLogger(RefundResponseParser.class);
-	
+
 	public RefundQueryResponse parseQueryResponse(String wsResponse) {
 		RefundQueryResponse response = new RefundQueryResponse();
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 			Document doc = docBuilder.parse(new ByteArrayInputStream(wsResponse.getBytes(StandardCharsets.UTF_8)));
-			
+
 			XPath xPath =  XPathFactory.newInstance().newXPath();
 			NodeList nodeList = (NodeList) xPath.compile("//lineItem").evaluate(doc, XPathConstants.NODESET);
-			
+
 			for (int i=0; i < nodeList.getLength(); i++) {
 				LineItem lineItem = new LineItem();
 				Element node = (Element) nodeList.item(i);
@@ -51,7 +51,7 @@ public class RefundResponseParser {
 			LOG.warn("Unable to parse: {}", wsResponse);
 			throw new IllegalArgumentException(e.getMessage(), e);
 		}
-        
+
 		return response;
 	}
 
@@ -61,7 +61,7 @@ public class RefundResponseParser {
 		try {
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 			Document doc = docBuilder.parse(new ByteArrayInputStream(wsResponse.getBytes(StandardCharsets.UTF_8)));
-			
+
 			XPath xPath =  XPathFactory.newInstance().newXPath();
 			// namespace sometimes in response
 			Element refundResponse = (Element) xPath.compile("//*[local-name()='errorMessage']").evaluate(doc, XPathConstants.NODE);
@@ -70,7 +70,7 @@ public class RefundResponseParser {
 			LOG.warn("Unable to parse: {}", wsResponse);
 			throw new IllegalArgumentException(e.getMessage(), e);
 		}
-        
+
 		return response;
 	}
 

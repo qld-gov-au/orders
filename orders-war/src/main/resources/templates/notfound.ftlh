@@ -9,7 +9,7 @@
         <meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />
 
     <link nonce="${__csp_nonce}" rel="stylesheet" type="text/css" href="https://static.qgov.net.au/assets/v2/style/qgov.css" media="all" />
-    <!--[if lt IE 9]><link nonce="${__csp_nonce}" rel="stylesheet" href="https://static.qgov.net.au/assets/v2/style/qgov-ie.css" type="text/css" media="all" /><![endif]-->
+    <!--[if lt IE 9]><link rel="stylesheet" href="https://static.qgov.net.au/assets/v2/style/qgov-ie.css" type="text/css" media="all" /><![endif]-->
 
     <!-- layout-small is assumed by default (combined with qgov.css) -->
     <link nonce="${__csp_nonce}" href="https://static.qgov.net.au/assets/v2/style/layout-medium.css" media="only all and (min-width: 640px) and (max-width: 980px)" rel="stylesheet" type="text/css" />
@@ -27,8 +27,8 @@
     // --></script>
     <script nonce="${__csp_nonce}" type="text/javascript" src="https://static.qgov.net.au/assets/v2/script/qgov-environment.js" id="qgov-environment"></script>
     <!--[if lt IE 9]>
-    <script nonce="${__csp_nonce}" type="text/javascript">document.createElement('abbr');document.createElement('time');</script>
-    <script nonce="${__csp_nonce}" type="text/javascript" src="https://static.qgov.net.au/assets/v2/script/ie-layout.js"></script>
+    <script type="text/javascript">document.createElement('abbr');document.createElement('time');</script>
+    <script type="text/javascript" src="https://static.qgov.net.au/assets/v2/script/ie-layout.js"></script>
     <![endif]-->
 
     <link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />

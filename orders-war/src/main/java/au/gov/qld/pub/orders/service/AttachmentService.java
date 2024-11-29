@@ -6,22 +6,23 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,18 +35,18 @@ import au.gov.qld.pub.orders.entity.Order;
 public class AttachmentService {
     private static final Logger LOG = LoggerFactory.getLogger(AttachmentService.class);
     public static final int OKAY_STATUS_CODE = 200;
-    
+
     private final int retryCount;
     private final int retryWait;
     private final int timeout;
-    
+
     @Autowired
     public AttachmentService(ConfigurationService config) {
         this.retryCount = config.getNotifyFormRetryCount();
         this.retryWait = config.getNotifyFormRetryWait();
         this.timeout = config.getNotifyFormTimeout();
     }
-    
+
     public FileAttachment retrieve(Order groupedOrder, NotifyType type, String itemId) throws IOException, InterruptedException {
         LOG.info("Starting downloading attachments for order {} and type {} for item {}", groupedOrder.getId(), type, itemId);
         List<Item> bundled = groupedOrder.getBundledPaidItems();
@@ -75,7 +76,7 @@ public class AttachmentService {
     public List<FileAttachment> retrieve(Order groupedOrder, NotifyType type) throws IOException, InterruptedException {
         LOG.info("Starting downloading attachments for order {} and type {}", groupedOrder.getId(), type);
         List<FileAttachment> attachments = new ArrayList<>();
-        
+
 		List<Item> bundled = groupedOrder.getBundledPaidItems();
         if (bundled.size() > 0) {
         	String uri = bundled.get(0).getNotifyFormUri(type);
@@ -93,10 +94,10 @@ public class AttachmentService {
 		        attachments.add(downloadRetrying(createClient(), uri, groupedOrder, asList(item), type));
 		    }
 		}
-		
+
 		return attachments;
     }
-    
+
     private Item findItemInList(List<Item> items, String id) {
         for (Item item : items) {
         	if (id.equals(item.getId())) {
@@ -108,15 +109,16 @@ public class AttachmentService {
 
 	private FileAttachment downloadRetrying(HttpClient client, String uri, Order order, List<Item> items, NotifyType type) throws IOException, InterruptedException {
         HttpPost httpPost = createRequest(uri, order, items);
-        for (int attempt=0; attempt < retryCount; attempt++) {
+        for (int attempt=0; attempt <= retryCount; attempt++) {
             try {
                 return new FileAttachment(firstFilename(items, type), download(client, httpPost));
             } catch(IOException e) {
+                LOG.info("failed to download, attempt:{}, retry set to: {}", attempt, retryCount);
                 LOG.error(e.getMessage(), e);
                 Thread.sleep(retryWait);
             }
         }
-        
+
         throw new IOException("Retries exhausted for bundled items in order" + order.getId() + " to uri " + uri);
     }
 
@@ -132,12 +134,15 @@ public class AttachmentService {
 
 	private byte[] download(HttpClient client, HttpPost httpPost) throws IOException {
         CloseableHttpResponse response = (CloseableHttpResponse) client.execute(httpPost);
-        
-        if (response.getStatusLine().getStatusCode() != OKAY_STATUS_CODE) {
-        	response.close();
-            throw new IOException("Could not download attachment: " + response.getStatusLine().getStatusCode() + ", " + response.getStatusLine().getReasonPhrase());
+
+        if (response == null) {
+            throw new IOException("Could not download attachment: \"response null\"");
         }
-        
+        if (response.getCode() != OKAY_STATUS_CODE) {
+        	response.close();
+            throw new IOException("Could not download attachment: " + response.getCode() + ", " + response.getReasonPhrase());
+        }
+
         HttpEntity entity = response.getEntity();
         byte[] data = IOUtils.toByteArray(entity.getContent());
         EntityUtils.consume(entity);
@@ -151,14 +156,14 @@ public class AttachmentService {
         nvps.addAll(createItemPostData(items.get(0), ""));
         if (items.size() > 1) {
         	for (int i=1; i < items.size(); i++) {
-        		nvps.addAll(createItemPostData(items.get(i), "-" + i));	
+        		nvps.addAll(createItemPostData(items.get(i), "-" + i));
         	}
         }
-        
+
         nvps.add(createField("paid", order.getPaid()));
         nvps.add(createField("receipt", order.getReceipt()));
 
-        httpPost.setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
+        httpPost.setEntity(new UrlEncodedFormEntity(nvps, StandardCharsets.UTF_8));
         return httpPost;
     }
 
@@ -182,7 +187,8 @@ public class AttachmentService {
     }
 
     protected HttpClient createClient() {
-        RequestConfig config = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout).build();
+        RequestConfig config = RequestConfig.custom().setConnectionRequestTimeout(Timeout.ofSeconds(timeout))
+            .setResponseTimeout(Timeout.ofSeconds(timeout)).build();
         return HttpClients.custom().setDefaultRequestConfig(config).build();
     }
 

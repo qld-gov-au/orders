@@ -1,4 +1,4 @@
-package au.gov.qld.pub.orders.web;
+package au.gov.qld.pub.orders.web.validator;
 
 import java.util.Map;
 

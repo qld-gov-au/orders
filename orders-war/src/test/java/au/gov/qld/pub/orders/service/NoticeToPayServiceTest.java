@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isA;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.fail;
+
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -20,19 +20,24 @@ import java.util.Optional;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import au.gov.qld.pub.orders.dao.NoticeToPayDAO;
 import au.gov.qld.pub.orders.entity.NoticeToPay;
 import au.gov.qld.pub.orders.service.ws.RequestBuilder;
 import au.gov.qld.pub.orders.service.ws.SOAPClient;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class NoticeToPayServiceTest {
     private static final String SOURCE_ID = "some id";
     private static final String REQUEST = "some request";
@@ -49,7 +54,7 @@ public class NoticeToPayServiceTest {
     private static final String PAID_QUERY_RESPONSE = "<status>PAID</status><receiptNumber>" + RECEIPT_NUMBER + "</receiptNumber>";
     private static final String NTP_QUERY = "some ntp query";
     private static final String DESCRIPTION = "some desc";
-    
+
     NoticeToPayService service;
 
     @Mock PaymentInformationService paymentInformationService;
@@ -60,8 +65,8 @@ public class NoticeToPayServiceTest {
     @Mock ConfigurationService config;
     @Mock NoticeToPay noticeToPay;
     @Mock AdditionalNotificationService additionalNotificationService;
-    
-    @Before
+
+    @BeforeEach
     public void setUp() throws Exception {
         DateTimeUtils.setCurrentMillisFixed(new DateTime().toDate().getTime());
         when(config.getServiceWsEndpoint()).thenReturn(ENDPOINT);
@@ -76,40 +81,40 @@ public class NoticeToPayServiceTest {
         when(paymentInformationService.fetch(SOURCE_ID)).thenReturn(paymentInformation);
         when(noticeToPayDAO.findById(NOTICE_TO_PAY_ID)).thenReturn(Optional.of(noticeToPay));
         when(noticeToPayDAO.findById("bogus")).thenReturn(Optional.empty());
-        
+
         service = new NoticeToPayService(config, paymentInformationService, noticeToPayDAO, requestBuilder, additionalNotificationService) {
             protected SOAPClient getSOAPClient(String endpoint) {
                 return ENDPOINT.equals(endpoint) ? soapClient : null;
             }
         };
     }
-    
-    @After
+
+    @AfterEach
     public void tearDown() {
         DateTimeUtils.setCurrentMillisSystem();
     }
-    
+
     @Test
     public void returnRedirectForFetchedAndSavedPaymentInformation() throws Exception {
         String redirect = service.create(SOURCE_ID, SOURCE_URL);
         assertThat(redirect, is(REDIRECT));
         verify(noticeToPayDAO).save((NoticeToPay)argThat(hasProperty("paymentInformationId", equalTo(SOURCE_ID))));
     }
-    
+
     @Test
     public void returnNullWhenIfNoOwingAmount() throws Exception {
         when(paymentInformation.getAmountOwingInCents()).thenReturn(0l);
         assertThat(service.create(SOURCE_ID, SOURCE_URL), nullValue());
         verifyNoInteractions(soapClient);
     }
-    
+
     @Test
     public void throwExceptionIfRecentlyPaid() throws Exception {
         when(noticeToPayDAO.existsByPaymentInformationIdAndNotifiedAtAfter(SOURCE_ID, new DateTime().minusHours(1).toDate())).thenReturn(true);
         assertThat(service.create(SOURCE_ID, SOURCE_URL), nullValue());
         verifyNoInteractions(soapClient);
     }
-    
+
     @Test
     public void throwExceptionWhenInvalidResponseFromRequest() throws Exception {
         when(soapClient.sendRequest(USERNAME, PASSWORD.getBytes("UTF-8"), NoticeToPayService.NS, REQUEST)).thenReturn("bogus");
@@ -120,31 +125,31 @@ public class NoticeToPayServiceTest {
             verify(noticeToPayDAO).save((NoticeToPay)argThat(hasProperty("paymentInformationId", equalTo(SOURCE_ID))));
         }
     }
-    
+
     @Test
     public void setNoticeToPayWithPaymentDetailsOnNotifyAfterCheckingStatus() throws Exception {
         when(noticeToPay.getDescription()).thenReturn(DESCRIPTION);
         when(noticeToPay.getPaymentInformationId()).thenReturn(SOURCE_ID);
         service.notifyPayment(NOTICE_TO_PAY_ID);
-        
+
         verify(noticeToPay).setReceiptNumber(RECEIPT_NUMBER);
         verify(noticeToPay).setNotifiedAt(argThat(isA(Date.class)));
         verify(noticeToPayDAO).save(noticeToPay);
-        verify(additionalNotificationService).notifedPaidNoticeToPay(eq(NOTICE_TO_PAY_ID), argThat(isA(Date.class)), eq(RECEIPT_NUMBER), 
+        verify(additionalNotificationService).notifedPaidNoticeToPay(eq(NOTICE_TO_PAY_ID), argThat(isA(Date.class)), eq(RECEIPT_NUMBER),
         eq(DESCRIPTION), eq(SOURCE_ID));
     }
-    
+
     @Test
     public void doNotSetNoticeToPayWithPaymentDetailsOnNotifyWhenAlreadyNotified() throws Exception {
         when(noticeToPay.getNotifiedAt()).thenReturn(new Date());
         service.notifyPayment(NOTICE_TO_PAY_ID);
-        
+
         verifyNoInteractions(requestBuilder);
         verifyNoInteractions(soapClient);
         verifyNoInteractions(additionalNotificationService);
         verify(noticeToPayDAO, never()).save(argThat(isA(NoticeToPay.class)));
     }
-    
+
     @Test
     public void throwExceptionIfNotifyingUnknownId() throws ServiceException {
         try {
@@ -157,7 +162,7 @@ public class NoticeToPayServiceTest {
             verifyNoInteractions(additionalNotificationService);
         }
     }
-    
+
     @Test
     public void throwExceptionIfNotifyingUnpaid() throws Exception {
         when(soapClient.sendRequest(USERNAME, PASSWORD.getBytes("UTF-8"), NoticeToPayService.NS, NTP_QUERY)).thenReturn(UNPAID_QUERY_RESPONSE);
@@ -169,7 +174,7 @@ public class NoticeToPayServiceTest {
             verifyNoInteractions(additionalNotificationService);
         }
     }
-    
+
     @Test
     public void ignoreNotificationOnFailed() throws Exception {
         when(soapClient.sendRequest(USERNAME, PASSWORD.getBytes("UTF-8"), NoticeToPayService.NS, NTP_QUERY)).thenReturn(FAILED_QUERY_RESPONSE);
@@ -177,5 +182,5 @@ public class NoticeToPayServiceTest {
         verify(noticeToPayDAO, never()).save(argThat(isA(NoticeToPay.class)));
         verifyNoInteractions(additionalNotificationService);
     }
-    
+
 }

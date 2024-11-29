@@ -14,12 +14,13 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,20 +65,20 @@ public class SOAPClient {
             httpPost.setHeader("Content-Type", "text/xml");
             httpPost.setEntity(new StringEntity(payload, StandardCharsets.UTF_8));
             CloseableHttpResponse response = httpclient.execute(httpPost);
-            
+
             try {
-                if (response.getStatusLine().getStatusCode() != 200) {
+                if (response.getCode() != 200) {
                     LOG.debug("Failed to send: {}", payload);
-                    throw new IOException("Could not connect - HTTP Status code: " + response.getStatusLine().getStatusCode() + " (" + response.getStatusLine().getReasonPhrase() + ")");
+                    throw new IOException("Could not connect - HTTP Status code: " + response.getCode() + " (" + response.getReasonPhrase() + ")");
                 }
-                
+
                 return extractBody(EntityUtils.toString(response.getEntity()));
             } finally {
                 response.close();
                 httpclient.close();
             }
-            
-        } catch (NoSuchAlgorithmException | IOException e) {
+
+        } catch (NoSuchAlgorithmException | IOException | ParseException e) {
             throw new ServiceException(e);
         }
     }

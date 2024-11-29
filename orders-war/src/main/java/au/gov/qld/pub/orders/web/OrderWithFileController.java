@@ -11,19 +11,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import au.gov.qld.pub.orders.web.validator.OrderValidator;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections4.EnumerationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+//import org.springframework.web.multipart.MultipartResolver.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import au.gov.qld.pub.orders.service.FileService;
@@ -46,15 +46,19 @@ public class OrderWithFileController {
 			productGroupValidators.put(validator.getProductGroup(), validator);
 		}
 	}
-	
+
 	@RequestMapping(value = "/confirmwithfile", method = RequestMethod.POST)
-    public ModelAndView confirmWithFile(@RequestParam String group, @RequestParam("upload") List<MultipartFile> upload,
-    		MultipartFile upload1, MultipartFile upload2, MultipartFile upload3, MultipartFile upload4, 
+    public ModelAndView confirmWithFile(@RequestParam(value = "group", required = false) String group,
+										@RequestParam(value = "upload", required = false) List<MultipartFile> upload,
+										@RequestParam(value = "upload1", required = false) MultipartFile upload1,
+										@RequestParam(value = "upload2", required = false) MultipartFile upload2,
+										@RequestParam(value = "upload3", required = false) MultipartFile upload3,
+										@RequestParam(value = "upload4", required = false) MultipartFile upload4,
             HttpServletRequest request) throws IOException, ValidationException {
 		if (isBlank(group) || group.length() > MAXIMUM_GROUP_LENGTH) {
 			throw new ValidationException("Invalid group provided");
 		}
-		
+
 		Map<String, String> fieldsAndValues = getFieldValues(request);
 		// Prefill with list of uploads if they are provided.
 		List<MultipartFile> uploads = new ArrayList<>(upload == null ? Collections.<MultipartFile>emptyList() : upload);
@@ -65,15 +69,15 @@ public class OrderWithFileController {
 		if (uploads.size() > MAX_UPLOADS) {
 			throw new ValidationException("Too many uploads");
 		}
-		
+
 		OrderValidator orderValidator = productGroupValidators.get(group);
 		if (orderValidator != null) {
-			orderValidator.validate(uploads, fieldsAndValues);	
+			orderValidator.validate(uploads, fieldsAndValues);
 		} else {
 			LOG.info("No server side validation for: {}", group);
 		}
-		
-		
+
+
 		ModelAndView mav = confirm(group, fieldsAndValues);
         List<String> fileIds = fileService.save(uploads);
         mav.addObject(FILE_ID, fileIds);
@@ -87,7 +91,7 @@ public class OrderWithFileController {
 		}
 	}
 
-	private ModelAndView confirm(@RequestParam String group, Map<String, String> fields) {
+	private ModelAndView confirm(@RequestParam("group") String group, Map<String, String> fields) {
         ModelAndView mav = new ModelAndView("confirm." + group);
         mav.getModel().put("fields", fields);
         return mav;
@@ -103,11 +107,11 @@ public class OrderWithFileController {
         }
 		return fields;
 	}
-	
-	@Bean(name = "multipartResolver")
-	public CommonsMultipartResolver createMultipartResolver() {
-	    CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-	    resolver.setDefaultEncoding("utf-8");
-	    return resolver;
-	}
+
+//	@Bean(name = "multipartResolver")
+//	public CommonsMultipartResolver createMultipartResolver() {
+//	    CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+//	    resolver.setDefaultEncoding("utf-8");
+//	    return resolver;
+//	}
 }
