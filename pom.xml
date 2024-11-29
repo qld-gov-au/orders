@@ -11,7 +11,7 @@
 
     <properties>
         <maven.build.timestamp.format>h:mm a, d MMMM yyyy</maven.build.timestamp.format>
-        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jackson.version>2.18.2</jackson.version>
         <maven.compiler.source>21</maven.compiler.source>
