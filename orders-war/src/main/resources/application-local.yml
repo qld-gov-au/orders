@@ -9,7 +9,7 @@ errorRedirect: "${sourceUrl}"
 
 jasypt:
   encryptor:
-    #provider needs to be bouncycastel for this algorithm
+    #provider needs to be bouncycastle for this algorithm
     provider-name: "BC"
     provider-class-name: org.bouncycastle.jce.provider.BouncyCastleProvider
     algorithm: "PBEWITHSHA256AND128BITAES-CBC-BC"

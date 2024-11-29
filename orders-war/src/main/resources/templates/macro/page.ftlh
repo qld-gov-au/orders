@@ -39,7 +39,7 @@
         <link nonce="${__csp_nonce}" type="text/css" href="${papiBase}/ui/minicart_1.0.css" rel="stylesheet" />
 
         <noscript>
-            <style nonce="${__csp_nonce}">
+            <style>
                 .collapse{
                     display: block !important;
                 }

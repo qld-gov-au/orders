@@ -17,9 +17,9 @@ function webTemplateReleaseInstall () {
         .pipe(replace(/<!--#include virtual="\/assets\/includes-cdn\/([a-zA-Z-]+)\/(.*)"-->/g, '<#include "..\/$1\/$2"\/>'))
         .pipe(replace(/<!--#include virtual="(.*)"-->/g, '<#include "$1"/>'))
         .pipe(replace(/(test-static|static)\.qgov\.net\.au/g, '${cdnEnvironment}'))
-        .pipe(htmlFilter).pipe(replace(/<(script|link|style)/g, '<$1 nonce="${__csp_nonce}"'))
+        .pipe(htmlFilter).pipe(replace(/(?<!<!--|<noscript>\n?\s*)<(script|link|style)/g, '<$1 nonce="${__csp_nonce}"'))
         .pipe(htmlFilter.restore)
-        .pipe(gulp.dest('./target/generated-sources/src/main/resources/templates/web-template-release'));//
+        .pipe(gulp.dest('./target/generated-sources/src/main/resources/templates/web-template-release'));
 }
 exports.webTemplateReleaseInstall = webTemplateReleaseInstall;
 
