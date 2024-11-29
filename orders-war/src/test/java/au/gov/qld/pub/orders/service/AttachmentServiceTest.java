@@ -126,11 +126,8 @@ public class AttachmentServiceTest {
     public void sendOrderAndItemDetailsToFormServiceAndReturnAsAttachmentsForBusiness() throws Exception {
         validPayload();
         setDefaultReturns(item, "", true, true, false, false);
-        //setDefaultReturns(item2, "2", true, true, true);
-        //setDefaultReturns(item3, "3", true, true, false);
 
         when(businessResponse.getCode()).thenReturn(Integer.valueOf(AttachmentService.OKAY_STATUS_CODE));
-//        when(businessResponse.getReasonPhrase()).thenReturn("200");
         when(businessResponse.getEntity()).thenReturn(new StringEntity(BUSINESS_CONTENT));
 
         when(client.execute(ArgumentMatchers.argThat(new HttpPostMatcher(BUSINESS_FORM_URI, EXPECTED_FORM_DATA))))
@@ -295,8 +292,6 @@ public class AttachmentServiceTest {
 
         when(customerResponse.getCode()).thenReturn(Integer.valueOf(500));
         when(customerResponse.getReasonPhrase()).thenReturn("500 Mock Error - customerResponse");
-//        when(customerResponse.getEntity()).thenReturn(new StringEntity(CUSTOMER_CONTENT));
-
 
         assertThrows(IOException.class, () -> {
             when(config.getNotifyFormRetryCount()).thenReturn(2);
