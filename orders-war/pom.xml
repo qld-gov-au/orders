@@ -81,7 +81,7 @@
         <!-- TEST DEPENDENCIES -->
         <dependency><scope>test</scope><groupId>com.github.dhsmith1001</groupId><artifactId>dumbster</artifactId><version>2.0.0-SNAPSHOT</version></dependency>
         <dependency><scope>test</scope><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId></dependency>
-        <dependency><scope>test</scope><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.11.3</version></dependency>
+        <dependency><scope>test</scope><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.11.4</version></dependency>
 
         <dependency><scope>test</scope><groupId>org.hamcrest</groupId><artifactId>hamcrest</artifactId><version>3.0</version></dependency>
         <dependency><scope>test</scope><groupId>au.gov.qld.online</groupId><artifactId>selenium-helper</artifactId><version>4.23.0.003</version></dependency>
