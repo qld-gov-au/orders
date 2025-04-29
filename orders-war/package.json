@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "cp-cli": "^1.1.2",
-    "gulp": "^4.0.2",
+    "gulp": "^5.0.0",
     "gulp-filter": "^6.0.0",
     "gulp-replace": "^1.0.0",
     "path": "^0.12.7",
