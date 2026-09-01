@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.joda.time.LocalDate;
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class FileService {
 	@Scheduled(fixedDelay = 60 * 60 * 1000)
 	public void cleanUp() {
 		LOG.debug("Cleaning up files older than: {} days", deleteUploadDays);
-		Collection<String> ids = dao.findIdByCreatedAtBefore(new LocalDate().minusDays(deleteUploadDays).toDate());
+		Collection<String> ids = dao.findIdByCreatedAtBefore(DateTimeUtils.currentLocalDate().minusDays(deleteUploadDays));
 		for (String id : ids) {
 			LOG.info("Cleaning up form file with id: {}", id);
 			dao.deleteById(id);

@@ -15,11 +15,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,7 +69,7 @@ public class NoticeToPayServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        DateTimeUtils.setCurrentMillisFixed(new DateTime().toDate().getTime());
+        DateTimeUtils.setSystemClock(DateTimeUtils.currentLocalDateTime());
         when(config.getServiceWsEndpoint()).thenReturn(ENDPOINT);
         when(config.getNoticeToPayServiceWsPassword()).thenReturn(PASSWORD);
         when(config.getNoticeToPayServiceWsUsername()).thenReturn(USERNAME);
@@ -91,7 +92,7 @@ public class NoticeToPayServiceTest {
 
     @AfterEach
     public void tearDown() {
-        DateTimeUtils.setCurrentMillisSystem();
+        DateTimeUtils.setSystemClock(null);
     }
 
     @Test
@@ -110,7 +111,7 @@ public class NoticeToPayServiceTest {
 
     @Test
     public void throwExceptionIfRecentlyPaid() throws Exception {
-        when(noticeToPayDAO.existsByPaymentInformationIdAndNotifiedAtAfter(SOURCE_ID, new DateTime().minusHours(1).toDate())).thenReturn(true);
+        when(noticeToPayDAO.existsByPaymentInformationIdAndNotifiedAtAfter(SOURCE_ID, DateTimeUtils.currentLocalDateTime().minusHours(1))).thenReturn(true);
         assertThat(service.create(SOURCE_ID, SOURCE_URL), nullValue());
         verifyNoInteractions(soapClient);
     }
@@ -133,15 +134,15 @@ public class NoticeToPayServiceTest {
         service.notifyPayment(NOTICE_TO_PAY_ID);
 
         verify(noticeToPay).setReceiptNumber(RECEIPT_NUMBER);
-        verify(noticeToPay).setNotifiedAt(argThat(isA(Date.class)));
+        verify(noticeToPay).setNotifiedAt(argThat(isA(LocalDateTime.class)));
         verify(noticeToPayDAO).save(noticeToPay);
-        verify(additionalNotificationService).notifedPaidNoticeToPay(eq(NOTICE_TO_PAY_ID), argThat(isA(Date.class)), eq(RECEIPT_NUMBER),
+        verify(additionalNotificationService).notifedPaidNoticeToPay(eq(NOTICE_TO_PAY_ID), argThat(isA(LocalDateTime.class)), eq(RECEIPT_NUMBER),
         eq(DESCRIPTION), eq(SOURCE_ID));
     }
 
     @Test
     public void doNotSetNoticeToPayWithPaymentDetailsOnNotifyWhenAlreadyNotified() throws Exception {
-        when(noticeToPay.getNotifiedAt()).thenReturn(new Date());
+        when(noticeToPay.getNotifiedAt()).thenReturn(LocalDateTime.now());
         service.notifyPayment(NOTICE_TO_PAY_ID);
 
         verifyNoInteractions(requestBuilder);

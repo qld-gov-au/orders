@@ -1,0 +1,94 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        xmlns:order="http://smartservice.qld.gov.au/payment/schemas/payment_api_1_3"
+        targetNamespace="http://smartservice.qld.gov.au/payment/schemas/payment_api_1_3"
+        xmlns="http://smartservice.qld.gov.au/payment/schemas/payment_api_1_3">
+
+    <xsd:include schemaLocation="order_1_3.xsd"/>
+
+    <xsd:element name="CheckOutRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element minOccurs="1" maxOccurs="1" ref="order:order"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="CheckOutResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="status" type="xsd:string" minOccurs="1" maxOccurs="1" nillable="false"/>
+                <xsd:element name="redirectUrl" type="order:urlType" minOccurs="1" maxOccurs="1" nillable="false"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="OrderStatusRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="serviceOrderRequestId" type="xsd:string" nillable="false" minOccurs="0" maxOccurs="1"/>
+                <xsd:element name="generatedOrderId" type="xsd:string" nillable="false" minOccurs="0" maxOccurs="1"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="OrderStatusResponse">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element name="status" type="xsd:string" nillable="false" minOccurs="1" maxOccurs="1"/>
+                <xsd:element name="receiptNumber" type="xsd:string" nillable="true" minOccurs="0" maxOccurs="1"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+
+
+     <xsd:element name="OrderQueryRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="orderId" type="xsd:string" nillable="false" minOccurs="0" maxOccurs="1"/>
+                <xsd:element name="receiptNumber" type="xsd:string" nillable="false" minOccurs="0" maxOccurs="1"/>
+                <xsd:element name="generatedOrderId" type="xsd:string" nillable="false" minOccurs="0" maxOccurs="1"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="OrderQueryResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element minOccurs="0" maxOccurs="1" name="Error" type="xsd:string"/>
+                <xsd:element minOccurs="0" maxOccurs="unbounded" ref="order:customerDetail"/>
+                <xsd:element minOccurs="0" maxOccurs="unbounded" ref="order:deliveryAddress"/>
+                <xsd:element minOccurs="0" maxOccurs="unbounded" ref="order:order"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="customerDetail">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element minOccurs="1" maxOccurs="unbounded" ref="order:detail"/>
+            </xsd:sequence>
+            <xsd:attribute name="type" use="required" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="deliveryAddress">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element minOccurs="1" maxOccurs="unbounded" ref="order:detail"/>
+            </xsd:sequence>
+            <xsd:attribute name="type" use="required" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="detail">
+        <xsd:complexType>
+            <xsd:simpleContent>
+                <xsd:extension base="xsd:string">
+                    <xsd:attribute name="type" use="required" type="xsd:string"/>
+                </xsd:extension>
+            </xsd:simpleContent>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>

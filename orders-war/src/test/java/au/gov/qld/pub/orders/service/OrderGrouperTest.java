@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 
@@ -33,8 +34,8 @@ public class OrderGrouperTest {
         Item itemB = new ItemBuilder().withGroup("b").withPaid("1").build();
         Item itemBUnpaid = new ItemBuilder().withGroup("b").withPaid("0").build();
         Item itemC = new ItemBuilder().withGroup("c").withPaid("0").build();
-        
-        Date paidAt = new Date();
+
+        LocalDateTime paidAt = LocalDateTime.now();
         Order order = new Order("cart id");
         order.setPaidAt(paidAt);
         order.setPaid("paid");

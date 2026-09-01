@@ -1,8 +1,11 @@
 package au.gov.qld.pub.orders.service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-import org.joda.time.LocalDateTime;
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +32,8 @@ public class ScheduleService {
     @Scheduled(fixedDelayString = "${scheduler.statusCheck.delay}")
     public void statusCheck() {
         LOG.info("Scheduled task: {} starting", "statusCheck");
-        Date minCreated = new LocalDateTime().minusMillis(maxAge).toDate();
+        LocalDateTime minCreated = DateTimeUtils.currentLocalDateTime()
+                .minus(maxAge, ChronoUnit.MILLIS);
 
         for (String orderId : orderService.findUnpaidOrderIds(minCreated)) {
             try {
@@ -46,10 +50,10 @@ public class ScheduleService {
     public void cleanup() {
         LOG.info("Scheduled task: {} starting", "cleanup");
         if (cleanupPaidOrderDays >= 0) {
-            orderService.deleteOlderThan(new LocalDateTime().minusDays(cleanupPaidOrderDays), true);
+            orderService.deleteOlderThan(DateTimeUtils.currentLocalDateTime().minusDays(cleanupPaidOrderDays), true);
         }
         if (cleanupUnpaidOrderDays >= 0) {
-            orderService.deleteOlderThan(new LocalDateTime().minusDays(cleanupUnpaidOrderDays), false);
+            orderService.deleteOlderThan(DateTimeUtils.currentLocalDateTime().minusDays(cleanupUnpaidOrderDays), false);
         }
         LOG.info("Scheduled task: {} finished", "cleanup");
     }

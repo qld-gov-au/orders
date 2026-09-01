@@ -2,6 +2,7 @@ package au.gov.qld.pub.orders.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.webmvc.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,9 +11,9 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
-public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
+public class ErrorsController implements ErrorController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ErrorController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ErrorsController.class);
 
     protected static final String ERROR_403 = "error";
     protected static final String ERROR_404 = "error";

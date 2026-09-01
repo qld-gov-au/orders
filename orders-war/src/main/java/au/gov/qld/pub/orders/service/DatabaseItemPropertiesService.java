@@ -8,7 +8,6 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
@@ -22,7 +21,6 @@ public class DatabaseItemPropertiesService implements ItemPropertiesService, App
     private final ItemPropertiesDAO dao;
     private final FileItemPropertiesDAO fileItemPropertiesDAO;
 
-    @Autowired
     public DatabaseItemPropertiesService(ItemPropertiesDAO dao, FileItemPropertiesDAO fileItemPropertiesDAO) {
         this.dao = dao;
         this.fileItemPropertiesDAO = fileItemPropertiesDAO;

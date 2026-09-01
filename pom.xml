@@ -11,9 +11,8 @@
 
     <properties>
         <maven.build.timestamp.format>h:mm a, d MMMM yyyy</maven.build.timestamp.format>
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.18.2</jackson.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
@@ -26,13 +25,10 @@
     <dependencyManagement>
         <!-- Inherit defaults from Spring Boot -->
         <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>3.3.2</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+            <!-- patch cve's until spring-boot-dependencies is at 4.0.7 -->
+            <dependency><scope>import</scope><groupId>org.springframework</groupId><artifactId>spring-framework-bom</artifactId><version>7.0.8</version><type>pom</type></dependency>
+            <!-- UBER SBOM spring-boot-dependencies-->
+            <dependency><scope>import</scope><groupId>org.springframework.boot</groupId><artifactId>spring-boot-dependencies</artifactId><version>4.0.6</version><type>pom</type></dependency>
         </dependencies>
     </dependencyManagement>
 

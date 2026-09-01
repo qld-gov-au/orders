@@ -14,7 +14,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -202,14 +203,14 @@ public class OrderService {
         return allowedFields;
     }
 
-    public Iterable<String> findUnpaidOrderIds(Date minCreated) {
+    public Iterable<String> findUnpaidOrderIds(LocalDateTime minCreated) {
         return orderDAO.findUnpaidOrdersCreatedAfter(minCreated);
     }
 
     public void deleteOlderThan(LocalDateTime maxCreated, boolean paid) {
         LOG.info("Cleanup {} orders created on or before {}", (paid ? "paid" : "unpaid"), maxCreated);
-        Iterable<Order> toDeletes = paid ? orderDAO.findOlderThanCreatedAndPaid(maxCreated.toDate()) 
-                : orderDAO.findOlderThanCreatedAndNotPaid(maxCreated.toDate());
+        Iterable<Order> toDeletes = paid ? orderDAO.findOlderThanCreatedAndPaid(maxCreated)
+                : orderDAO.findOlderThanCreatedAndNotPaid(maxCreated);
         
         for (Order toDelete : toDeletes) {
             LOG.info("Deleting items and order: {} created at: {}", toDelete.getId(), toDelete.getCreated());

@@ -14,12 +14,13 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import org.hamcrest.Matcher;
-import org.joda.time.DateTimeUtils;
-import org.joda.time.LocalDate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ public class FileServiceTest {
 
 	@BeforeEach
 	public void setUp() throws Exception {
-		DateTimeUtils.setCurrentMillisFixed(new Date().getTime());//prevent milli second differences breaking tests
+		DateTimeUtils.setSystemClock(LocalDateTime.now());//prevent milli second differences breaking tests
 		when(upload.getSize()).thenReturn((long)DATA.length);
 		when(upload.getBytes()).thenReturn(DATA);
 		when(upload.getOriginalFilename()).thenReturn(SUPPORTED_FILENAME);
@@ -59,7 +60,7 @@ public class FileServiceTest {
 
 	@AfterEach
 	public void tearDown() {
-		DateTimeUtils.setCurrentMillisSystem();
+		DateTimeUtils.setSystemClock(null);
 	}
 
 	@Test
@@ -75,7 +76,7 @@ public class FileServiceTest {
 
 	@Test
 	public void cleanupFile() {
-		Date createdAt = new LocalDate().minusDays(DELETE_UPLOAD_AGE).toDate();
+		LocalDate createdAt = DateTimeUtils.currentLocalDate().minusDays(DELETE_UPLOAD_AGE);
 		when(dao.findIdByCreatedAtBefore(createdAt)).thenReturn(asList(SAVED_FORM_FILE_ID));
 		service.cleanUp();
 		verify(dao).deleteById(SAVED_FORM_FILE_ID);

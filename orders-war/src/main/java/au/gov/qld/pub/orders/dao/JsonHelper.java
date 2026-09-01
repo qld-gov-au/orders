@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class JsonHelper {
@@ -23,6 +24,10 @@ public class JsonHelper {
 			private static final long serialVersionUID = 1L;
 			{
                 this.registerModule(new ParameterNamesModule());
+                this.registerModule(new JavaTimeModule());
+
+                //Prevent Jackson from writing dates as numeric arrays [2026,6,12,16,20]
+                this.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
                 this.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
                 this.setSerializationInclusion(JsonInclude.Include.NON_NULL);
                 this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

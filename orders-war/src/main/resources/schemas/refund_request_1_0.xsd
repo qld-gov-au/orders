@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+            xmlns="http://smartservice.qld.gov.au/payment/schemas/refund_request_1_0"
+            targetNamespace="http://smartservice.qld.gov.au/payment/schemas/refund_request_1_0">
+
+    <xsd:element name="RefundRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="papiReferenceNumber" type="xsd:positiveInteger"/>
+                <xsd:element name="papiReceiptNumber" type="xsd:positiveInteger"/>
+                <xsd:element name="papiLineItemId" type="xsd:positiveInteger"/>
+                <xsd:element name="amountToBeRefunded" type="money"/>
+                <xsd:element name="reasonForRefund" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="RefundResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="papiRefundRequestVersion" type="xsd:string"/>
+                <xsd:element name="retrievedAt" type="xsd:string"/>
+                <xsd:element name="refundAmount" type="money" minOccurs="0"/>
+                <xsd:element name="refundReferenceNumber" type="xsd:positiveInteger" minOccurs="0"/>
+                <xsd:element name="errorMessage" type="xsd:string" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:simpleType name="money">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

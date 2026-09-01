@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xsd:element name="paymentRequest" type="paymentRequestType"/>
+
+    <xsd:complexType name="paymentRequestType">
+        <xsd:sequence>
+            <xsd:element name="onlineService" type="onlineServiceType" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="paymentOptions" type="paymentOptions" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="contactDetails" type="contactDetailsType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="taxDetails" type="taxDetailsType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="dueDate" type="xsd:date" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="timeout" type="timeoutType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="item" type="itemType" maxOccurs="unbounded" minOccurs="1"/>
+            <xsd:element name="returnUrl" type="urlType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="notificationUrl" type="urlType" maxOccurs="1" minOccurs="0"/>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="requestIdType"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="paymentOptions">
+        <xsd:all>
+            <xsd:element name="creditCard" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="eft" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="cheque" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="bpay" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:simpleType name="onlineServiceType">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="3"/>
+            <xsd:maxLength value="5"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="itemType">
+        <xsd:sequence>
+            <xsd:element name="agency" type="nonEmptyStringMaxLength100" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="description" type="nonEmptyStringMaxLength300" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="cost" type="costType" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="gst" type="costType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="reference" type="nonEmptyStringMaxLength50" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="glAccount" type="glAccountType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="costCentre" type="costCentreType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="narrative" type="narrativeType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="taxCodeReference" type="taxCodeReferenceType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="disbursementId" type="xsd:positiveInteger" maxOccurs="1" minOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="contactDetailsType">
+        <xsd:all>
+            <xsd:element name="title" type="nonEmptyStringMaxLength12" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="givenName" type="nonEmptyStringMaxLength50" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="familyName" type="nonEmptyStringMaxLength50" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="organisationName" type="nonEmptyStringMaxLength200" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="address" type="addressType" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="contactEmail" type="nonEmptyStringMaxLength100" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="phone" type="nonEmptyStringMaxLength100" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="fax" type="nonEmptyStringMaxLength100" maxOccurs="1" minOccurs="0"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="taxDetailsType">
+        <xsd:sequence>
+            <xsd:element name="registeredName" type="nonEmptyStringMaxLength100" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="abn" type="nonEmptyStringMaxLength12" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="address" type="addressType" maxOccurs="1" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="addressType">
+        <xsd:sequence>
+            <xsd:element name="line1" type="nonEmptyStringMaxLength50" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="line2" type="stringMaxLength50" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="line3" type="stringMaxLength50" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="suburb" type="nonEmptyStringMaxLength50" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="state" type="stringMaxLength50" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="postcode" type="stringMaxLength12" maxOccurs="1" minOccurs="0"/>
+            <xsd:element name="country" type="nonEmptyStringMaxLength100" maxOccurs="1" minOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="timeoutType">
+        <xsd:sequence>
+            <xsd:element name="period" type="xsd:positiveInteger" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="timedOutUrl" type="urlType" maxOccurs="1" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="requestIdType">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="8"/>
+            <xsd:maxLength value="36"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="costType">
+        <xsd:restriction base="xsd:nonNegativeInteger">
+            <xsd:totalDigits value="10"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="glAccountType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="30"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="costCentreType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="30"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="narrativeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="2000"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="taxCodeReferenceType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="30"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="nonEmptyStringMaxLength300">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="300"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+     <xsd:simpleType name="nonEmptyStringMaxLength200">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="100"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="nonEmptyStringMaxLength100">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="100"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="stringMaxLength50">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="0"/>
+            <xsd:maxLength value="50"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="nonEmptyStringMaxLength50">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="50"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="nonEmptyStringLength11">
+        <xsd:restriction base="xsd:string">
+            <xsd:length value="11" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="nonEmptyStringMaxLength12">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="12"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="stringMaxLength12">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="0"/>
+            <xsd:maxLength value="12"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="nonEmptyString">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="urlType">
+        <xsd:restriction base="xsd:anyURI">
+            <xsd:pattern value="https?://[\w\d:#;%@$()!~_/?\\+-=.&amp;]+"/>
+            <xsd:maxLength value="1024"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="paymentType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="POST"/>
+            <xsd:enumeration value="EMAIL"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

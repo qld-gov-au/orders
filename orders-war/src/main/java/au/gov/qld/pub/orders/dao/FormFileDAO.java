@@ -1,7 +1,7 @@
 package au.gov.qld.pub.orders.dao;
 
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -14,6 +14,6 @@ import au.gov.qld.pub.orders.entity.FormFile;
 public interface FormFileDAO extends CrudRepository<FormFile, String> {
 
 	@Query("select id from FormFile where createdAt <= :createdAt")
-	Collection<String> findIdByCreatedAtBefore(@Param("createdAt") Date createdAt);
+	Collection<String> findIdByCreatedAtBefore(@Param("createdAt") LocalDate createdAt);
 
 }

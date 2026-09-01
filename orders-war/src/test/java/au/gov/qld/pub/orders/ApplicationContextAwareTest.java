@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import au.gov.qld.pub.orders.config.App;
+import au.gov.qld.pub.App;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

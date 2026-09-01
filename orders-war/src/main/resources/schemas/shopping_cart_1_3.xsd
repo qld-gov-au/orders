@@ -1,0 +1,27 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        xmlns:order="http://smartservice.qld.gov.au/payment/schemas/shopping_cart_1_3"
+        targetNamespace="http://smartservice.qld.gov.au/payment/schemas/shopping_cart_1_3"
+        xmlns="http://smartservice.qld.gov.au/payment/schemas/shopping_cart_1_3">
+
+    <xsd:include schemaLocation="order_1_3.xsd"/>
+
+    <xsd:element name="CartAddRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="cartId" type="xsd:string" nillable="false" minOccurs="0" maxOccurs="1"/>
+                <xsd:element minOccurs="1" maxOccurs="1" ref="order:order"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="CartAddResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="status" type="xsd:string" minOccurs="1" maxOccurs="1" nillable="false"/>
+                <xsd:element name="cartId" type="xsd:string" minOccurs="1" maxOccurs="1" nillable="false"/>
+                <xsd:element name="generatedOrderId" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="false"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -5,18 +5,18 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,8 +94,8 @@ public class NotifyService {
         
         additionalNotificationService.notifedPaidOrder(order.getId(), order.getCreated(), order.getPaid(), order.getReceipt(), order.getCartId(),
         		order.getCustomerDetailsMap(), order.getDeliveryDetailsMap(), toFieldMaps(order.getPaidItems()));
-        Date notifiedAt = new Date();
-        order.setNotified(new LocalDateTime(notifiedAt).toString());
+        LocalDateTime notifiedAt = DateTimeUtils.currentLocalDateTime();
+        order.setNotified(DateTimeUtils.DMY_DATE_FORMATTER.format(notifiedAt));
         order.setNotifiedAt(notifiedAt);
         orderDAO.save(order);
         LOG.info("Notified order: {}", order.getId());

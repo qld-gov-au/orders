@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns="http://smartservice.qld.gov.au/payment/schemas/refund_query_1_0"
+            targetNamespace="http://smartservice.qld.gov.au/payment/schemas/refund_query_1_0">
+
+    <xsd:element name="RefundQueryRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="papiReceiptNumber" type="xsd:positiveInteger"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="RefundQueryResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="papiRefundQueryVersion" type="xsd:string"/>
+                <xsd:element name="retrievedAt" type="xsd:string"/>
+                <xsd:element name="paymentAndRefundDetails" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="timeOfIssue" type="xsd:dateTime"/>
+                            <xsd:element name="papiReferenceNumber" type="xsd:positiveInteger"/>
+                            <xsd:element name="customerDetails" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="serviceName" type="xsd:string"/>
+                            <xsd:element name="totalPaymentAmount" type="money"/>
+                            <xsd:element name="lineItem" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="papiLineItemId" type="xsd:positiveInteger"/>
+                                        <xsd:element name="orderLineId" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="lineItemDescription" type="xsd:string"/>
+                                        <xsd:element name="agency" type="xsd:string"/>
+                                        <xsd:element name="agencyReference" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="quantity" type="xsd:positiveInteger"/>
+                                        <xsd:element name="totalLineItemAmount" type="money"/>
+                                        <xsd:element name="totalLineItemAdjustments" type="money"/>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="errorMessage" type="xsd:string" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:simpleType name="money">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:fractionDigits value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

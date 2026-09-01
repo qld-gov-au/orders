@@ -19,7 +19,6 @@ public class OrderExtensionConfig {
     }
 
     // Extend with your own payment information service by overwriting this file in your overlay project
-    @Autowired
     @ConditionalOnMissingBean
     @Bean(name = "itemPropertiesService")
     public DatabaseItemPropertiesService databaseItemPropertiesService(ItemPropertiesDAO dao, FileItemPropertiesDAO fileItemPropertiesDAO){

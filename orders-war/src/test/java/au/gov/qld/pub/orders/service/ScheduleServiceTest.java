@@ -8,11 +8,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Date;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 
-import org.joda.time.DateTimeUtils;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
+
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,13 +31,13 @@ public class ScheduleServiceTest {
     @Mock ConfigurationService config;
     @Mock OrderService orderService;
 
-    Date minAge;
+    LocalDateTime minAge;
     ScheduleService service;
 
     @BeforeEach
     public void setUp() throws ServiceException {
-        DateTimeUtils.setCurrentMillisFixed(new Date().getTime());
-        minAge = new LocalDateTime().minusMillis(MAX_AGE).toDate();
+        DateTimeUtils.setSystemClock(LocalDateTime.now().minusYears(10).truncatedTo(ChronoUnit.MINUTES));
+        minAge = DateTimeUtils.currentLocalDateTime().minus(MAX_AGE, ChronoUnit.MILLIS);
         when(config.getMaxAgeForRetry()).thenReturn(MAX_AGE);
         when(config.getDeletePaidOrderDays()).thenReturn(DELETE_PAID_DAYS);
         when(config.getDeleteUnpaidOrderDays()).thenReturn(DELETE_UNPAID_DAYS);
@@ -45,14 +46,14 @@ public class ScheduleServiceTest {
 
     @AfterEach
     public void tearDown() {
-        DateTimeUtils.setCurrentMillisSystem();
+        DateTimeUtils.setSystemClock(null);
     }
 
     @Test
     public void cleanupOrdersOlderThanDeleteDaysAgo() {
         service.cleanup();
-        verify(orderService).deleteOlderThan(new LocalDateTime().minusDays(DELETE_PAID_DAYS), true);
-        verify(orderService).deleteOlderThan(new LocalDateTime().minusDays(DELETE_UNPAID_DAYS), false);
+        verify(orderService).deleteOlderThan(DateTimeUtils.currentLocalDateTime().minusDays(DELETE_PAID_DAYS), true);
+        verify(orderService).deleteOlderThan(DateTimeUtils.currentLocalDateTime().minusDays(DELETE_UNPAID_DAYS), false);
     }
 
     @Test
@@ -60,7 +61,7 @@ public class ScheduleServiceTest {
         when(config.getDeleteUnpaidOrderDays()).thenReturn(-1);
         service = new ScheduleService(config, orderService);
         service.cleanup();
-        verify(orderService).deleteOlderThan(new LocalDateTime().minusDays(DELETE_PAID_DAYS), true);
+        verify(orderService).deleteOlderThan(DateTimeUtils.currentLocalDateTime().minusDays(DELETE_PAID_DAYS), true);
         verify(orderService, never()).deleteOlderThan(isA(LocalDateTime.class), eq(false));
     }
 
@@ -70,7 +71,7 @@ public class ScheduleServiceTest {
         service = new ScheduleService(config, orderService);
         service.cleanup();
         verify(orderService, never()).deleteOlderThan(isA(LocalDateTime.class), eq(true));
-        verify(orderService).deleteOlderThan(new LocalDateTime().minusDays(DELETE_UNPAID_DAYS), false);
+        verify(orderService).deleteOlderThan(DateTimeUtils.currentLocalDateTime().minusDays(DELETE_UNPAID_DAYS), false);
     }
 
     @Test

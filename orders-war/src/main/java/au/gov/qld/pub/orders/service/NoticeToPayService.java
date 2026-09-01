@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
@@ -11,7 +12,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.joda.time.DateTime;
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class NoticeToPayService {
 
     @Transactional
     public String create(String sourceId, String sourceUrl) throws ServiceException {
-        boolean recentlyPaid = noticeToPayDAO.existsByPaymentInformationIdAndNotifiedAtAfter(sourceId, new DateTime().minusHours(1).toDate());
+        boolean recentlyPaid = noticeToPayDAO.existsByPaymentInformationIdAndNotifiedAtAfter(sourceId, DateTimeUtils.currentLocalDateTime().minusHours(1));
         if (recentlyPaid) {
             LOG.warn("This source ID was recently paid for and could be a duplicate: {}", sourceId);
             return null;
@@ -89,7 +90,7 @@ public class NoticeToPayService {
 
     @Transactional
     public void notifyPayment(String noticeToPayId) throws ServiceException {
-        final Date now = new Date();
+        final LocalDateTime now = LocalDateTime.now();
         
         Optional<NoticeToPay> noticeToPayOptional = noticeToPayDAO.findById(noticeToPayId);
         if (!noticeToPayOptional.isPresent()) {

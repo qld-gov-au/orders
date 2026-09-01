@@ -1,6 +1,6 @@
 package au.gov.qld.pub.orders.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -18,7 +18,7 @@ public class NoticeToPay {
     @Column(nullable = false) private String description;
     @Column(nullable = false) private long amount;
     @Column(nullable = false) private long amountGst;
-    @Column private Date notifiedAt;
+    @Column private LocalDateTime notifiedAt;
     @Column private String receiptNumber;
     @Column private String exported;
     
@@ -61,16 +61,16 @@ public class NoticeToPay {
         this.receiptNumber = receiptNumber;
     }
 
-    public void setNotifiedAt(Date notifiedAt) {
-        this.notifiedAt = notifiedAt != null ? new Date(notifiedAt.getTime()) : null;
+    public void setNotifiedAt(LocalDateTime notifiedAt) {
+        this.notifiedAt = notifiedAt;
     }
 
     public String getReceiptNumber() {
         return receiptNumber;
     }
 
-    public Date getNotifiedAt() {
-        return notifiedAt != null ? new Date(notifiedAt.getTime()) : null;
+    public LocalDateTime getNotifiedAt() {
+        return notifiedAt;
     }
     
     public String getDescription() {

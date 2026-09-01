@@ -10,7 +10,9 @@ import static org.hamcrest.Matchers.nullValue;
 import java.util.Map;
 import java.util.UUID;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
+
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -100,7 +102,7 @@ public class OrderDAOIT extends ApplicationContextAwareTest {
         dao.save(paidOrder);
 
 
-        Iterable<String> unpaidIds = dao.findUnpaidOrdersCreatedAfter(new LocalDateTime().minusHours(1).toDate());
+        Iterable<String> unpaidIds = dao.findUnpaidOrdersCreatedAfter(DateTimeUtils.currentLocalDateTime().minusHours(1));
         assertThat(unpaidIds, hasItem(unpaidId));
         assertThat(unpaidIds, not(hasItem(paidId)));
     }

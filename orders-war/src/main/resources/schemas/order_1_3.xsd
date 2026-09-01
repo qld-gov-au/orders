@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+  <xsd:element name="order">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="onlineService"/>
+        <xsd:element minOccurs="0" maxOccurs="unbounded" ref="orderline"/>
+        <xsd:element minOccurs="0" maxOccurs="unbounded" ref="delivery"/>
+        <xsd:element minOccurs="0" maxOccurs="unbounded" ref="deliveryAddressRequest"/>
+        <xsd:element minOccurs="0" maxOccurs="unbounded" ref="customerDetailsRequest"/>
+        <xsd:element minOccurs="0" ref="serviceSpecific"/>
+      </xsd:sequence>
+      <xsd:attribute name="id" use="optional" type="positiveInteger8Digits"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="onlineService">
+    <xsd:complexType>
+      <xsd:attribute name="id" use="required" type="nonEmptyStringMaxLength5"/>
+      <xsd:attribute name="name" use="required" type="nonEmptyStringMaxLength50"/>
+      <xsd:attribute name="next" use="optional" type="urlType"/>
+      <xsd:attribute name="notify" use="optional" type="urlType"/>
+      <xsd:attribute name="prev" use="required" type="urlType"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="orderline">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="product"/>
+        <xsd:element minOccurs="0" maxOccurs="unbounded" ref="deliveryAddressRequest"/>
+        <xsd:element minOccurs="0" maxOccurs="unbounded" ref="customerDetailsRequest"/>
+        <xsd:element name="timeout" type="timeoutType" maxOccurs="1" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="delete" use="optional" type="urlType"/>
+      <xsd:attribute name="id" use="required" type="nonEmptyStringMaxLength48"/>
+      <xsd:attribute name="quantity" use="optional" type="xsd:positiveInteger"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="product">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" ref="accounting"/>
+        <xsd:element minOccurs="0" maxOccurs="unbounded" ref="distribution"/>
+        <xsd:element minOccurs="0" ref="productSpecific"/>
+      </xsd:sequence>
+      <xsd:attribute name="title" use="required" type="nonEmptyStringMaxLength100"/>
+      <xsd:attribute name="ref" use="optional" type="nonEmptyStringMaxLength40"/>
+      <xsd:attribute name="cost" use="required" type="costType"/>
+      <xsd:attribute name="gst" use="optional" type="costType"/>
+      <xsd:attribute name="agency" use="required" type="nonEmptyStringMaxLength100"/>
+      <xsd:attribute name="description" use="optional" type="nonEmptyStringMaxLength300"/>
+      <xsd:attribute name="disbursementId" use="required" type="xsd:positiveInteger"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="accounting">
+    <xsd:complexType>
+      <xsd:attribute name="costCenter" use="optional" type="costCenterType"/>
+      <xsd:attribute name="glCode" use="optional" type="glCodeType"/>
+      <xsd:attribute name="narrative" use="optional" type="narrativeType"/>
+      <xsd:attribute name="taxCode" use="optional" type="taxCodeType"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="productSpecific">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="distribution">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="1" maxOccurs="unbounded" ref="resource"/>
+      </xsd:sequence>
+      <xsd:attribute name="title" use="optional" type="nonEmptyStringMaxLength100"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="resource">
+    <xsd:complexType>
+      <xsd:attribute name="link" use="required" type="urlType"/>
+      <xsd:attribute name="type" use="required" type="nonEmptyStringMaxLength20"/>
+      <xsd:attribute name="size" use="optional" type="nonEmptyStringMaxLength20"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="delivery">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" ref="accounting"/>
+      </xsd:sequence>
+      <xsd:attribute name="description" use="required" type="nonEmptyStringMaxLength100"/>
+      <xsd:attribute name="cost" use="required" type="costType"/>
+      <xsd:attribute name="gst" use="optional" type="costType"/>
+      <xsd:attribute name="disbursementId" use="required" type="xsd:positiveInteger"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="deliveryAddressRequest">
+    <xsd:complexType>
+      <xsd:attribute name="type" use="required" type="deliveryAddressType"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="customerDetailsRequest">
+    <xsd:complexType>
+      <xsd:attribute name="type" use="required" type="customerDetailsType"/>
+      <xsd:attribute name="required" use="optional" type="xsd:boolean" default="true"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="serviceSpecific">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:complexType name="timeoutType">
+    <xsd:sequence>
+        <xsd:element name="period" type="xsd:positiveInteger" maxOccurs="1" minOccurs="1"/>
+        <xsd:element name="timedOutUrl" type="urlType" maxOccurs="1" minOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+    <xsd:simpleType name="positiveInteger8Digits">
+    <xsd:restriction base="xsd:positiveInteger">
+      <xsd:totalDigits value="8"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="nonEmptyStringMaxLength5">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="5"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="nonEmptyStringMaxLength20">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="20"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="nonEmptyStringMaxLength48">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="48"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="nonEmptyStringMaxLength50">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="50"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="nonEmptyStringMaxLength100">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="100"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="nonEmptyStringMaxLength300">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="300"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="nonEmptyStringMaxLength40">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="40"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="costType">
+    <xsd:restriction base="xsd:nonNegativeInteger">
+      <xsd:totalDigits value="10"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="glCodeType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="30"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="costCenterType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="30"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="narrativeType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="2000"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="taxCodeType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="30"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="deliveryAddressType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="POST"/>
+      <xsd:enumeration value="EMAIL"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="customerDetailsType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="CUSTOMER"/>
+      <xsd:enumeration value="POST"/>
+      <xsd:enumeration value="EMAIL"/>
+      <xsd:enumeration value="PHONE"/>
+      <xsd:enumeration value="FAX"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="urlType">
+    <xsd:restriction base="xsd:anyURI">
+      <xsd:pattern value="https?://[\w\d:#;%@$()!~_/?\\+-=.&amp;]+"/>
+      <xsd:maxLength value="1024" />
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>

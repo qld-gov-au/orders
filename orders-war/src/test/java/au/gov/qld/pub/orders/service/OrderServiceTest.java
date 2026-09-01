@@ -22,12 +22,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
@@ -317,7 +319,7 @@ public class OrderServiceTest {
     @SuppressWarnings("unchecked")
     @Test
     public void returnUnpaidOrdersAfterMinCreated() {
-        Date minCreated = new Date();
+        LocalDateTime minCreated = DateTimeUtils.currentLocalDateTime();
         Iterable<String> unpaidAfterMinCreated = mock(Iterable.class);
         when(orderDAO.findUnpaidOrdersCreatedAfter(minCreated)).thenReturn(unpaidAfterMinCreated);
         assertThat(orderService.findUnpaidOrderIds(minCreated), is(unpaidAfterMinCreated));

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import org.springframework.stereotype.Component;
 
 import au.gov.qld.pub.orders.entity.Item;
@@ -24,7 +25,7 @@ public class OrderGrouper {
             orderForGroup.setPaidAt(order.getPaidAt());
             orderForGroup.setDeliveryDetailsMap(order.getDeliveryDetailsMap());
             orderForGroup.setCustomerDetailsMap(order.getCustomerDetailsMap());
-            orderForGroup.setCreatedAt(new Date(order.getCreated().getTime()));
+            orderForGroup.setCreatedAt(order.getCreated());
             orderForGroup.setGeneratedId(order.getGeneratedId());
             orderForGroup.setNotified(order.getNotified());
             orderForGroup.setNotifiedAt(order.getNotifiedAt());

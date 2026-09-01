@@ -9,8 +9,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import org.hamcrest.Matcher;
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -79,7 +80,7 @@ public class OrderServiceIT extends ApplicationContextAwareTest {
 
     @Test
     public void deletePaidOrdersOlderThanMaxCreatedDate() {
-        LocalDateTime maxCreatedAt = new LocalDateTime().minusDays(10);
+        LocalDateTime maxCreatedAt = DateTimeUtils.currentLocalDateTime().minusDays(10);
 
         Order oldPaid = createOrder(maxCreatedAt, true, createItem());
         Order oldUnpaid = createOrder(maxCreatedAt, false, createItem());
@@ -101,7 +102,7 @@ public class OrderServiceIT extends ApplicationContextAwareTest {
     private Order createOrder(LocalDateTime created, boolean paid, Item item) {
         item = itemDAO.save(item);
         Order order = new Order("");
-        order.setCreatedAt(created.toDate());
+        order.setCreatedAt(created);
         order.add(item);
         order.setPaid(paid ? "paid" : null);
         orderDAO.save(order);

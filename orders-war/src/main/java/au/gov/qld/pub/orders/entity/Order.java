@@ -2,12 +2,15 @@ package au.gov.qld.pub.orders.entity;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,7 +21,6 @@ import jakarta.persistence.Table;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.joda.time.LocalDateTime;
 
 import au.gov.qld.pub.orders.dao.JsonHelper;
 import au.gov.qld.pub.orders.service.ws.OrderDetails;
@@ -33,7 +35,7 @@ public class Order {
     private List<Item> items = new ArrayList<Item>();
     
     @Column
-    private Date created;
+    private LocalDateTime created;
     @Column
     private String customerDetails;
     @Column
@@ -48,11 +50,11 @@ public class Order {
     @Column
     private String paid;
     @Column
-    private Date paidAt;
+    private LocalDateTime paidAt;
     @Column
     private String notified;
     @Column
-    private Date notifiedAt;
+    private LocalDateTime notifiedAt;
     
     private Order() {
         this.id = UUID.randomUUID().toString();
@@ -61,15 +63,15 @@ public class Order {
     public Order(String cartId) {
         this();
         this.cartId = cartId;
-        this.created = new Date();
+        this.created = LocalDateTime.now();
     }
     
     public String getCartId() {
         return cartId;
     }
     
-    public Date getCreated() {
-        return new Date(created.getTime());
+    public LocalDateTime getCreated() {
+        return created;
     }
     
     public void setCartId(String cartId) {
@@ -108,20 +110,20 @@ public class Order {
         this.paid = paid;
     }
     
-    public Date getPaidAt() {
-		return paidAt != null ? new Date(paidAt.getTime()) : null;
+    public LocalDateTime getPaidAt() {
+		return paidAt;
 	}
 
-	public void setPaidAt(Date paidAt) {
-		this.paidAt = paidAt != null ? new Date(paidAt.getTime()) : null;
+	public void setPaidAt(LocalDateTime paidAt) {
+		this.paidAt = paidAt;
 	}
 
-	public Date getNotifiedAt() {
-		return notifiedAt != null ? new Date(notifiedAt.getTime()) : null;
+	public LocalDateTime getNotifiedAt() {
+		return notifiedAt;
 	}
 
-	public void setNotifiedAt(Date notifiedAt) {
-		this.notifiedAt = notifiedAt != null ? new Date(notifiedAt.getTime()) : null;
+	public void setNotifiedAt(LocalDateTime notifiedAt) {
+		this.notifiedAt = notifiedAt;
 	}
 
 	public void setPaid(String receipt, OrderDetails orderDetails) {
@@ -130,8 +132,8 @@ public class Order {
         }
         
         this.receipt = receipt;
-        this.paidAt = new Date();
-        this.paid = new LocalDateTime(this.paidAt).toString();
+        this.paidAt = LocalDateTime.now();
+        this.paid = DateTimeUtils.DMY_DATE_FORMATTER.format(this.paidAt);
         this.deliveryDetails = JsonHelper.serialise(orderDetails.getDeliveryDetails());
         this.customerDetails = JsonHelper.serialise(orderDetails.getCustomerDetails());
         for (Item item : items) {
@@ -184,8 +186,8 @@ public class Order {
         return obj instanceof Order && id.equals(((Order)obj).id);
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.created = new Date(createdAt.getTime());
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.created = createdAt;
     }
 
 	public List<Item> getPaidItems() {

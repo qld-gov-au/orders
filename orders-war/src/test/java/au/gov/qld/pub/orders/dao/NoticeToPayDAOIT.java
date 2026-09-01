@@ -4,13 +4,15 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import org.joda.time.DateTime;
+import au.gov.qld.pub.orders.utils.DateTimeUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import au.gov.qld.pub.orders.ApplicationContextAwareTest;
 import au.gov.qld.pub.orders.entity.NoticeToPay;
 import au.gov.qld.pub.orders.service.PaymentInformationService;
+
+import java.time.temporal.ChronoUnit;
 
 public class NoticeToPayDAOIT extends ApplicationContextAwareTest {
     @Autowired NoticeToPayDAO noticeToPayDao;
@@ -19,17 +21,17 @@ public class NoticeToPayDAOIT extends ApplicationContextAwareTest {
     @Test
     public void returnTrueWhenRecentNoticeToPayPaid() throws Exception {
         NoticeToPay ntpNew = new NoticeToPay(paymentInformationService.fetch("1"));
-        ntpNew.setNotifiedAt(new DateTime().toDate());
+        ntpNew.setNotifiedAt(DateTimeUtils.currentLocalDateTime());
 
         NoticeToPay ntpOld = new NoticeToPay(paymentInformationService.fetch("2"));
-        ntpOld.setNotifiedAt(new DateTime().minusDays(1).toDate());
+        ntpOld.setNotifiedAt(DateTimeUtils.currentLocalDateTime().minusDays(1));
 
         NoticeToPay ntpOther = new NoticeToPay(paymentInformationService.fetch("3"));
         noticeToPayDao.saveAll(asList(ntpNew, ntpOld, ntpOther));
 
 
-        assertThat(noticeToPayDao.existsByPaymentInformationIdAndNotifiedAtAfter("1", new DateTime().minusMinutes(5).toDate()), is(true));
-        assertThat(noticeToPayDao.existsByPaymentInformationIdAndNotifiedAtAfter("2", new DateTime().minusMinutes(5).toDate()), is(false));
-        assertThat(noticeToPayDao.existsByPaymentInformationIdAndNotifiedAtAfter("3", new DateTime().minusMinutes(5).toDate()), is(false));
+        assertThat(noticeToPayDao.existsByPaymentInformationIdAndNotifiedAtAfter("1", DateTimeUtils.currentLocalDateTime().minusMinutes(5)), is(true));
+        assertThat(noticeToPayDao.existsByPaymentInformationIdAndNotifiedAtAfter("2", DateTimeUtils.currentLocalDateTime().minusMinutes(5)), is(false));
+        assertThat(noticeToPayDao.existsByPaymentInformationIdAndNotifiedAtAfter("3", DateTimeUtils.currentLocalDateTime().minusMinutes(5)), is(false));
     }
 }
